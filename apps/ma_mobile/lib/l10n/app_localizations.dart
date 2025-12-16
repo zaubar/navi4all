@@ -1091,6 +1091,24 @@ abstract class AppLocalizations {
   /// **'{name}. {status}.'**
   String placeListItemSemantic(String name, String status);
 
+  /// No description provided for @placeScreenDialogRadiusSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Search radius. Currently {radius} metres.'**
+  String placeScreenDialogRadiusSemantic(int radius);
+
+  /// No description provided for @placeScreenDialogRadiusIncrementSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase radius by 100 metres.'**
+  String get placeScreenDialogRadiusIncrementSemantic;
+
+  /// No description provided for @placeScreenDialogRadiusDecrementSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease radius by 100 metres.'**
+  String get placeScreenDialogRadiusDecrementSemantic;
+
   /// No description provided for @parkingLocationScreenSearchBarSemantic.
   ///
   /// In en, this message translates to:

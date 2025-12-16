@@ -76,14 +76,14 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
     _drawRadius();
 
     // Compute new camera zoom and position to fit radius
-    double zoomLevel = 14.0 - log(Settings.defaultRadius / 450) / log(2);
+    double zoomLevel = 14.0 - log(Settings.searchRadiusDefault / 450) / log(2);
     zoomLevel = zoomLevel.clamp(9.0, 16.0);
     _mapController.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(
             _parkingLocation.coordinates.lat -
-                (Settings.defaultRadius / 200000),
+                (Settings.searchRadiusDefault / 200000),
             _parkingLocation.coordinates.lon,
           ),
           zoom: zoomLevel,
@@ -152,7 +152,7 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
       Map<String, dynamic> geoJson;
       (parkingLocations, geoJson) = await parkingService.getParkingLocations(
         focusPoint: _parkingLocation.coordinates,
-        radius: Settings.defaultRadius,
+        radius: Settings.searchRadiusDefault,
       );
       setState(() {
         _parkingLocations = parkingLocations;
@@ -176,7 +176,7 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
       _parkingLocation.coordinates.lon,
     );
     final int points = 60; // More points = smoother circle
-    final double radiusInMeters = Settings.defaultRadius.toDouble();
+    final double radiusInMeters = Settings.searchRadiusDefault.toDouble();
     final double earthRadius = 6378137.0;
 
     List<LatLng> polygon = [];

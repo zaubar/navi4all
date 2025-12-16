@@ -553,6 +553,17 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String placeScreenDialogRadiusSemantic(int radius) {
+    return 'Suchradius. Aktuell $radius Metern.';
+  }
+
+  @override
+  String get placeScreenDialogRadiusIncrementSemantic => 'Suchradius um 100 Meter erhöhen.';
+
+  @override
+  String get placeScreenDialogRadiusDecrementSemantic => 'Suchradius um 100 Meter verringern.';
+
+  @override
   String parkingLocationScreenSearchBarSemantic(String name) {
     return '$name selected. Tap to go back.';
   }

@@ -366,6 +366,16 @@
             }
         }
     },
+    "placeScreenDialogRadiusSemantic": "Suchradius. Aktuell {radius} Metern.",
+    "@placeScreenDialogRadiusSemantic": {
+        "placeholders": {
+            "radius": {
+                "type": "int"
+            }
+        }
+    },
+    "placeScreenDialogRadiusIncrementSemantic": "Suchradius um 100 Meter erhöhen.",
+    "placeScreenDialogRadiusDecrementSemantic": "Suchradius um 100 Meter verringern.",
     "parkingLocationScreenSearchBarSemantic": "{name} selected. Tap to go back.",
     "@parkingLocationScreenSearchBarSemantic": {
         "placeholders": {

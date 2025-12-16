@@ -15,6 +15,7 @@ import 'package:smartroots/view/parking_location/parking_location.dart';
 import 'package:smartroots/services/poi_parking.dart';
 import 'package:smartroots/view/common/sheet_button.dart';
 import 'package:smartroots/core/utils.dart';
+import 'package:smartroots/view/place/search_radius_dialog.dart';
 
 class PlaceScreen extends StatefulWidget {
   final Place place;
@@ -26,8 +27,7 @@ class PlaceScreen extends StatefulWidget {
 
 class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
   Timer? _refreshTimer;
-  int _selectedRadius = Settings.defaultRadius;
-  int _changedRadius = Settings.defaultRadius;
+  int _selectedRadius = Settings.searchRadiusDefault;
   List<Place> _parkingLocations = [];
 
   @override
@@ -76,135 +76,24 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
   void _changeRadiusOnTap() {
     showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(32),
-          ),
-          child: Semantics(
-            label: AppLocalizations.of(context)!.placeScreenChangeRadiusButton,
-            focused: true,
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Semantics(
-                      excludeSemantics: true,
-                      child: Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.placeScreenChangeRadiusButton,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: SmartRootsColors.maBlueExtraExtraDark,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 32),
-                  DropdownMenu(
-                    inputDecorationTheme: InputDecorationTheme(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    textStyle: TextStyle(
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    dropdownMenuEntries: [
-                      for (var value in Settings.radiusOptions)
-                        DropdownMenuEntry(
-                          value: value,
-                          label: '${value}m',
-                          labelWidget: Semantics(
-                            excludeSemantics: true,
-                            label: '${value}m',
-                            focused: _changedRadius == value,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(width: 16),
-                                Expanded(
-                                  child: Text(
-                                    '${value}m',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color:
-                                          SmartRootsColors.maBlueExtraExtraDark,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
-                    initialSelection: _selectedRadius,
-                    onSelected: (value) {
-                      setState(() {
-                        _changedRadius = value as int;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 32),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SheetButton(
-                          label: AppLocalizations.of(
-                            context,
-                          )!.placeScreenChangeRadiusCancel,
-                          onTap: () {
-                            _changedRadius = _selectedRadius;
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: SheetButton(
-                          label: AppLocalizations.of(
-                            context,
-                          )!.placeScreenChangeRadiusConfirm,
-                          onTap: () {
-                            setState(() {
-                              _selectedRadius = _changedRadius;
-                              _refreshData();
-                              Navigator.of(context).pop();
-                            });
+        return SearchRadiusDialog(
+          selectedRadius: _selectedRadius,
+          onConfirm: (changedRadius) {
+            setState(() {
+              _selectedRadius = changedRadius;
+            });
+            _refreshData();
 
-                            // Analytics event
-                            MatomoTracker.instance.trackEvent(
-                              eventInfo: EventInfo(
-                                category: EventCategory.placeScreen.toString(),
-                                action: EventAction
-                                    .placeScreenSearchRadiusChanged
-                                    .toString(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+            // Analytics event
+            MatomoTracker.instance.trackEvent(
+              eventInfo: EventInfo(
+                category: EventCategory.placeScreen.toString(),
+                action: EventAction.placeScreenSearchRadiusChanged.toString(),
               ),
-            ),
-          ),
+            );
+          },
+          onCancel: () {},
         );
       },
     );
