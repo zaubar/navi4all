@@ -154,16 +154,6 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                     ),
-                    /* IconButton(
-                      icon: Icon(
-                        Icons.mic,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
-                        semanticLabel: AppLocalizations.of(
-                          context,
-                        )!.commonMicButtonSemantic,
-                      ),
-                      onPressed: null,
-                    ), */
                   ],
                 ),
               ),
@@ -172,62 +162,68 @@ class _SearchScreenState extends State<SearchScreen> {
                   : const SizedBox(height: 32),
               autocompleteController.searchQuery.isEmpty &&
                       autocompleteController.recentSearches.isNotEmpty
-                  ? Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.tertiary,
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                      ),
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          final place =
-                              autocompleteController.recentSearches[index];
-                          return _SearchSuggestion(
-                            place: place,
-                            isRecentSearch: true,
-                            onTap: () => _onSuggestionTap(place),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const Divider(
-                            height: 1,
-                            indent: 12,
-                            endIndent: 12,
-                            color: SmartRootsColors.maBlue,
-                          );
-                        },
-                        itemCount: autocompleteController.recentSearches.length,
+                  ? Flexible(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.tertiary,
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                        ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            final place =
+                                autocompleteController.recentSearches[index];
+                            return _SearchSuggestion(
+                              place: place,
+                              isRecentSearch: true,
+                              onTap: () => _onSuggestionTap(place),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider(
+                              height: 1,
+                              indent: 12,
+                              endIndent: 12,
+                              color: SmartRootsColors.maBlue,
+                            );
+                          },
+                          itemCount:
+                              autocompleteController.recentSearches.length,
+                        ),
                       ),
                     )
                   : autocompleteController.searchQuery.isNotEmpty &&
                         autocompleteController.searchResults.isNotEmpty
-                  ? Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.tertiary,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(32),
-                          bottomRight: Radius.circular(32),
+                  ? Flexible(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.tertiary,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(32),
+                            bottomRight: Radius.circular(32),
+                          ),
                         ),
-                      ),
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          final place =
-                              autocompleteController.searchResults[index];
-                          return _SearchSuggestion(
-                            place: place,
-                            onTap: () => _onSuggestionTap(place),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const Divider(
-                            height: 1,
-                            indent: 12,
-                            endIndent: 12,
-                            color: SmartRootsColors.maBlue,
-                          );
-                        },
-                        itemCount: autocompleteController.searchResults.length,
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            final place =
+                                autocompleteController.searchResults[index];
+                            return _SearchSuggestion(
+                              place: place,
+                              onTap: () => _onSuggestionTap(place),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider(
+                              height: 1,
+                              indent: 12,
+                              endIndent: 12,
+                              color: SmartRootsColors.maBlue,
+                            );
+                          },
+                          itemCount:
+                              autocompleteController.searchResults.length,
+                        ),
                       ),
                     )
                   : Semantics(
@@ -261,12 +257,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ),
               const Spacer(),
-              /*AccessibleButton(
-                label: AppLocalizations.of(context)!.commonHomeScreenButton,
-                style: AccessibleButtonStyle.pink,
-                onTap: () =>
-                    Navigator.of(context).popUntil((route) => route.isFirst),
-              ),*/
             ],
           ),
         ),
