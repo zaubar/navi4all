@@ -221,6 +221,30 @@ abstract class AppLocalizations {
   /// **'Real-time data unavailable'**
   String get onboardingSymbolInformationParkingUnknown;
 
+  /// No description provided for @onboardingFavoritesInformationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your favorites'**
+  String get onboardingFavoritesInformationTitle;
+
+  /// No description provided for @onboardingFavoritesInformationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite frequently used parking spots to find them quickly.'**
+  String get onboardingFavoritesInformationSubtitle;
+
+  /// No description provided for @onboardingFavoritesNotFavorited.
+  ///
+  /// In en, this message translates to:
+  /// **'Not favourited'**
+  String get onboardingFavoritesNotFavorited;
+
+  /// No description provided for @onboardingFavoritesFavorited.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourited'**
+  String get onboardingFavoritesFavorited;
+
   /// No description provided for @onboardingUserLocationTitle.
   ///
   /// In en, this message translates to:
@@ -232,6 +256,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'With access to your location, we can show you parking spots nearby and navigate there directly.'**
   String get onboardingUserLocationSubtitle;
+
+  /// No description provided for @onboardingAudioGuidanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio guidance'**
+  String get onboardingAudioGuidanceTitle;
+
+  /// No description provided for @onboardingAudioGuidanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'To customise navigation audio settings, visit your device\'s sound or accessibility settings.'**
+  String get onboardingAudioGuidanceSubtitle;
 
   /// No description provided for @onboardingFinishTitle.
   ///

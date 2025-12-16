@@ -72,10 +72,28 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingSymbolInformationParkingUnknown => 'Echtzeitstatus unbekannt';
 
   @override
+  String get onboardingFavoritesInformationTitle => 'Favoriten speichern';
+
+  @override
+  String get onboardingFavoritesInformationSubtitle => 'Speichern Sie häufig genutzte Parkplätze, um sie schnell zu finden.';
+
+  @override
+  String get onboardingFavoritesNotFavorited => 'Nicht favorisiert';
+
+  @override
+  String get onboardingFavoritesFavorited => 'Favorisiert';
+
+  @override
   String get onboardingUserLocationTitle => 'Standort aktivieren';
 
   @override
   String get onboardingUserLocationSubtitle => 'Mit Ihrer Standortfreigabe zeigen wir Ihnen die nächsten verfügbaren Parkplätze und navigieren Sie direkt dorthin.';
+
+  @override
+  String get onboardingAudioGuidanceTitle => 'Audioanleitung';
+
+  @override
+  String get onboardingAudioGuidanceSubtitle => 'Um die Audioeinstellungen für die Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
 
   @override
   String get onboardingFinishTitle => 'Perfekt – Sie sind startbereit!';

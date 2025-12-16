@@ -72,10 +72,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingSymbolInformationParkingUnknown => 'Real-time data unavailable';
 
   @override
+  String get onboardingFavoritesInformationTitle => 'Save your favorites';
+
+  @override
+  String get onboardingFavoritesInformationSubtitle => 'Favourite frequently used parking spots to find them quickly.';
+
+  @override
+  String get onboardingFavoritesNotFavorited => 'Not favourited';
+
+  @override
+  String get onboardingFavoritesFavorited => 'Favourited';
+
+  @override
   String get onboardingUserLocationTitle => 'Location access';
 
   @override
   String get onboardingUserLocationSubtitle => 'With access to your location, we can show you parking spots nearby and navigate there directly.';
+
+  @override
+  String get onboardingAudioGuidanceTitle => 'Audio guidance';
+
+  @override
+  String get onboardingAudioGuidanceSubtitle => 'To customise navigation audio settings, visit your device\'s sound or accessibility settings.';
 
   @override
   String get onboardingFinishTitle => 'Perfect - You\'re all set!';
