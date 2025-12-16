@@ -57,50 +57,53 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: SmartRootsColors.maBlueExtraExtraDark,
-      body: Column(
-        children: [
-          SizedBox(height: 64),
-          Expanded(
-            child: PageView(
-              controller: _controller,
-              physics: const NeverScrollableScrollPhysics(),
-              onPageChanged: (index) {
-                setState(() => _currentPage = index);
-              },
-              children: _pages,
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 64),
+            Expanded(
+              child: PageView(
+                controller: _controller,
+                physics: const NeverScrollableScrollPhysics(),
+                onPageChanged: (index) {
+                  setState(() => _currentPage = index);
+                },
+                children: _pages,
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              _pages.length,
-              (index) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: index == _currentPage
-                      ? SmartRootsColors.maWhite
-                      : SmartRootsColors.maBlue,
-                  shape: BoxShape.circle,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                _pages.length,
+                (index) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: index == _currentPage
+                        ? SmartRootsColors.maWhite
+                        : SmartRootsColors.maBlue,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
-            child: AccessibleButton(
-              label: _currentPage < (_pages.length - 1)
-                  ? AppLocalizations.of(context)!.commonContinueButtonSemantic
-                  : AppLocalizations.of(
-                      context,
-                    )!.onboardingFinishHomeScreenButton,
-              style: AccessibleButtonStyle.white,
-              onTap: () => _nextPage(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+              child: AccessibleButton(
+                label: _currentPage < (_pages.length - 1)
+                    ? AppLocalizations.of(context)!.commonContinueButtonSemantic
+                    : AppLocalizations.of(
+                        context,
+                      )!.onboardingFinishHomeScreenButton,
+                style: AccessibleButtonStyle.white,
+                onTap: () => _nextPage(),
+              ),
             ),
-          ),
-          SizedBox(height: 64),
-        ],
+            Image.asset("assets/smart_logo.png", width: 64),
+            SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }
