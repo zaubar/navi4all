@@ -88,11 +88,7 @@ class _FavoritesScreenState extends State<FavoritesScreen>
                     AppLocalizations.of(context)!.favouritesTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -216,18 +212,12 @@ class _FavouritesListItem extends StatelessWidget {
                         parkingLocation.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: SmartRootsColors.maBlueExtraExtraDark,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         parkingLocation.description,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: SmartRootsColors.maBlueExtraExtraDark,
-                        ),
                       ),
                     ],
                   ),
@@ -251,9 +241,6 @@ class _FavouritesListItem extends StatelessWidget {
                           textAlign: TextAlign.center,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: SmartRootsColors.maBlueExtraExtraDark,
-                          ),
                         ),
                       ),
                     ],

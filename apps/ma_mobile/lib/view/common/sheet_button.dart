@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smartroots/core/theme/colors.dart';
 
 class SheetButton extends StatelessWidget {
   final IconData? icon;
@@ -39,7 +38,7 @@ class SheetButton extends StatelessWidget {
                 icon != null
                     ? Icon(
                         icon,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                         size: 20,
                       )
                     : const SizedBox.shrink(),
@@ -53,10 +52,7 @@ class SheetButton extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: SmartRootsColors.maBlueExtraExtraDark,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       )
                     : const SizedBox.shrink(),

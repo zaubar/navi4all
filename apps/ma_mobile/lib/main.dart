@@ -86,7 +86,12 @@ class SmartRootsApp extends StatelessWidget {
               tertiary: SmartRootsColors.maTertiaryLight,
               brightness: Brightness.light,
             ),
-            textTheme: GoogleFonts.robotoTextTheme(),
+            textTheme: GoogleFonts.robotoTextTheme(
+              Theme.of(context).textTheme.apply(
+                bodyColor: themeController.textColorLight,
+                displayColor: themeController.textColorLight,
+              ),
+            ),
             brightness: Brightness.light,
           ),
           darkTheme: ThemeData(
@@ -98,7 +103,10 @@ class SmartRootsApp extends StatelessWidget {
               brightness: Brightness.dark,
             ),
             textTheme: GoogleFonts.robotoTextTheme(
-              ThemeData(brightness: Brightness.dark).textTheme,
+              Theme.of(context).textTheme.apply(
+                bodyColor: themeController.textColorDark,
+                displayColor: themeController.textColorDark,
+              ),
             ),
             brightness: Brightness.dark,
           ),

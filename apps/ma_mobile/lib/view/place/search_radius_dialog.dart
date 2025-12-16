@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:smartroots/core/config.dart';
-import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/view/common/accessible_icon_button.dart';
 import 'package:smartroots/view/common/sheet_button.dart';
@@ -57,7 +56,6 @@ class _SearchRadiusDialogState extends State<SearchRadiusDialog> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
                       ),
                     ),
                   ),
@@ -95,10 +93,7 @@ class _SearchRadiusDialogState extends State<SearchRadiusDialog> {
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: SmartRootsColors.maBlueExtraExtraDark,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),

@@ -166,7 +166,6 @@ class RoutingState extends State<RoutingScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
                             ),
                           ),
                         ),
@@ -180,9 +179,6 @@ class RoutingState extends State<RoutingScreen> {
                       AppLocalizations.of(
                         context,
                       )!.availabilityChangeDialogMessage,
-                      style: TextStyle(
-                        color: SmartRootsColors.maBlueExtraExtraDark,
-                      ),
                     ),
                   ),
                   SizedBox(height: 24),
@@ -274,11 +270,7 @@ class RoutingState extends State<RoutingScreen> {
                     AppLocalizations.of(context)!.routingDisclaimerTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -286,10 +278,7 @@ class RoutingState extends State<RoutingScreen> {
                   alignment: Alignment.topLeft,
                   child: Text(
                     AppLocalizations.of(context)!.routingDisclaimerMessage,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
+                    style: TextStyle(fontSize: 14),
                   ),
                 ),
                 SizedBox(height: 32),
@@ -672,8 +661,9 @@ class RoutingState extends State<RoutingScreen> {
                                   children: [
                                     Icon(
                                       Icons.directions_car_outlined,
-                                      color:
-                                          SmartRootsColors.maBlueExtraExtraDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.displayMedium!.color,
                                     ),
                                     SizedBox(width: 12.0),
                                     navigationStatsController.timeToArrival !=
@@ -685,19 +675,16 @@ class RoutingState extends State<RoutingScreen> {
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              color: SmartRootsColors
-                                                  .maBlueExtraExtraDark,
-                                              fontSize: 16,
-                                            ),
+                                            style: TextStyle(fontSize: 16),
                                           )
                                         : SizedBox.shrink(),
                                     SizedBox(width: 6.0),
                                     Icon(
                                       Icons.circle,
                                       size: 6,
-                                      color:
-                                          SmartRootsColors.maBlueExtraExtraDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.displayMedium!.color,
                                     ),
                                     SizedBox(width: 6.0),
                                     navigationStatsController
@@ -710,11 +697,7 @@ class RoutingState extends State<RoutingScreen> {
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              color: SmartRootsColors
-                                                  .maBlueExtraExtraDark,
-                                              fontSize: 16,
-                                            ),
+                                            style: TextStyle(fontSize: 16),
                                           )
                                         : SizedBox.shrink(),
                                   ],
@@ -922,8 +905,6 @@ class RoutingState extends State<RoutingScreen> {
                                                 : _origin.name,
                                             style: const TextStyle(
                                               fontSize: 16,
-                                              color: SmartRootsColors
-                                                  .maBlueExtraExtraDark,
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
@@ -1024,11 +1005,7 @@ class RoutingState extends State<RoutingScreen> {
                                             context,
                                           )!.origDestCurrentLocation
                                         : _destination.name,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color:
-                                          SmartRootsColors.maBlueExtraExtraDark,
-                                    ),
+                                    style: const TextStyle(fontSize: 16),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),

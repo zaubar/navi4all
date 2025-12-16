@@ -12,7 +12,6 @@ import 'package:smartroots/core/analytics/events.dart';
 import 'package:smartroots/core/config.dart';
 import 'package:smartroots/core/persistence/preference_helper.dart';
 import 'package:smartroots/core/theme/base_map_style.dart';
-import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 import 'package:smartroots/services/poi_parking.dart';
@@ -183,7 +182,6 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: SmartRootsColors.maBlueExtraExtraDark,
                           ),
                         ),
                       ),
@@ -497,7 +495,9 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                         onPressed: () => _onLayersButtonPressed(),
                         child: Icon(
                           Icons.layers,
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                         ),
                       ),
                     ),
@@ -516,7 +516,9 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                         onPressed: () => _panToUserLocation(),
                         child: Icon(
                           Icons.my_location,
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                         ),
                       ),
                     ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:smartroots/core/analytics/events.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
-import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/view/home/map.dart';
 import 'package:smartroots/view/favourites/favorites.dart';
 import 'package:smartroots/view/settings/settings.dart';
@@ -87,10 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Row(
                                 children: [
                                   SizedBox(width: 24),
-                                  const Icon(
+                                  Icon(
                                     Icons.search,
-                                    color:
-                                        SmartRootsColors.maBlueExtraExtraDark,
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium!.color,
                                   ),
                                   SizedBox(width: 16),
                                   Expanded(
@@ -98,11 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       AppLocalizations.of(
                                         context,
                                       )!.homeSearchButtonHint,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: SmartRootsColors
-                                            .maBlueExtraExtraDark,
-                                      ),
+                                      style: const TextStyle(fontSize: 16),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -137,13 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ) {
                               if (states.contains(WidgetState.selected)) {
                                 return const TextStyle(
-                                  color: SmartRootsColors.maBlueExtraExtraDark,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13,
                                 );
                               }
                               return const TextStyle(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
                               );
@@ -161,11 +155,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.place_outlined,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             selectedIcon: Icon(
                               Icons.place_rounded,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             label: AppLocalizations.of(
                               context,
@@ -174,11 +172,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.star_border,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             selectedIcon: Icon(
                               Icons.star,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             label: AppLocalizations.of(
                               context,
@@ -187,11 +189,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.settings_outlined,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             selectedIcon: Icon(
                               Icons.settings,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             label: AppLocalizations.of(
                               context,

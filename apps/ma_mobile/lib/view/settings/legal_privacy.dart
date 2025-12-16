@@ -25,9 +25,9 @@ class _LegalPrivacyScreenState extends State<LegalPrivacyScreen> {
                   InkWell(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_back,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
                     ),
                     onTap: () {
@@ -43,7 +43,6 @@ class _LegalPrivacyScreenState extends State<LegalPrivacyScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
                       ),
                     ),
                   ),
@@ -57,7 +56,7 @@ class _LegalPrivacyScreenState extends State<LegalPrivacyScreen> {
                     ListTile(
                       leading: Icon(
                         Icons.gps_fixed_outlined,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
                       title: Text(
                         AppLocalizations.of(
@@ -66,7 +65,9 @@ class _LegalPrivacyScreenState extends State<LegalPrivacyScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                         ),
                       ),
                       onTap: () {
@@ -85,7 +86,7 @@ class _LegalPrivacyScreenState extends State<LegalPrivacyScreen> {
                     ListTile(
                       leading: Icon(
                         Icons.security_outlined,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
                       title: Text(
                         AppLocalizations.of(
@@ -94,7 +95,9 @@ class _LegalPrivacyScreenState extends State<LegalPrivacyScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                         ),
                       ),
                       onTap: () {

@@ -109,7 +109,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: IconButton(
                         icon: Icon(
                           Icons.arrow_back,
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                           semanticLabel: AppLocalizations.of(
                             context,
                           )!.commonBackButtonSemantic,
@@ -329,7 +331,6 @@ class _SearchSuggestion extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 16,
-                          color: SmartRootsColors.maBlueExtraExtraDark,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -337,10 +338,7 @@ class _SearchSuggestion extends StatelessWidget {
                         place.locality ?? place.address,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: SmartRootsColors.maBlueExtraExtraDark,
-                        ),
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ],
                   ),

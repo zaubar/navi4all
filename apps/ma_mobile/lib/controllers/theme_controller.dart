@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:smartroots/core/persistence/preference_helper.dart';
 import 'package:smartroots/core/theme/base_map_style.dart';
+import 'package:smartroots/core/theme/colors.dart';
 
 class ThemeController extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;
   BaseMapStyle _baseMapStyle = BaseMapStyle.light;
+  Color textColorLight = SmartRootsColors.maBlueExtraExtraDark;
+  Color textColorDark = SmartRootsColors.maBlueLight;
 
   ThemeController(BuildContext context) {
     Brightness platformBrightness = MediaQuery.of(context).platformBrightness;

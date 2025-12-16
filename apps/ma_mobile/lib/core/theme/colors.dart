@@ -17,5 +17,5 @@ class SmartRootsColors {
   static const Color maSecondaryDark = Color(0xFF1A2127);
 
   static const Color maTertiaryLight = Color(0xFFE0ECFB);
-  static const Color maTertiaryDark = Color(0xFF1A2127);
+  static const Color maTertiaryDark = Color(0xFF000000);
 }

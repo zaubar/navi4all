@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smartroots/core/theme/colors.dart';
 
 class AccessibleIconButton extends StatelessWidget {
   final IconData icon;
@@ -30,7 +29,10 @@ class AccessibleIconButton extends StatelessWidget {
           child: IconButton(
             icon: Stack(
               children: [
-                Icon(icon, color: SmartRootsColors.maBlueExtraExtraDark),
+                Icon(
+                  icon,
+                  color: Theme.of(context).textTheme.displayMedium!.color,
+                ),
               ],
             ),
             onPressed: onTap,

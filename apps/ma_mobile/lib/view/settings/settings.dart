@@ -39,11 +39,7 @@ class SettingsScreen extends StatelessWidget {
                     AppLocalizations.of(context)!.settingsTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -56,14 +52,16 @@ class SettingsScreen extends StatelessWidget {
                     ListTile(
                       leading: Icon(
                         Icons.play_circle_outline,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
                       title: Text(
                         AppLocalizations.of(context)!.settingsOptionSetupGuide,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                         ),
                       ),
                       onTap: () => Navigator.of(context).pushReplacement(
@@ -76,14 +74,16 @@ class SettingsScreen extends StatelessWidget {
                     ListTile(
                       leading: Icon(
                         Icons.feedback_outlined,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
                       title: Text(
                         AppLocalizations.of(context)!.settingsOptionFeedback,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                         ),
                       ),
                       onTap: () => Navigator.of(context).push(
@@ -96,14 +96,16 @@ class SettingsScreen extends StatelessWidget {
                     ListTile(
                       leading: Icon(
                         Icons.support_agent_outlined,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
                       title: Text(
                         AppLocalizations.of(context)!.settingsOptionSupport,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                         ),
                       ),
                       onTap: () => _launchSupport(),
@@ -112,7 +114,7 @@ class SettingsScreen extends StatelessWidget {
                     ListTile(
                       leading: Icon(
                         Icons.privacy_tip_outlined,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
                       title: Text(
                         AppLocalizations.of(
@@ -121,7 +123,9 @@ class SettingsScreen extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                         ),
                       ),
                       onTap: () => Navigator.of(context).push(

@@ -162,7 +162,6 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
                                 style: TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
-                                  color: SmartRootsColors.maBlueExtraExtraDark,
                                 ),
                               ),
                             ),
@@ -175,9 +174,6 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
                                 widget.place.description,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: SmartRootsColors.maBlueExtraExtraDark,
-                                ),
                               ),
                             ),
                           ),
@@ -239,9 +235,11 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
                         child: Row(
                           children: [
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.arrow_back,
-                                color: SmartRootsColors.maBlueExtraExtraDark,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
                               ),
                               onPressed: () {
                                 Navigator.of(context).pop();
@@ -250,10 +248,7 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
                             Expanded(
                               child: Text(
                                 widget.place.name,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: SmartRootsColors.maBlueExtraExtraDark,
-                                ),
+                                style: const TextStyle(fontSize: 16),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
@@ -313,7 +308,6 @@ class PlaceListItem extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: SmartRootsColors.maBlueExtraExtraDark,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -323,7 +317,9 @@ class PlaceListItem extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.directions_car_outlined,
-                          color: SmartRootsColors.maBlueExtraExtraDark,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
                           size: 20,
                         ),
                         SizedBox(width: 8),
@@ -332,9 +328,6 @@ class PlaceListItem extends StatelessWidget {
                             '',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: SmartRootsColors.maBlueExtraExtraDark,
-                            ),
                           ),
                         ),
                       ],
@@ -347,10 +340,7 @@ class PlaceListItem extends StatelessWidget {
                 TextFormatter.getOccupancyText(context, parkingLocation),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: SmartRootsColors.maBlueExtraExtraDark,
-                  fontSize: 16,
-                ),
+                style: const TextStyle(fontSize: 16),
               ),
               SizedBox(width: 8),
               Container(

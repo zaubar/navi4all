@@ -30,7 +30,9 @@ class SelectionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: isSelected ? SmartRootsColors.maBlueLight : Colors.transparent,
+      color: isSelected
+          ? Theme.of(context).colorScheme.tertiary
+          : Colors.transparent,
       borderRadius: BorderRadius.circular(32.0),
       child: Semantics(
         selected: isSelected,
@@ -53,7 +55,7 @@ class SelectionTile extends StatelessWidget {
                 leadingIcon != null
                     ? Icon(
                         leadingIcon!,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       )
                     : leadingImage != null
                     ? ClipRRect(
@@ -83,10 +85,7 @@ class SelectionTile extends StatelessWidget {
                         title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: SmartRootsColors.maBlueExtraExtraDark,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle != null
                           ? SizedBox(height: 4.0)
@@ -96,9 +95,6 @@ class SelectionTile extends StatelessWidget {
                               subtitle!,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
-                              ),
                             )
                           : SizedBox.shrink(),
                     ],

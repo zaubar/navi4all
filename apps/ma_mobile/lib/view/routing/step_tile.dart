@@ -29,7 +29,7 @@ class StepTile extends StatelessWidget {
               Icon(
                 getRelativeDirectionIconMapping(step.relativeDirection),
                 color: step == activeStep
-                    ? SmartRootsColors.maBlueExtraExtraDark
+                    ? Theme.of(context).textTheme.displayMedium!.color
                     : SmartRootsColors.maBlue,
                 size: 32,
               ),
@@ -48,7 +48,6 @@ class StepTile extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
                       ),
                     ),
                     !step.bogusName
@@ -56,10 +55,7 @@ class StepTile extends StatelessWidget {
                             step.streetName,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
-                            ),
+                            style: const TextStyle(fontSize: 16),
                           )
                         : SizedBox.shrink(),
                     step.relativeDirection != RelativeDirection.DEPART
@@ -73,9 +69,6 @@ class StepTile extends StatelessWidget {
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: SmartRootsColors.maBlueExtraExtraDark,
-                            ),
                           )
                         : SizedBox.shrink(),
                   ],

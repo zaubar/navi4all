@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
-import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/view/common/selection_tile.dart';
 import 'package:smartroots/view/common/sheet_button.dart';
@@ -36,11 +35,7 @@ class RouteExternalDialog extends StatelessWidget {
                   )!.parkingLocationButtonRouteExternal,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: SmartRootsColors.maBlueExtraExtraDark,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
               SizedBox(height: 16),

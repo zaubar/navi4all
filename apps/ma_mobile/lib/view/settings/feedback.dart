@@ -90,9 +90,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   InkWell(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_back,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
                     ),
                     onTap: () {
@@ -104,11 +104,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     AppLocalizations.of(context)!.feedbackScreenTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -127,10 +123,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               AppLocalizations.of(context)!.feedbackTypeHint,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -179,10 +172,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               AppLocalizations.of(context)!.feedbackSubjectHint,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -199,13 +189,21 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(32),
                               borderSide: BorderSide(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium!.color ??
+                                    SmartRootsColors.maBlueExtraExtraDark,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(32),
                               borderSide: BorderSide(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium!.color ??
+                                    SmartRootsColors.maBlueExtraExtraDark,
                               ),
                             ),
                           ),
@@ -224,10 +222,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               AppLocalizations.of(context)!.feedbackMessageHint,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -244,13 +239,21 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium!.color ??
+                                    SmartRootsColors.maBlueExtraExtraDark,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium!.color ??
+                                    SmartRootsColors.maBlueExtraExtraDark,
                               ),
                             ),
                           ),
@@ -269,10 +272,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               AppLocalizations.of(context)!.feedbackImageTitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -283,9 +283,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             padding: const EdgeInsets.only(left: 8),
                             child: Text(
                               AppLocalizations.of(context)!.feedbackImageHint,
-                              style: TextStyle(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
-                              ),
                             ),
                           ),
                         ),

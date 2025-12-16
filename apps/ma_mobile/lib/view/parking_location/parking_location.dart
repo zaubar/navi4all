@@ -279,8 +279,6 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                       style: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
-                                        color: SmartRootsColors
-                                            .maBlueExtraExtraDark,
                                       ),
                                     ),
                                   ),
@@ -289,10 +287,6 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                       _parkingLocation.address,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: SmartRootsColors
-                                            .maBlueExtraExtraDark,
-                                      ),
                                     ),
                                   ),
                                 ],
@@ -410,8 +404,9 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                   children: [
                                     Icon(
                                       Icons.directions_car_outlined,
-                                      color:
-                                          SmartRootsColors.maBlueExtraExtraDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.displayMedium!.color,
                                     ),
                                     SizedBox(width: 8.0),
                                     Text(
@@ -420,18 +415,15 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: SmartRootsColors
-                                            .maBlueExtraExtraDark,
-                                        fontSize: 16,
-                                      ),
+                                      style: TextStyle(fontSize: 16),
                                     ),
                                     SizedBox(width: 6.0),
                                     Icon(
                                       Icons.circle,
                                       size: 6,
-                                      color:
-                                          SmartRootsColors.maBlueExtraExtraDark,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.displayMedium!.color,
                                     ),
                                     SizedBox(width: 6.0),
                                     Text(
@@ -440,11 +432,7 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: SmartRootsColors
-                                            .maBlueExtraExtraDark,
-                                        fontSize: 16,
-                                      ),
+                                      style: TextStyle(fontSize: 16),
                                     ),
                                   ],
                                 ),
@@ -493,10 +481,7 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: SmartRootsColors.maBlueExtraExtraDark,
-                                  fontSize: 16,
-                                ),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ],
                           ),
@@ -537,9 +522,11 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                         child: Row(
                           children: [
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.arrow_back,
-                                color: SmartRootsColors.maBlueExtraExtraDark,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
                               ),
                               onPressed: () {
                                 Navigator.of(context).pop();
@@ -548,10 +535,7 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                             Expanded(
                               child: Text(
                                 _parkingLocation.name,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: SmartRootsColors.maBlueExtraExtraDark,
-                                ),
+                                style: const TextStyle(fontSize: 16),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
