@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:smartroots/core/analytics/events.dart';
 import 'package:smartroots/core/config.dart';
+import 'package:smartroots/core/persistence/preference_helper.dart';
 import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/place.dart';
@@ -34,6 +35,15 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _initializeSearchRadius();
+  }
+
+  Future<void> _initializeSearchRadius() async {
+    int searchRadius = await PreferenceHelper.getSearchRadius();
+    setState(() {
+      _selectedRadius = searchRadius;
+    });
+
     _refreshData();
   }
 
@@ -92,6 +102,9 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
                 action: EventAction.placeScreenSearchRadiusChanged.toString(),
               ),
             );
+
+            // Update saved search radius
+            PreferenceHelper.setSearchRadius(changedRadius);
           },
           onCancel: () {},
         );

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:smartroots/controllers/autocomplete_controller.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/core/theme/colors.dart';
+import 'package:smartroots/view/parking_location/parking_location.dart';
 import 'package:smartroots/view/place/place.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 
@@ -48,9 +49,18 @@ class _SearchScreenState extends State<SearchScreen> {
     if (widget.isSecondarySearch) {
       Navigator.of(context).pop(place);
     } else {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => PlaceScreen(place: place)),
-      );
+      if (place.type == PlaceType.parkingSpot ||
+          place.type == PlaceType.parkingSite) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ParkingLocationScreen(parkingLocation: place),
+          ),
+        );
+      } else {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => PlaceScreen(place: place)),
+        );
+      }
     }
 
     // Write selected place to recent searches
@@ -294,13 +304,31 @@ class _SearchSuggestion extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(
-                  isRecentSearch
-                      ? Icons.history_rounded
-                      : Icons.location_on_rounded,
-                  color: SmartRootsColors.maBlue,
-                ),
-                const SizedBox(width: 8),
+                (place.type == PlaceType.parkingSpot ||
+                        place.type == PlaceType.parkingSite)
+                    ? Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: SmartRootsColors.maBlue,
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.local_parking,
+                              size: 16,
+                              color: SmartRootsColors.maBlueLight,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Icon(
+                        isRecentSearch
+                            ? Icons.history_rounded
+                            : Icons.location_on_rounded,
+                        color: SmartRootsColors.maBlue,
+                      ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,20 +343,24 @@ class _SearchSuggestion extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      place.locality != null
-                          ? Text(
-                              place.locality!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: SmartRootsColors.maBlueExtraExtraDark,
-                              ),
-                            )
-                          : const SizedBox.shrink(),
+                      Text(
+                        place.locality ?? place.address,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: SmartRootsColors.maBlueExtraExtraDark,
+                        ),
+                      ),
                     ],
                   ),
                 ),
+                place.isFavorite != null && place.isFavorite!
+                    ? const SizedBox(width: 12)
+                    : const SizedBox.shrink(),
+                place.isFavorite != null && place.isFavorite!
+                    ? Icon(Icons.star, color: SmartRootsColors.maBlue)
+                    : SizedBox.shrink(),
               ],
             ),
           ),

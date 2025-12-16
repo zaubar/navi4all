@@ -11,6 +11,7 @@ String keyFavorites = "ma_favorites";
 String keyThemeMode = "ma_theme_mode";
 String keyBaseMapStyle = "ma_base_map_style";
 String keyRecentSearches = "ma_recent_searches";
+String keySearchRadius = "ma_search_radius";
 
 class PreferenceHelper {
   static Future<bool> isOnboardingComplete() async {
@@ -127,5 +128,15 @@ class PreferenceHelper {
     return recentSearches
         .map((item) => Place.fromJson(jsonDecode(item)))
         .toList();
+  }
+
+  static Future<int> getSearchRadius() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getInt(keySearchRadius) ?? Settings.searchRadiusDefault;
+  }
+
+  static Future<void> setSearchRadius(int radius) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setInt(keySearchRadius, radius);
   }
 }

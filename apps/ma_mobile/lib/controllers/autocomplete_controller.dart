@@ -77,6 +77,17 @@ class AutocompleteController extends ChangeNotifier {
       _searchResults.clear();
 
       if (_searchQuery.isNotEmpty) {
+        // Search favorites by address and name
+        List<Place> favoritePlaces = await PreferenceHelper.getFavorites();
+        for (Place place in favoritePlaces) {
+          if (place.address.toLowerCase().contains(
+                _searchQuery.toLowerCase(),
+              ) ||
+              place.name.toLowerCase().contains(_searchQuery.toLowerCase())) {
+            _searchResults.add(place.copyWith(isFavorite: true));
+          }
+        }
+
         // Fetch autocomplete results
         var (timestamp, places) = await _geocodingService.autocomplete(
           timestamp: _searchTimestamp!.toIso8601String(),

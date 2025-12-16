@@ -16,6 +16,7 @@ abstract class Place with _$Place {
     String? street,
     String? locality,
     String? postcode,
+    bool? isFavorite,
     Map<String, dynamic>? attributes,
   }) = _Place;
 

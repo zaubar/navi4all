@@ -9,6 +9,7 @@ import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:provider/provider.dart';
 import 'package:smartroots/controllers/theme_controller.dart';
 import 'package:smartroots/core/config.dart';
+import 'package:smartroots/core/persistence/preference_helper.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 import 'package:smartroots/services/poi_parking.dart';
@@ -32,6 +33,7 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
   late MapLibreMapController _mapController;
   Timer? _refreshTimer;
   bool _canInteractWithMap = false;
+  int _selectedRadius = Settings.searchRadiusDefault;
   late Place _parkingLocation;
   List<Place> _parkingLocations = [];
 
@@ -59,6 +61,15 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
     await Future.delayed(const Duration(milliseconds: 250));
     setState(() => _canInteractWithMap = true);
 
+    _initializeSearchRadius();
+  }
+
+  Future<void> _initializeSearchRadius() async {
+    int searchRadius = await PreferenceHelper.getSearchRadius();
+    setState(() {
+      _selectedRadius = searchRadius;
+    });
+
     // Fetch and draw map layers
     _drawMapLayers();
   }
@@ -76,14 +87,13 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
     _drawRadius();
 
     // Compute new camera zoom and position to fit radius
-    double zoomLevel = 14.0 - log(Settings.searchRadiusDefault / 450) / log(2);
+    double zoomLevel = 14.0 - log(_selectedRadius / 450) / log(2);
     zoomLevel = zoomLevel.clamp(9.0, 16.0);
     _mapController.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(
-            _parkingLocation.coordinates.lat -
-                (Settings.searchRadiusDefault / 200000),
+            _parkingLocation.coordinates.lat - (_selectedRadius / 200000),
             _parkingLocation.coordinates.lon,
           ),
           zoom: zoomLevel,
@@ -152,7 +162,7 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
       Map<String, dynamic> geoJson;
       (parkingLocations, geoJson) = await parkingService.getParkingLocations(
         focusPoint: _parkingLocation.coordinates,
-        radius: Settings.searchRadiusDefault,
+        radius: _selectedRadius,
       );
       setState(() {
         _parkingLocations = parkingLocations;
@@ -176,7 +186,7 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
       _parkingLocation.coordinates.lon,
     );
     final int points = 60; // More points = smoother circle
-    final double radiusInMeters = Settings.searchRadiusDefault.toDouble();
+    final double radiusInMeters = _selectedRadius.toDouble();
     final double earthRadius = 6378137.0;
 
     List<LatLng> polygon = [];
