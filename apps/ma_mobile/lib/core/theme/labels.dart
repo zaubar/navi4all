@@ -3,7 +3,7 @@ import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/mode.dart';
 
 class SmartRootsLabels {
-  static const String appName = 'ParkStark';
+  static const String appName = 'Park-Stark';
 
   static String getModeString(BuildContext context, Mode mode) {
     switch (mode) {

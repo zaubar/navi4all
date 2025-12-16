@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'ParkStark';
+  String get appTitle => 'Park-Stark';
 
   @override
   String get commonModeWalking => 'Walking';
@@ -48,7 +48,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonContinueButtonSemantic => 'Continue';
 
   @override
-  String get onboardingWelcomeTitle => 'Welcome to\nParkStark';
+  String get onboardingWelcomeTitle => 'Welcome to\nPark-Stark';
 
   @override
   String get onboardingWelcomeSubtitle => 'Find accessible parking spots quickly and easily.';
@@ -578,7 +578,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get parkingLocationScreenRouteExternalButtonSemantic => 'Route using external maps app.';
 
   @override
-  String get parkingLocationScreenRouteInternalButtonSemantic => 'Route using ParkStark.';
+  String get parkingLocationScreenRouteInternalButtonSemantic => 'Route using Park-Stark.';
 
   @override
   String parkingLocationScreenEstimatedDrivingTimeSemantic(String time) {

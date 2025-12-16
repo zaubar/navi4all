@@ -1,6 +1,6 @@
 {
     "@@locale": "en",
-    "appTitle": "ParkStark",
+    "appTitle": "Park-Stark",
     "commonModeWalking": "Walking",
     "commonModeBicycle": "Bicycle",
     "commonModeBus": "Bus",
@@ -13,7 +13,7 @@
     "commonBackButtonSemantic": "Back",
     "commonMicButtonSemantic": "Voice input",
     "commonContinueButtonSemantic": "Continue",
-    "onboardingWelcomeTitle": "Welcome to\nParkStark",
+    "onboardingWelcomeTitle": "Welcome to\nPark-Stark",
     "onboardingWelcomeSubtitle": "Find accessible parking spots quickly and easily.",
     "onboardingWelcomeHint": "Press the button to continue.",
     "onboardingSymbolInformationTitle": "How it works",
@@ -387,7 +387,7 @@
     "parkingLocationScreenAddToFavoritesButtonSemantic": "Add to favorites.",
     "parkingLocationScreenRemoveFromFavoritesButtonSemantic": "Remove from favorites.",
     "parkingLocationScreenRouteExternalButtonSemantic": "Route using external maps app.",
-    "parkingLocationScreenRouteInternalButtonSemantic": "Route using ParkStark.",
+    "parkingLocationScreenRouteInternalButtonSemantic": "Route using Park-Stark.",
     "parkingLocationScreenEstimatedDrivingTimeSemantic": "Estimated driving time: {time}.",
     "@parkingLocationScreenEstimatedDrivingTimeSemantic": {
         "placeholders": {

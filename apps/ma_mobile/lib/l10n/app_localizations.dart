@@ -98,7 +98,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'ParkStark'**
+  /// **'Park-Stark'**
   String get appTitle;
 
   /// No description provided for @commonModeWalking.
@@ -176,7 +176,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingWelcomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to\nParkStark'**
+  /// **'Welcome to\nPark-Stark'**
   String get onboardingWelcomeTitle;
 
   /// No description provided for @onboardingWelcomeSubtitle.
@@ -1136,7 +1136,7 @@ abstract class AppLocalizations {
   /// No description provided for @parkingLocationScreenRouteInternalButtonSemantic.
   ///
   /// In en, this message translates to:
-  /// **'Route using ParkStark.'**
+  /// **'Route using Park-Stark.'**
   String get parkingLocationScreenRouteInternalButtonSemantic;
 
   /// No description provided for @parkingLocationScreenEstimatedDrivingTimeSemantic.

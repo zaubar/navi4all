@@ -1,6 +1,6 @@
 {
     "@@locale": "de",
-    "appTitle": "ParkStark",
+    "appTitle": "Park-Stark",
     "commonModeWalking": "Zu Fuß",
     "commonModeBicycle": "Fahrrad",
     "commonModeBus": "Bus",
@@ -13,7 +13,7 @@
     "commonBackButtonSemantic": "Zurück",
     "commonMicButtonSemantic": "Spracheingabe",
     "commonContinueButtonSemantic": "Weiter",
-    "onboardingWelcomeTitle": "Willkommen bei\nParkStark",
+    "onboardingWelcomeTitle": "Willkommen bei\nPark-Stark",
     "onboardingWelcomeSubtitle": "Gemeinsam finden wir allgemeinen Schwerbehindertenparkplätzen – schnell und unkompliziert.",
     "onboardingWelcomeHint": "Drücken Sie die Taste, um fortzufahren.",
     "onboardingSymbolInformationTitle": "So funktioniert's",
@@ -387,7 +387,7 @@
     "parkingLocationScreenAddToFavoritesButtonSemantic": "Zu Favoriten hinzufügen.",
     "parkingLocationScreenRemoveFromFavoritesButtonSemantic": "Aus Favoriten entfernen.",
     "parkingLocationScreenRouteExternalButtonSemantic": "Route mit externer Navigations-App.",
-    "parkingLocationScreenRouteInternalButtonSemantic": "Route mit ParkStark-App.",
+    "parkingLocationScreenRouteInternalButtonSemantic": "Route mit Park-Stark-App.",
     "parkingLocationScreenEstimatedDrivingTimeSemantic": "Fahrzeit mit dem Auto: {time}.",
     "@parkingLocationScreenEstimatedDrivingTimeSemantic": {
         "placeholders": {

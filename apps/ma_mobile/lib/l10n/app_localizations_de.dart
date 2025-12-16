@@ -9,7 +9,7 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get appTitle => 'ParkStark';
+  String get appTitle => 'Park-Stark';
 
   @override
   String get commonModeWalking => 'Zu Fuß';
@@ -48,7 +48,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonContinueButtonSemantic => 'Weiter';
 
   @override
-  String get onboardingWelcomeTitle => 'Willkommen bei\nParkStark';
+  String get onboardingWelcomeTitle => 'Willkommen bei\nPark-Stark';
 
   @override
   String get onboardingWelcomeSubtitle => 'Gemeinsam finden wir allgemeinen Schwerbehindertenparkplätzen – schnell und unkompliziert.';
@@ -578,7 +578,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get parkingLocationScreenRouteExternalButtonSemantic => 'Route mit externer Navigations-App.';
 
   @override
-  String get parkingLocationScreenRouteInternalButtonSemantic => 'Route mit ParkStark-App.';
+  String get parkingLocationScreenRouteInternalButtonSemantic => 'Route mit Park-Stark-App.';
 
   @override
   String parkingLocationScreenEstimatedDrivingTimeSemantic(String time) {
