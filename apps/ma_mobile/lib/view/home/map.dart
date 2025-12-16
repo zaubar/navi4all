@@ -155,7 +155,6 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
 
     showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setStateDialog) => Dialog(
@@ -198,9 +197,8 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                               selectedBaseMapStyle == BaseMapStyle.light,
                           leadingImage: 'assets/base_map_light_thumbnail.png',
                           onTap: () {
-                            setStateDialog(() {
-                              selectedBaseMapStyle = BaseMapStyle.light;
-                            });
+                            _setNewBaseMapStyle(BaseMapStyle.light);
+                            Navigator.of(context).pop();
                           },
                         ),
                         SizedBox(height: 8),
@@ -212,9 +210,8 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                           isSelected: selectedBaseMapStyle == BaseMapStyle.dark,
                           leadingImage: 'assets/base_map_dark_thumbnail.png',
                           onTap: () {
-                            setStateDialog(() {
-                              selectedBaseMapStyle = BaseMapStyle.dark;
-                            });
+                            _setNewBaseMapStyle(BaseMapStyle.dark);
+                            Navigator.of(context).pop();
                           },
                         ),
                         SizedBox(height: 8),
@@ -228,9 +225,8 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                           leadingImage:
                               'assets/base_map_satellite_thumbnail.png',
                           onTap: () {
-                            setStateDialog(() {
-                              selectedBaseMapStyle = BaseMapStyle.satellite;
-                            });
+                            _setNewBaseMapStyle(BaseMapStyle.satellite);
+                            Navigator.of(context).pop();
                           },
                         ),
                       ],
@@ -243,45 +239,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                             label: AppLocalizations.of(
                               context,
                             )!.placeScreenChangeRadiusCancel,
-                            onTap: () {
-                              selectedBaseMapStyle =
-                                  Provider.of<ThemeController>(
-                                    context,
-                                    listen: false,
-                                  ).baseMapStyle;
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: SheetButton(
-                            label: AppLocalizations.of(
-                              context,
-                            )!.placeScreenChangeRadiusConfirm,
-                            onTap: () {
-                              PreferenceHelper.setBaseMapStyle(
-                                selectedBaseMapStyle,
-                              );
-                              setState(() {
-                                Provider.of<ThemeController>(
-                                  context,
-                                  listen: false,
-                                ).setBaseMapStyle(selectedBaseMapStyle);
-                                Navigator.of(context).pop();
-                              });
-
-                              // Analytics event
-                              MatomoTracker.instance.trackEvent(
-                                eventInfo: EventInfo(
-                                  category: EventCategory.homeMapScreen
-                                      .toString(),
-                                  action: EventAction
-                                      .homeMapScreenBaseMapChanged
-                                      .toString(),
-                                ),
-                              );
-                            },
+                            onTap: () => Navigator.of(context).pop(),
                           ),
                         ),
                       ],
@@ -293,6 +251,22 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _setNewBaseMapStyle(BaseMapStyle baseMapStyle) async {
+    await PreferenceHelper.setBaseMapStyle(baseMapStyle);
+    Provider.of<ThemeController>(
+      context,
+      listen: false,
+    ).setBaseMapStyle(baseMapStyle);
+
+    // Analytics event
+    MatomoTracker.instance.trackEvent(
+      eventInfo: EventInfo(
+        category: EventCategory.homeMapScreen.toString(),
+        action: EventAction.homeMapScreenBaseMapChanged.toString(),
+      ),
     );
   }
 

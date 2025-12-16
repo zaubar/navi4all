@@ -111,7 +111,7 @@ class SettingsScreen extends StatelessWidget {
                       onTap: () => _launchSupport(),
                     ),
                     Divider(color: SmartRootsColors.maBlue, height: 0),
-                    ListTile(
+                    /* ListTile(
                       leading: Icon(
                         Icons.privacy_tip_outlined,
                         color: Theme.of(context).textTheme.displayMedium!.color,
@@ -134,7 +134,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Divider(color: SmartRootsColors.maBlue, height: 0),
+                    Divider(color: SmartRootsColors.maBlue, height: 0), */
                   ],
                 ),
               ),
