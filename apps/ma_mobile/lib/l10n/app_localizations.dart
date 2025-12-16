@@ -224,7 +224,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingFavoritesInformationTitle.
   ///
   /// In en, this message translates to:
-  /// **'Save your favorites'**
+  /// **'Save your favourites'**
   String get onboardingFavoritesInformationTitle;
 
   /// No description provided for @onboardingFavoritesInformationSubtitle.

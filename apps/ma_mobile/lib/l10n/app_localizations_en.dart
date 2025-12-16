@@ -72,7 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingSymbolInformationParkingUnknown => 'Real-time data unavailable';
 
   @override
-  String get onboardingFavoritesInformationTitle => 'Save your favorites';
+  String get onboardingFavoritesInformationTitle => 'Save your favourites';
 
   @override
   String get onboardingFavoritesInformationSubtitle => 'Favourite frequently used parking spots to find them quickly.';
