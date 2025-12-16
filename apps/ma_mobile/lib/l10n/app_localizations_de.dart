@@ -372,7 +372,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get feedbackResetButton => 'Zurücksetzen';
 
   @override
-  String get feedbackSubmitButton => 'Absenden';
+  String get feedbackSubmitButton => 'Weiter';
 
   @override
   String get feedbackFieldErrorRequired => 'Dieses Feld ist erforderlich.';

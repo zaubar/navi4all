@@ -776,7 +776,7 @@ abstract class AppLocalizations {
   /// No description provided for @feedbackSubmitButton.
   ///
   /// In en, this message translates to:
-  /// **'Submit'**
+  /// **'Continue'**
   String get feedbackSubmitButton;
 
   /// No description provided for @feedbackFieldErrorRequired.

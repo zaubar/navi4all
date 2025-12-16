@@ -224,7 +224,7 @@
     "feedbackImageTitle": "Attach image",
     "feedbackImageHint": "In the next step, attach an image in support of your feedback (optional).",
     "feedbackResetButton": "Reset",
-    "feedbackSubmitButton": "Submit",
+    "feedbackSubmitButton": "Continue",
     "feedbackFieldErrorRequired": "This field is required.",
     "legalPrivacyScreenTitle": "Legal & Privacy",
     "legalPrivacyLocationAccess": "Location Access",
