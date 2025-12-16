@@ -188,7 +188,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                         ),
                       ),
                     ),
-                    SizedBox(height: 24),
+                    SizedBox(height: 16),
                     Column(
                       children: [
                         SelectionTile(
@@ -205,7 +205,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                             });
                           },
                         ),
-                        SizedBox(height: 16),
+                        SizedBox(height: 8),
                         SelectionTile(
                           title: getBaseMapStyleTitle(
                             context,
@@ -219,7 +219,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                             });
                           },
                         ),
-                        SizedBox(height: 16),
+                        SizedBox(height: 8),
                         SelectionTile(
                           title: getBaseMapStyleTitle(
                             context,
@@ -237,7 +237,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                         ),
                       ],
                     ),
-                    SizedBox(height: 24),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(

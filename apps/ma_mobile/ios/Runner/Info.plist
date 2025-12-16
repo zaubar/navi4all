@@ -47,5 +47,14 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>maps</string>            <!-- Apple Maps -->
+		<string>comgooglemaps</string>   <!-- Google Maps -->
+		<string>waze</string>            <!-- Waze -->
+		<string>citymapper</string>      <!-- Citymapper -->
+		<string>here-location</string>   <!-- HERE WeGo -->
+		<string>moovit</string>          <!-- Moovit -->
+	</array>
 </dict>
 </plist>

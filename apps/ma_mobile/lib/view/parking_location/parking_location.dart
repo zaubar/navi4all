@@ -21,8 +21,9 @@ import 'package:smartroots/services/routing.dart';
 import 'package:smartroots/schemas/routing/itinerary.dart';
 import 'package:smartroots/core/processing_status.dart';
 import 'package:smartroots/core/utils.dart';
-import 'package:maps_launcher/maps_launcher.dart';
+import 'package:map_launcher/map_launcher.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:smartroots/view/parking_location/route_external_dialog.dart';
 import 'package:smartroots/view/routing/routing.dart';
 
 class ParkingLocationScreen extends StatefulWidget {
@@ -176,6 +177,56 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
     }
   }
 
+  Future<void> _showRouteExternalDialog() async {
+    List<AvailableMap> availableMaps = await MapLauncher.installedMaps;
+
+    // No mapping apps installed
+    if (availableMaps.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorUnableToLaunchRouteExternal,
+          ),
+        ),
+      );
+      return;
+    }
+
+    // Only one mapping app installed, launch it
+    if (availableMaps.length == 1) {
+      MapLauncher.showDirections(
+        mapType: availableMaps.first.mapType,
+        destination: Coords(
+          _parkingLocation.coordinates.lat,
+          _parkingLocation.coordinates.lon,
+        ),
+        destinationTitle: _parkingLocation.name,
+      );
+      return;
+    }
+
+    // Multiple mapping apps installed, ask user to choose
+    showDialog(
+      context: context,
+      builder: (context) => RouteExternalDialog(
+        availableMaps: availableMaps,
+        onConfirm: (AvailableMap map) {
+          MapLauncher.showDirections(
+            mapType: map.mapType,
+            destination: Coords(
+              _parkingLocation.coordinates.lat,
+              _parkingLocation.coordinates.lon,
+            ),
+            destinationTitle: _parkingLocation.name,
+          );
+        },
+        onCancel: () {
+          Navigator.of(context).pop();
+        },
+      ),
+    );
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
@@ -277,25 +328,7 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                   context,
                                 )!.parkingLocationScreenRouteExternalButtonSemantic,
                                 onTap: () {
-                                  MapsLauncher.launchCoordinates(
-                                    _parkingLocation.coordinates.lat,
-                                    _parkingLocation.coordinates.lon,
-                                    _parkingLocation.name,
-                                  ).then((value) {
-                                    if (!value) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            AppLocalizations.of(
-                                              context,
-                                            )!.errorUnableToLaunchRouteExternal,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  });
+                                  _showRouteExternalDialog();
 
                                   // Analytics event
                                   MatomoTracker.instance.trackEvent(

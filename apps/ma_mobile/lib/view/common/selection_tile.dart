@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smartroots/core/theme/colors.dart';
 
 class SelectionTile extends StatelessWidget {
@@ -7,6 +8,7 @@ class SelectionTile extends StatelessWidget {
   final String? subtitle;
   final String? leadingImage;
   final IconData? leadingIcon;
+  final String? leadingSvg;
   final VoidCallback onTap;
 
   SelectionTile({
@@ -16,6 +18,7 @@ class SelectionTile extends StatelessWidget {
     this.subtitle,
     this.leadingImage,
     this.leadingIcon,
+    this.leadingSvg,
     required this.onTap,
   }) {
     assert(
@@ -42,7 +45,9 @@ class SelectionTile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                leadingIcon != null || leadingImage != null
+                leadingIcon != null ||
+                        leadingImage != null ||
+                        leadingSvg != null
                     ? SizedBox(width: 8.0)
                     : SizedBox.shrink(),
                 leadingIcon != null
@@ -57,6 +62,15 @@ class SelectionTile extends StatelessWidget {
                           leadingImage!,
                           width: 32,
                           height: 32,
+                        ),
+                      )
+                    : leadingSvg != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(32.0),
+                        child: SvgPicture.asset(
+                          leadingSvg!,
+                          width: 32.0,
+                          height: 32.0,
                         ),
                       )
                     : SizedBox.shrink(),
