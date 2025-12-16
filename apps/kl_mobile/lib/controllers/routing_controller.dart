@@ -68,6 +68,8 @@ class RoutingController extends ChangeNotifier {
   bool get isCurrentPositionSnapped => _isCurrentPositionSnapped;
 
   void setParameters({required ItineraryDetails itineraryDetails}) {
+    _reset();
+
     _itineraryDetails = itineraryDetails;
     _buildActionTrail();
     _state = RoutingControllerState.initialized;
@@ -322,6 +324,13 @@ class RoutingController extends ChangeNotifier {
       _state = RoutingControllerState.navigating;
     }
 
+    // Check if user has arrived
+    if (_checkArrived()) {
+      _state = RoutingControllerState.arrived;
+      _navigationStatus = NavigationStatus.arrived;
+      _unsubscribeFromLocationStream();
+    }
+
     notifyListeners();
   }
 
@@ -391,6 +400,35 @@ class RoutingController extends ChangeNotifier {
     // If index is unavailable, user is digressing
     return positionIndex == -1;
   }
+
+  bool _checkArrived() {
+    // Only non-transit legs with step tracking can be used for arrival checks
+    if (_actionTrail.isEmpty || _activeLeg == null || _activeStep == null) {
+      return false;
+    }
+
+    // Ensure last step of last leg is active
+    if (_activeLeg != _actionTrail.keys.last ||
+        _activeStep != _actionTrail[_activeLeg!]!.keys.last) {
+      return false;
+    }
+
+    // Check if current position is within a certain threshold of destination
+    maps_toolkit.LatLng destinationCoordinates =
+        _actionTrail[_activeLeg!]![_activeStep!]!.last;
+    if (maps_toolkit.SphericalUtil.computeDistanceBetween(
+          maps_toolkit.LatLng(
+            _currentPosition!.latitude,
+            _currentPosition!.longitude,
+          ),
+          destinationCoordinates,
+        ) >
+        Settings.navigationAudioStages[AudioStage.near]!) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 enum RoutingControllerState {
@@ -399,6 +437,7 @@ enum RoutingControllerState {
   error,
   navigating,
   digressing,
+  arrived,
 }
 
 class CurrentPositionController extends ChangeNotifier {

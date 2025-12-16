@@ -69,7 +69,8 @@ class LegTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
               border: Border.all(
                 color: leg == activeLeg
-                    ? Navi4AllColors.klRed
+                    ? Theme.of(context).textTheme.displayMedium?.color ??
+                          Navi4AllColors.klRed
                     : Navi4AllColors.klPink,
               ),
             )
@@ -84,17 +85,14 @@ class LegTile extends StatelessWidget {
                     children: [
                       Icon(
                         ModeIcons.get(leg.mode),
-                        color: Navi4AllColors.klRed,
+                        color: Theme.of(context).textTheme.displayMedium?.color,
                       ),
                       SizedBox(width: 16),
                       Text(
                         getModeTextMapping(leg.mode, context),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Navi4AllColors.klRed,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

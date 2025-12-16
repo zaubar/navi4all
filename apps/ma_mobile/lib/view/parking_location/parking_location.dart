@@ -433,11 +433,9 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                 padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(
                                   color:
-                                      (widget
-                                          .parkingLocation
+                                      (_parkingLocation
                                           .attributes?['has_realtime_data'])
-                                      ? (widget
-                                                .parkingLocation
+                                      ? (_parkingLocation
                                                 .attributes?['disabled_parking_available'])
                                             ? SmartRootsColors.maGreen
                                             : SmartRootsColors.maRed

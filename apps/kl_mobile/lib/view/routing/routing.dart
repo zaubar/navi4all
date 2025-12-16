@@ -97,11 +97,7 @@ class RoutingState extends State<RoutingScreen> {
                     AppLocalizations.of(context)!.routingDisclaimerTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Navi4AllColors.klRed,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -238,7 +234,8 @@ class RoutingState extends State<RoutingScreen> {
         ).pauseNavigation();
         break;
       case NavigationStatus.arrived:
-        // TODO: Handle this scenario better
+        Provider.of<RoutingController>(context, listen: false).stopNavigation();
+        Navigator.of(context).pop();
         break;
     }
   }
@@ -426,179 +423,7 @@ class RoutingState extends State<RoutingScreen> {
           RoutingMap(destination: widget.destinationPlace),
           Consumer<RoutingController>(
             builder: (context, routingController, _) => SlidingBottomSheet(
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24.0,
-                            vertical: 16.0,
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: SheetButton(
-                                      icon:
-                                          routingController.navigationStatus ==
-                                              NavigationStatus.idle
-                                          ? Icons.play_arrow
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.navigating
-                                          ? Icons.pause
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.arrived
-                                          ? Icons.check
-                                          : Icons.play_arrow,
-                                      label:
-                                          routingController.navigationStatus ==
-                                              NavigationStatus.idle
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationStartButton
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.navigating
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationPauseButton
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.arrived
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationDoneButton
-                                          : AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationResumeButton,
-                                      semanticLabel:
-                                          routingController.navigationStatus ==
-                                              NavigationStatus.idle
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationStartButton
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.navigating
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationPauseButton
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.arrived
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationDoneButton
-                                          : AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationResumeButton,
-                                      onTap: () => _toggleNavigationState(),
-                                      shrinkWrap: false,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  AccessibleIconButton(
-                                    icon:
-                                        routingController.audioStatus ==
-                                            AudioStatus.muted
-                                        ? Icons.volume_off
-                                        : Icons.volume_up,
-                                    semanticLabel:
-                                        routingController.audioStatus ==
-                                            AudioStatus.muted
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.routeNavigationMuteButtonUnmuteText
-                                        : AppLocalizations.of(
-                                            context,
-                                          )!.routeNavigationMuteButtonMuteText,
-                                    onTap: () => _toggleAudioStatus(),
-                                  ),
-                                  SizedBox(width: 8),
-                                  AccessibleIconButton(
-                                    icon: Icons.close,
-                                    semanticLabel: AppLocalizations.of(
-                                      context,
-                                    )!.routingScreenExitRoutingButtonSemantic,
-                                    onTap: () {
-                                      routingController.stopNavigation();
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 16),
-                              Consumer<NavigationStatsController>(
-                                builder:
-                                    (
-                                      context,
-                                      navigationStatsController,
-                                      _,
-                                    ) => Row(
-                                      children: [
-                                        Icon(
-                                          Icons.place_rounded,
-                                          color: Theme.of(
-                                            context,
-                                          ).textTheme.displayMedium?.color,
-                                        ),
-                                        SizedBox(width: 8.0),
-                                        navigationStatsController
-                                                    .timeToArrival !=
-                                                null
-                                            ? Text(
-                                                TextFormatter.formatDurationText(
-                                                  navigationStatsController
-                                                      .timeToArrival!,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  color: Navi4AllColors.klRed,
-                                                  fontSize: 16,
-                                                ),
-                                              )
-                                            : SizedBox.shrink(),
-                                        SizedBox(width: 6.0),
-                                        Icon(
-                                          Icons.circle,
-                                          size: 6,
-                                          color: Navi4AllColors.klRed,
-                                        ),
-                                        SizedBox(width: 6.0),
-                                        navigationStatsController
-                                                    .distanceToArrival !=
-                                                null
-                                            ? Text(
-                                                TextFormatter.formatDistanceValueText(
-                                                  navigationStatsController
-                                                      .distanceToArrival!,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  color: Navi4AllColors.klRed,
-                                                  fontSize: 16,
-                                                ),
-                                              )
-                                            : SizedBox.shrink(),
-                                      ],
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Divider(height: 0, color: Navi4AllColors.klPink),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              SizedBox.shrink(),
               listItems: _processingStatus == ProcessingStatus.completed
                   ? _legTiles
                   : null,
@@ -608,9 +433,178 @@ class RoutingState extends State<RoutingScreen> {
                   ? NavigationProcessingTile(
                       processingStatus: _processingStatus,
                     )
-                  : SizedBox.shrink(),
+                  : SizedBox(height: 132.0),
               initSize: 0.35,
               maxSize: 0.7,
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Divider(height: 0.0, color: Navi4AllColors.klPink),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                  padding: const EdgeInsets.only(
+                    bottom: 32.0,
+                    top: 16.0,
+                    left: 16.0,
+                    right: 16.0,
+                  ),
+                  child: Material(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Consumer<NavigationStatsController>(
+                            builder: (context, navigationStatsController, _) =>
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.directions_car_outlined,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.displayMedium?.color,
+                                    ),
+                                    SizedBox(width: 12.0),
+                                    navigationStatsController.timeToArrival !=
+                                            null
+                                        ? Text(
+                                            TextFormatter.formatDurationText(
+                                              navigationStatsController
+                                                  .timeToArrival!,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontSize: 16),
+                                          )
+                                        : SizedBox.shrink(),
+                                    SizedBox(width: 6.0),
+                                    Icon(
+                                      Icons.circle,
+                                      size: 6,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.displayMedium?.color,
+                                    ),
+                                    SizedBox(width: 6.0),
+                                    navigationStatsController
+                                                .distanceToArrival !=
+                                            null
+                                        ? Text(
+                                            TextFormatter.formatDistanceValueText(
+                                              navigationStatsController
+                                                  .distanceToArrival!,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontSize: 16),
+                                          )
+                                        : SizedBox.shrink(),
+                                  ],
+                                ),
+                          ),
+                        ),
+                        SizedBox(height: 12.0),
+                        Consumer<RoutingController>(
+                          builder: (context, routingController, _) => Row(
+                            children: [
+                              Expanded(
+                                child: SheetButton(
+                                  icon:
+                                      routingController.navigationStatus ==
+                                          NavigationStatus.idle
+                                      ? Icons.play_arrow
+                                      : routingController.navigationStatus ==
+                                            NavigationStatus.navigating
+                                      ? Icons.pause
+                                      : routingController.navigationStatus ==
+                                            NavigationStatus.arrived
+                                      ? Icons.check
+                                      : Icons.play_arrow,
+                                  label:
+                                      routingController.navigationStatus ==
+                                          NavigationStatus.idle
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenNavigationStartButton
+                                      : routingController.navigationStatus ==
+                                            NavigationStatus.navigating
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenNavigationPauseButton
+                                      : routingController.navigationStatus ==
+                                            NavigationStatus.arrived
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenNavigationDoneButton
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenNavigationResumeButton,
+                                  semanticLabel:
+                                      routingController.navigationStatus ==
+                                          NavigationStatus.idle
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenNavigationStartButton
+                                      : routingController.navigationStatus ==
+                                            NavigationStatus.navigating
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenNavigationPauseButton
+                                      : routingController.navigationStatus ==
+                                            NavigationStatus.arrived
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenNavigationDoneButton
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenNavigationResumeButton,
+                                  onTap: () => _toggleNavigationState(),
+                                  shrinkWrap: false,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              AccessibleIconButton(
+                                icon:
+                                    routingController.audioStatus ==
+                                        AudioStatus.muted
+                                    ? Icons.volume_off
+                                    : Icons.volume_up,
+                                semanticLabel:
+                                    routingController.audioStatus ==
+                                        AudioStatus.muted
+                                    ? AppLocalizations.of(
+                                        context,
+                                      )!.routeNavigationMuteButtonUnmuteText
+                                    : AppLocalizations.of(
+                                        context,
+                                      )!.routeNavigationMuteButtonMuteText,
+                                onTap: () => _toggleAudioStatus(),
+                              ),
+                              SizedBox(width: 8),
+                              AccessibleIconButton(
+                                icon: Icons.close,
+                                semanticLabel: AppLocalizations.of(
+                                  context,
+                                )!.routingScreenExitRoutingButtonSemantic,
+                                onTap: () {
+                                  routingController.stopNavigation();
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           SafeArea(
@@ -673,7 +667,10 @@ class RoutingState extends State<RoutingScreen> {
                                               height: 20.0,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                color: Navi4AllColors.klRed,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .displayMedium
+                                                    ?.color,
                                                 border: Border.all(
                                                   color: Navi4AllColors.klWhite,
                                                   width: 3.0,
@@ -693,7 +690,6 @@ class RoutingState extends State<RoutingScreen> {
                                                 : widget.originPlace.name,
                                             style: const TextStyle(
                                               fontSize: 16,
-                                              color: Navi4AllColors.klRed,
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
@@ -765,7 +761,9 @@ class RoutingState extends State<RoutingScreen> {
                                 SizedBox(width: 16),
                                 Icon(
                                   Icons.place_rounded,
-                                  color: Navi4AllColors.klRed,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.displayMedium?.color,
                                 ),
                                 SizedBox(width: 12),
                                 Expanded(
@@ -776,10 +774,7 @@ class RoutingState extends State<RoutingScreen> {
                                             context,
                                           )!.origDestCurrentLocation
                                         : widget.destinationPlace.name,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Navi4AllColors.klRed,
-                                    ),
+                                    style: const TextStyle(fontSize: 16),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -819,7 +814,7 @@ class NavigationProcessingTile extends StatelessWidget {
           size: 48,
           color: Navi4AllColors.klPink,
         ),
-        SizedBox(height: 16),
+        SizedBox(height: 8),
         Text(
           processingStatus == ProcessingStatus.error
               ? AppLocalizations.of(context)!.navigationNoRouteFound
