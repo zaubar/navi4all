@@ -3,7 +3,6 @@ import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/view/onboarding/onboarding.dart';
 import 'package:smartroots/view/settings/feedback.dart';
-import 'package:smartroots/view/settings/legal_privacy.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:smartroots/core/config.dart';
 
@@ -18,6 +17,13 @@ class SettingsScreen extends StatelessWidget {
     );
 
     await launchUrl(emailLaunchUri);
+  }
+
+  void _launchLegalAndPrivacy() async {
+    final Uri url = Uri.parse(Settings.legalAndPrivacyUrl);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    }
   }
 
   @override
@@ -111,7 +117,7 @@ class SettingsScreen extends StatelessWidget {
                       onTap: () => _launchSupport(),
                     ),
                     Divider(color: SmartRootsColors.maBlue, height: 0),
-                    /* ListTile(
+                    ListTile(
                       leading: Icon(
                         Icons.privacy_tip_outlined,
                         color: Theme.of(context).textTheme.displayMedium!.color,
@@ -128,13 +134,9 @@ class SettingsScreen extends StatelessWidget {
                           ).textTheme.displayMedium!.color,
                         ),
                       ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const LegalPrivacyScreen(),
-                        ),
-                      ),
+                      onTap: () => _launchLegalAndPrivacy(),
                     ),
-                    Divider(color: SmartRootsColors.maBlue, height: 0), */
+                    Divider(color: SmartRootsColors.maBlue, height: 0),
                   ],
                 ),
               ),
