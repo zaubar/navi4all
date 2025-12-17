@@ -407,9 +407,13 @@ class RoutingController extends ChangeNotifier {
       return false;
     }
 
-    // Ensure last step of last leg is active
-    if (_activeLeg != _actionTrail.keys.last ||
-        _activeStep != _actionTrail[_activeLeg!]!.keys.last) {
+    // Ensure second-last step of last leg is active
+    leg_schema.Step secondLastStep = _actionTrail[_activeLeg!]!.keys.length > 1
+        ? _actionTrail[_activeLeg!]!.keys.elementAt(
+            _actionTrail[_activeLeg!]!.keys.length - 2,
+          )
+        : _actionTrail[_activeLeg!]!.keys.last;
+    if (_activeLeg != _actionTrail.keys.last || _activeStep != secondLastStep) {
       return false;
     }
 
