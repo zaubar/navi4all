@@ -2,28 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:smartroots/core/config.dart' show Settings;
 import 'package:maps_toolkit/maps_toolkit.dart' as maps_toolkit;
 import 'package:smartroots/core/utils.dart';
-import 'package:smartroots/schemas/poi/parking_type.dart';
 import 'package:smartroots/schemas/routing/coordinates.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 
 class POIParkingService {
-  // TODO: ONLY FOR TESTING
-  final List<Map<String, dynamic>> _testParkingLocations = [
-    {
-      "id": "test1",
-      "name": "München Test Parking 1",
-      "address": "Schellingstraße 84, 80798 München",
-      "lat": "48.152458623658056",
-      "lon": "11.568498141412222",
-      "has_realtime_data": true,
-      "realtime_status": "AVAILABLE",
-      "restrictions": [
-        {"type": "DISABLED"},
-      ],
-      "parking_type": ParkingType.parkingSpot,
-    },
-  ];
-
   final Dio apiClient = Dio(
     BaseOptions(
       baseUrl: Settings.parkApiBaseUrl,
@@ -62,13 +44,6 @@ class POIParkingService {
     Response parkingSitesResponse = await apiClient.get(
       '/parking-sites',
       queryParameters: queryParameters,
-    );
-
-    // TODO: ONLY FOR TESTING
-    parkingLocations.addAll(
-      _testParkingLocations
-          .map((item) => _parseParkingSpotLocation(item))
-          .toList(),
     );
 
     // Process parking spots
@@ -160,19 +135,6 @@ class POIParkingService {
     required String placeId,
     required PlaceType placeType,
   }) async {
-    // TODO: ONLY FOR TESTING
-    for (var testLocation in _testParkingLocations) {
-      if (testLocation['id'] == placeId) {
-        if (placeType == PlaceType.parkingSite) {
-          return _parseParkingSiteLocation(testLocation);
-        } else if (placeType == PlaceType.parkingSpot) {
-          return _parseParkingSpotLocation(testLocation);
-        } else {
-          throw Exception('Invalid parking type');
-        }
-      }
-    }
-
     if (placeType == PlaceType.parkingSpot) {
       // Fetch details from parking-spots endpoint
       Response parkingSpotsResponse = await apiClient.get(

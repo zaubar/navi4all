@@ -48,7 +48,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonContinueButtonSemantic => 'Continue';
 
   @override
-  String get onboardingWelcomeTitle => 'Welcome to\nPark-Stark';
+  String get onboardingWelcomeTitle => 'Welcome to Park-Stark';
 
   @override
   String get onboardingWelcomeSubtitle => 'Find accessible parking spots quickly and easily.';
@@ -78,10 +78,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingFavoritesInformationSubtitle => 'Favourite frequently used parking spots to find them quickly.';
 
   @override
-  String get onboardingFavoritesNotFavorited => 'Not favourited';
+  String get onboardingFavoritesNotFavorited => 'Not added to favourites';
 
   @override
-  String get onboardingFavoritesFavorited => 'Favourited';
+  String get onboardingFavoritesFavorited => 'Added to favourites';
 
   @override
   String get onboardingUserLocationTitle => 'Location access';
@@ -96,7 +96,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingAudioGuidanceSubtitle => 'To customise navigation audio settings, visit your device\'s sound or accessibility settings.';
 
   @override
-  String get onboardingFinishTitle => 'Perfect - You\'re all set!';
+  String get onboardingFinishTitle => 'Perfect! You\'re all set.';
 
   @override
   String get onboardingFinishSubtitle => 'Now you can find accessible parking spots nearby.';

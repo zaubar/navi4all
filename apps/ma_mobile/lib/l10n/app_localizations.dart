@@ -176,7 +176,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingWelcomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to\nPark-Stark'**
+  /// **'Welcome to Park-Stark'**
   String get onboardingWelcomeTitle;
 
   /// No description provided for @onboardingWelcomeSubtitle.
@@ -236,13 +236,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingFavoritesNotFavorited.
   ///
   /// In en, this message translates to:
-  /// **'Not favourited'**
+  /// **'Not added to favourites'**
   String get onboardingFavoritesNotFavorited;
 
   /// No description provided for @onboardingFavoritesFavorited.
   ///
   /// In en, this message translates to:
-  /// **'Favourited'**
+  /// **'Added to favourites'**
   String get onboardingFavoritesFavorited;
 
   /// No description provided for @onboardingUserLocationTitle.
@@ -272,7 +272,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingFinishTitle.
   ///
   /// In en, this message translates to:
-  /// **'Perfect - You\'re all set!'**
+  /// **'Perfect! You\'re all set.'**
   String get onboardingFinishTitle;
 
   /// No description provided for @onboardingFinishSubtitle.

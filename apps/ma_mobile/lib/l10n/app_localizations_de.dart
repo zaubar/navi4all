@@ -48,10 +48,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonContinueButtonSemantic => 'Weiter';
 
   @override
-  String get onboardingWelcomeTitle => 'Willkommen bei\nPark-Stark';
+  String get onboardingWelcomeTitle => 'Willkommen bei Park-Stark';
 
   @override
-  String get onboardingWelcomeSubtitle => 'Gemeinsam finden wir allgemeinen Schwerbehindertenparkplätzen – schnell und unkompliziert.';
+  String get onboardingWelcomeSubtitle => 'Gemeinsam finden wir allgemeine Schwerbehindertenparkplätze – schnell und unkompliziert.';
 
   @override
   String get onboardingWelcomeHint => 'Drücken Sie die Taste, um fortzufahren.';
@@ -78,10 +78,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingFavoritesInformationSubtitle => 'Speichern Sie häufig genutzte Parkplätze, um sie schnell zu finden.';
 
   @override
-  String get onboardingFavoritesNotFavorited => 'Nicht favorisiert';
+  String get onboardingFavoritesNotFavorited => 'Nicht als Favorit gespeichert';
 
   @override
-  String get onboardingFavoritesFavorited => 'Favorisiert';
+  String get onboardingFavoritesFavorited => 'Als Favorit gespeichert';
 
   @override
   String get onboardingUserLocationTitle => 'Standort aktivieren';
@@ -96,7 +96,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingAudioGuidanceSubtitle => 'Um die Audioeinstellungen für die Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
 
   @override
-  String get onboardingFinishTitle => 'Perfekt – Sie sind startbereit!';
+  String get onboardingFinishTitle => 'Perfekt! Sie sind startbereit.';
 
   @override
   String get onboardingFinishSubtitle => 'Entdecken Sie jetzt barrierefreie Parkplätze in Ihrer Nähe.';

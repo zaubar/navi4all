@@ -430,7 +430,9 @@ class RoutingState extends State<RoutingScreen> {
       if (results.isNotEmpty) {
         await _fetchItineraryDetails(results.first.itineraryId);
       } else {
-        throw Exception(AppLocalizations.of(context)!.navigationNoRouteFound);
+        setState(() {
+          _processingStatus = ProcessingStatus.error;
+        });
       }
     } catch (e) {
       setState(() {

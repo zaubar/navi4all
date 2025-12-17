@@ -257,7 +257,7 @@ class _SymbolLegendRow extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     children: [
       Container(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           color: iconColor,
           borderRadius: BorderRadius.circular(32),
@@ -273,7 +273,6 @@ class _SymbolLegendRow extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 16.0,
             fontWeight: FontWeight.bold,
           ),
         ),
