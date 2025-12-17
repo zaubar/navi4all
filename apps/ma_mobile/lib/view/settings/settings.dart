@@ -19,10 +19,20 @@ class SettingsScreen extends StatelessWidget {
     await launchUrl(emailLaunchUri);
   }
 
-  void _launchLegalAndPrivacy() async {
+  void _launchLegalAndPrivacy(BuildContext context) async {
     final Uri url = Uri.parse(Settings.legalAndPrivacyUrl);
-    if (await canLaunchUrl(url)) {
+    try {
       await launchUrl(url);
+    } catch (e) {
+      // TODO: Improve error handling
+      // Show a snackbar with the error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorUnableToOpenPrivacyPolicy,
+          ),
+        ),
+      );
     }
   }
 
@@ -134,7 +144,7 @@ class SettingsScreen extends StatelessWidget {
                           ).textTheme.displayMedium!.color,
                         ),
                       ),
-                      onTap: () => _launchLegalAndPrivacy(),
+                      onTap: () => _launchLegalAndPrivacy(context),
                     ),
                     Divider(color: SmartRootsColors.maBlue, height: 0),
                   ],

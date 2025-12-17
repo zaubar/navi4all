@@ -607,4 +607,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get routingScreenReroutingDialogConfirmButton => 'Reroute';
+
+  @override
+  String get errorUnableToOpenPrivacyPolicy => 'Unable to open privacy policy.';
 }

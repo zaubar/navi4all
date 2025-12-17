@@ -1186,6 +1186,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reroute'**
   String get routingScreenReroutingDialogConfirmButton;
+
+  /// No description provided for @errorUnableToOpenPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open privacy policy.'**
+  String get errorUnableToOpenPrivacyPolicy;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

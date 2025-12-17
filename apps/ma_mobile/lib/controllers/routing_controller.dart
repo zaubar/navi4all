@@ -427,7 +427,7 @@ class RoutingController extends ChangeNotifier {
           ),
           destinationCoordinates,
         ) >
-        Settings.navigationAudioStages[AudioStage.near]!) {
+        Settings.navigationAudioStages[AudioStage.near]! / 2) {
       return false;
     }
 

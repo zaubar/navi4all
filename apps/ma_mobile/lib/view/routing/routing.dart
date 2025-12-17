@@ -371,8 +371,9 @@ class RoutingState extends State<RoutingScreen> {
     // Delay allows map to initialize
     await Future.delayed(Duration(milliseconds: 500));
 
-    // Initialise TTS language
-    await flutterTts.setLanguage(AppLocalizations.of(context)!.localeName);
+    // Initialise TTS
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setVolume(1.0);
 
     // Initialize origin and destination places
     if (_origin.id == SmartRootsValues.userLocation ||

@@ -409,5 +409,6 @@
     "routingScreenReroutingDialogTitle": "Rerouting",
     "routingScreenReroutingDialogMessage": "You have deviated from the planned route. Would you like to find a new route?",
     "routingScreenReroutingDialogCancelButton": "Cancel",
-    "routingScreenReroutingDialogConfirmButton": "Reroute"
+    "routingScreenReroutingDialogConfirmButton": "Reroute",
+    "errorUnableToOpenPrivacyPolicy": "Unable to open privacy policy."
 }

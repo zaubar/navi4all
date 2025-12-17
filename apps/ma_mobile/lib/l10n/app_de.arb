@@ -409,5 +409,6 @@
     "routingScreenReroutingDialogTitle": "Neuberechnung der Route",
     "routingScreenReroutingDialogMessage": "Sie haben die geplante Route verlassen. Möchten Sie eine neue Route finden?",
     "routingScreenReroutingDialogCancelButton": "Abbrechen",
-    "routingScreenReroutingDialogConfirmButton": "Neuberechnen"
+    "routingScreenReroutingDialogConfirmButton": "Neuberechnen",
+    "errorUnableToOpenPrivacyPolicy": "Datenschutzbestimmungen können nicht geöffnet werden."
 }

@@ -607,4 +607,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get routingScreenReroutingDialogConfirmButton => 'Neuberechnen';
+
+  @override
+  String get errorUnableToOpenPrivacyPolicy => 'Datenschutzbestimmungen können nicht geöffnet werden.';
 }
