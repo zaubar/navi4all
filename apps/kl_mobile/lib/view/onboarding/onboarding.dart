@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:navi4all/controllers/theme_controller.dart';
 import 'package:navi4all/core/persistence/preference_helper.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
 import 'package:navi4all/core/theme/colors.dart';
-import '../../view_alt/home/home.dart';
+import 'package:navi4all/view/alt/home/home.dart' as home_alt;
 import 'package:navi4all/view/common/accessible_selector.dart';
 import 'package:navi4all/view/common/accessible_button.dart';
+import 'package:navi4all/view/home/home.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:navi4all/core/theme/profile_mode.dart';
+import 'package:provider/provider.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -29,9 +33,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       await _requestLocationPermission();
     } else if (_currentPage >= 3) {
       PreferenceHelper.setOnboardingComplete(true);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+      switch (await PreferenceHelper.getProfileMode()) {
+        case ProfileMode.blind:
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => home_alt.HomeScreen()),
+          );
+          break;
+        case ProfileMode.visionImpaired:
+        case ProfileMode.general:
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+          break;
+      }
     }
     _controller.nextPage(
       duration: const Duration(milliseconds: 300),
@@ -110,31 +124,34 @@ class _WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.onboardingWelcomeTitle,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
-              color: Colors.white,
+    return Semantics(
+      focused: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.onboardingWelcomeTitle,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 32,
+                color: Colors.white,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            AppLocalizations.of(context)!.onboardingWelcomeSubtitle,
-            style: const TextStyle(fontSize: 18, color: Colors.white),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            AppLocalizations.of(context)!.onboardingWelcomeHint,
-            style: const TextStyle(fontSize: 14, color: Colors.white),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              AppLocalizations.of(context)!.onboardingWelcomeSubtitle,
+              style: const TextStyle(fontSize: 18, color: Colors.white),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              AppLocalizations.of(context)!.onboardingWelcomeHint,
+              style: const TextStyle(fontSize: 14, color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -160,39 +177,49 @@ class _ProfileSelectionScreenState extends State<_ProfileSelectionScreen> {
       )!.onboardingProfileSelectionVisionImpairedUserTitle,
       AppLocalizations.of(context)!.onboardingProfileSelectionGeneralUserTitle,
     ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: 32),
-          Center(
-            child: Text(
-              AppLocalizations.of(context)!.onboardingProfileSelectionTitle,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 28,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const SizedBox(height: 32),
-          Column(
-            children: List.generate(
-              profiles.length,
-              (index) => Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: AccessibleSelector(
-                  label: profiles[index],
-                  selected: _selectedIndex == index,
-                  onTap: () {
-                    setState(() => _selectedIndex = index);
-                  },
+    return Semantics(
+      focused: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 32),
+            Center(
+              child: Text(
+                AppLocalizations.of(context)!.onboardingProfileSelectionTitle,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  color: Colors.white,
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 32),
+            Column(
+              children: List.generate(
+                profiles.length,
+                (index) => Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: AccessibleSelector(
+                    label: profiles[index],
+                    selected: _selectedIndex == index,
+                    onTap: () {
+                      setState(() => _selectedIndex = index);
+                      PreferenceHelper.setProfileMode(
+                        ProfileMode.values[_selectedIndex],
+                      );
+                      Provider.of<ThemeController>(
+                        context,
+                        listen: false,
+                      ).setProfileMode(ProfileMode.values[_selectedIndex]);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -203,25 +230,28 @@ class _UserLocationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.onboardingUserLocationTitle,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
-              color: Colors.white,
+    return Semantics(
+      focused: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.onboardingUserLocationTitle,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 32,
+                color: Colors.white,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            AppLocalizations.of(context)!.onboardingUserLocationSubtitle,
-            style: const TextStyle(fontSize: 18, color: Colors.white),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              AppLocalizations.of(context)!.onboardingUserLocationSubtitle,
+              style: const TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -232,26 +262,29 @@ class _FinishScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.onboardingFinishTitle,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
-              color: Colors.white,
+    return Semantics(
+      focused: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.onboardingFinishTitle,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 32,
+                color: Colors.white,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            AppLocalizations.of(context)!.onboardingFinishSubtitle,
-            style: const TextStyle(fontSize: 18, color: Colors.white),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              AppLocalizations.of(context)!.onboardingFinishSubtitle,
+              style: const TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }

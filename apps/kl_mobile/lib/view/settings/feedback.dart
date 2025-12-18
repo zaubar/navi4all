@@ -4,7 +4,8 @@ import 'package:navi4all/core/processing_status.dart';
 import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
 import 'package:navi4all/schemas/feedback/feedback_type.dart';
-import 'package:navi4all/view/common/accessible_button.dart';
+import 'package:navi4all/view/common/selection_tile.dart';
+import 'package:navi4all/view/common/sheet_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -21,6 +22,16 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
 
+  void _resetForm() {
+    _formKey.currentState!.reset();
+    setState(() {
+      _selectedFeedbackType = FeedbackType.unselected;
+      _submissionStatus = ProcessingStatus.idle;
+    });
+    _subjectController.clear();
+    _messageController.clear();
+  }
+
   Future<void> _submitFeedback() async {
     if (!_formKey.currentState!.validate() ||
         _submissionStatus != ProcessingStatus.idle) {
@@ -30,7 +41,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     String messageBody = '';
     if (_selectedFeedbackType != FeedbackType.unselected) {
       messageBody +=
-          '${AppLocalizations.of(context)!.feedbackTypeHint}: $_selectedFeedbackType\n\n';
+          '${AppLocalizations.of(context)!.feedbackTypeHint}: ${_selectedFeedbackType.name}\n\n';
     }
     messageBody +=
         '${AppLocalizations.of(context)!.feedbackSubjectHint}: ${_subjectController.text}\n\n';
@@ -61,11 +72,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     ); */
 
     // Reset form after submission
-    _formKey.currentState!.reset();
-    setState(() {
-      _selectedFeedbackType = FeedbackType.localData;
-      _submissionStatus = ProcessingStatus.idle;
-    });
+    _resetForm();
   }
 
   @override
@@ -83,9 +90,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   InkWell(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_back,
-                        color: Navi4AllColors.klRed,
+                        color: Theme.of(context).textTheme.displayMedium?.color,
                       ),
                     ),
                     onTap: () {
@@ -97,11 +104,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     AppLocalizations.of(context)!.feedbackScreenTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Navi4AllColors.klRed,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -120,79 +123,47 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               AppLocalizations.of(context)!.feedbackTypeHint,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Navi4AllColors.klRed,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
                         SizedBox(height: 8),
-                        Row(
+                        Column(
                           children: [
-                            Expanded(
-                              child: SegmentedButton(
-                                showSelectedIcon: false,
-                                emptySelectionAllowed: true,
-                                style: ButtonStyle(
-                                  side: WidgetStateProperty.all(
-                                    BorderSide(color: Navi4AllColors.klRed),
-                                  ),
-                                  padding: WidgetStateProperty.all(
-                                    EdgeInsets.symmetric(vertical: 16),
-                                  ),
-                                ),
-                                segments: [
-                                  ButtonSegment(
-                                    value: FeedbackType.localData,
-                                    icon: Icon(
-                                      Icons.place_outlined,
-                                      color: Navi4AllColors.klRed,
-                                    ),
-                                    label: Text(
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.feedbackTypeLocalData,
-                                      textAlign: TextAlign.center,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Navi4AllColors.klRed,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  ButtonSegment(
-                                    value: FeedbackType.appFunctionality,
-                                    icon: Icon(
-                                      Icons.phone_android_outlined,
-                                      color: Navi4AllColors.klRed,
-                                    ),
-                                    label: Text(
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.feedbackTypeAppFunctionality,
-                                      textAlign: TextAlign.center,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Navi4AllColors.klRed,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                                selected: {_selectedFeedbackType},
-                                onSelectionChanged: (newSelection) {
-                                  setState(() {
-                                    _selectedFeedbackType = newSelection.first;
-                                  });
-                                },
-                              ),
+                            SelectionTile(
+                              leadingIcon: Icons.place_outlined,
+                              title: AppLocalizations.of(
+                                context,
+                              )!.feedbackTypeLocalData,
+                              isSelected:
+                                  _selectedFeedbackType ==
+                                  FeedbackType.localData,
+                              onTap: () {
+                                setState(() {
+                                  _selectedFeedbackType =
+                                      FeedbackType.localData;
+                                });
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            SelectionTile(
+                              leadingIcon: Icons.phone_android_outlined,
+                              title: AppLocalizations.of(
+                                context,
+                              )!.feedbackTypeAppFunctionality,
+                              isSelected:
+                                  _selectedFeedbackType ==
+                                  FeedbackType.appFunctionality,
+                              onTap: () {
+                                setState(() {
+                                  _selectedFeedbackType =
+                                      FeedbackType.appFunctionality;
+                                });
+                              },
                             ),
                           ],
                         ),
-                        SizedBox(height: 32),
+                        SizedBox(height: 16),
                         Align(
                           alignment: Alignment.topLeft,
                           child: Padding(
@@ -201,10 +172,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               AppLocalizations.of(context)!.feedbackSubjectHint,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Navi4AllColors.klRed,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -217,15 +185,23 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             hintText: '...',
                             hintStyle: TextStyle(color: Navi4AllColors.klPink),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(32),
                               borderSide: BorderSide(
-                                color: Navi4AllColors.klRed,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium?.color ??
+                                    Navi4AllColors.klRed,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(32),
                               borderSide: BorderSide(
-                                color: Navi4AllColors.klRed,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium?.color ??
+                                    Navi4AllColors.klRed,
                               ),
                             ),
                           ),
@@ -244,10 +220,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               AppLocalizations.of(context)!.feedbackMessageHint,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Navi4AllColors.klRed,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -260,15 +233,23 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             hintText: '...',
                             hintStyle: TextStyle(color: Navi4AllColors.klPink),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color: Navi4AllColors.klRed,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium?.color ??
+                                    Navi4AllColors.klRed,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color: Navi4AllColors.klRed,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium?.color ??
+                                    Navi4AllColors.klRed,
                               ),
                             ),
                           ),
@@ -278,13 +259,50 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 )!.feedbackFieldErrorRequired
                               : null,
                         ),
+                        SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Text(
+                              AppLocalizations.of(context)!.feedbackImageTitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Text(
+                              AppLocalizations.of(context)!.feedbackImageHint,
+                              style: TextStyle(),
+                            ),
+                          ),
+                        ),
                         SizedBox(height: 32),
-                        AccessibleButton(
-                          label: AppLocalizations.of(
-                            context,
-                          )!.feedbackSubmitButton,
-                          style: AccessibleButtonStyle.pink,
-                          onTap: () => _submitFeedback(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SheetButton(
+                              onTap: _resetForm,
+                              icon: Icons.clear_rounded,
+                              label: AppLocalizations.of(
+                                context,
+                              )!.feedbackResetButton,
+                            ),
+                            SizedBox(width: 16),
+                            SheetButton(
+                              onTap: _submitFeedback,
+                              icon: Icons.send_rounded,
+                              label: AppLocalizations.of(
+                                context,
+                              )!.feedbackSubmitButton,
+                            ),
+                          ],
                         ),
                         SizedBox(height: 32),
                       ],

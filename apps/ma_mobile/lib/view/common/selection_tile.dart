@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smartroots/core/theme/colors.dart';
 
 class SelectionTile extends StatelessWidget {
@@ -7,6 +8,7 @@ class SelectionTile extends StatelessWidget {
   final String? subtitle;
   final String? leadingImage;
   final IconData? leadingIcon;
+  final String? leadingSvg;
   final VoidCallback onTap;
 
   SelectionTile({
@@ -16,6 +18,7 @@ class SelectionTile extends StatelessWidget {
     this.subtitle,
     this.leadingImage,
     this.leadingIcon,
+    this.leadingSvg,
     required this.onTap,
   }) {
     assert(
@@ -27,56 +30,78 @@ class SelectionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: isSelected ? SmartRootsColors.maBlueLight : Colors.transparent,
+      color: isSelected
+          ? Theme.of(context).colorScheme.tertiary
+          : Colors.transparent,
       borderRadius: BorderRadius.circular(32.0),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(32.0),
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32.0),
-            border: Border.all(color: SmartRootsColors.maBlue, width: 1.0),
-          ),
-          child: Row(
-            children: [
-              leadingIcon != null || leadingImage != null
-                  ? SizedBox(width: 8.0)
-                  : SizedBox.shrink(),
-              leadingIcon != null
-                  ? Icon(leadingIcon!)
-                  : leadingImage != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(32.0),
-                      child: Image.asset(leadingImage!, width: 32, height: 32),
-                    )
-                  : SizedBox.shrink(),
-              SizedBox(width: 12.0),
-              Column(
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
+      child: Semantics(
+        selected: isSelected,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(32.0),
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 4.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32.0),
+              border: Border.all(color: SmartRootsColors.maBlue, width: 1.5),
+            ),
+            child: Row(
+              children: [
+                leadingIcon != null ||
+                        leadingImage != null ||
+                        leadingSvg != null
+                    ? SizedBox(width: 8.0)
+                    : SizedBox.shrink(),
+                leadingIcon != null
+                    ? Icon(
+                        leadingIcon!,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
+                      )
+                    : leadingImage != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(32.0),
+                        child: Image.asset(
+                          leadingImage!,
+                          width: 32,
+                          height: 32,
+                        ),
+                      )
+                    : leadingSvg != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(32.0),
+                        child: SvgPicture.asset(
+                          leadingSvg!,
+                          width: 32.0,
+                          height: 32.0,
+                        ),
+                      )
+                    : SizedBox.shrink(),
+                SizedBox(width: 12.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle != null
+                          ? SizedBox(height: 4.0)
+                          : SizedBox.shrink(),
+                      subtitle != null
+                          ? Text(
+                              subtitle!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : SizedBox.shrink(),
+                    ],
                   ),
-                  subtitle != null ? SizedBox(height: 4.0) : SizedBox.shrink(),
-                  subtitle != null
-                      ? Text(
-                          subtitle!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: SmartRootsColors.maBlueExtraExtraDark,
-                          ),
-                        )
-                      : SizedBox.shrink(),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

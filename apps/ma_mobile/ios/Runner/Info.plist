@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>ParkStark</string>
+	<string>Park-Stark</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>ParkStark needs access to your location for search and navigation.</string>
+	<string>Park-Stark needs access to your location for search and navigation.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -44,6 +44,17 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>maps</string>            <!-- Apple Maps -->
+		<string>comgooglemaps</string>   <!-- Google Maps -->
+		<string>waze</string>            <!-- Waze -->
+		<string>citymapper</string>      <!-- Citymapper -->
+		<string>here-location</string>   <!-- HERE WeGo -->
+		<string>moovit</string>          <!-- Moovit -->
 	</array>
 </dict>
 </plist>

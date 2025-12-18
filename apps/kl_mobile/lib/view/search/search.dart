@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:navi4all/controllers/canvas_controller.dart';
+import 'package:navi4all/controllers/place_controller.dart';
+import 'package:navi4all/view/canvas/canvas_screen.dart';
+import 'package:navi4all/view/common/accessible_button.dart';
 import 'package:provider/provider.dart';
 import 'package:navi4all/controllers/autocomplete_controller.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
 import 'package:navi4all/core/theme/colors.dart';
-import 'package:navi4all/view/place/place.dart';
 import 'package:navi4all/schemas/routing/place.dart';
 
 class SearchScreen extends StatefulWidget {
   final bool isSecondarySearch;
   final bool isOriginPlaceSearch;
+  final bool altMode;
 
   const SearchScreen({
     super.key,
     this.isSecondarySearch = false,
     this.isOriginPlaceSearch = false,
+    this.altMode = false,
   });
 
   @override
@@ -74,26 +80,38 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   child: Row(
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Navi4AllColors.klRed,
-                          semanticLabel: AppLocalizations.of(
-                            context,
-                          )!.commonBackButtonSemantic,
+                      Semantics(
+                        sortKey: OrdinalSortKey(1),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.displayMedium?.color,
+                            semanticLabel: AppLocalizations.of(
+                              context,
+                            )!.commonBackButtonSemantic,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
                         ),
-                        onPressed: () => Navigator.of(context).pop(),
                       ),
                       Expanded(
                         child: Semantics(
-                          label: widget.isOriginPlaceSearch
-                              ? AppLocalizations.of(
-                                  context,
-                                )!.searchTextFieldOriginHintSemantic
+                          label: autocompleteController.searchQuery.isEmpty
+                              ? widget.isOriginPlaceSearch
+                                    ? AppLocalizations.of(
+                                        context,
+                                      )!.searchTextFieldOriginHintSemantic
+                                    : AppLocalizations.of(
+                                        context,
+                                      )!.searchTextFieldDestinationHintSemantic
                               : AppLocalizations.of(
                                   context,
-                                )!.searchTextFieldDestinationHintSemantic,
+                                )!.searchScreenSearchFieldSemantic(
+                                  autocompleteController.searchQuery,
+                                ),
                           excludeSemantics: true,
+                          sortKey: OrdinalSortKey(0),
                           child: TextField(
                             controller: _controller,
                             focusNode: _focusNode,
@@ -115,16 +133,6 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         ),
                       ),
-                      /* IconButton(
-                        icon: Icon(
-                          Icons.mic,
-                          color: SmartRootsColors.maBlueExtraExtraDark,
-                          semanticLabel: AppLocalizations.of(
-                            context,
-                          )!.commonMicButtonSemantic,
-                        ),
-                        onPressed: null,
-                      ), */
                     ],
                   ),
                 ),
@@ -151,10 +159,18 @@ class _SearchScreenState extends State<SearchScreen> {
                                 if (widget.isSecondarySearch) {
                                   Navigator.of(context).pop(place);
                                 } else {
+                                  Provider.of<CanvasController>(
+                                    context,
+                                    listen: false,
+                                  ).setState(CanvasControllerState.place);
+                                  Provider.of<PlaceController>(
+                                    context,
+                                    listen: false,
+                                  ).setPlace(place);
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          PlaceScreen(place: place),
+                                          CanvasScreen(altMode: widget.altMode),
                                     ),
                                   );
                                 }
@@ -202,12 +218,21 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                 const Spacer(),
-                /*AccessibleButton(
-                  label: AppLocalizations.of(context)!.commonHomeScreenButton,
-                  style: AccessibleButtonStyle.pink,
-                  onTap: () =>
-                      Navigator.of(context).popUntil((route) => route.isFirst),
-                ),*/
+                widget.altMode
+                    ? Align(
+                        alignment: Alignment.bottomCenter,
+                        child: AccessibleButton(
+                          label: AppLocalizations.of(
+                            context,
+                          )!.commonHomeScreenButton,
+                          style: AccessibleButtonStyle.pink,
+                          onTap: () => Navigator.of(
+                            context,
+                          ).popUntil((route) => route.isFirst),
+                        ),
+                      )
+                    : SizedBox.shrink(),
+                widget.altMode ? SizedBox(height: 8) : SizedBox.shrink(),
               ],
             ),
           ),
@@ -236,30 +261,37 @@ class _SearchSuggestion extends StatelessWidget {
         excludeSemantics: true,
         child: Container(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Text(
-                place.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Navi4AllColors.klRed,
-                  fontWeight: FontWeight.bold,
-                ),
+              const Icon(
+                Icons.location_on_rounded,
+                color: Navi4AllColors.klPink,
               ),
-              place.locality != null
-                  ? Text(
-                      place.locality!,
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      place.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 12,
-                        color: Navi4AllColors.klRed,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                    )
-                  : const SizedBox.shrink(),
+                    ),
+                    place.locality != null
+                        ? Text(
+                            place.locality!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 12),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

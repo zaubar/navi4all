@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 // import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:navi4all/view/search/search.dart';
-// import 'package:navi4all/view/favourites/favourites.dart';
+import 'package:navi4all/view/favourites/favorites.dart';
 import 'package:navi4all/view/settings/settings.dart';
 // import 'package:navi4all/core/analytics/events.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/view/home/map.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,11 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _pageIndex = 0;
-  List<Widget> get _pages => [
-    HomeMap(),
-    SettingsScreen(), // FavouritesScreen(_pageIndex == 1),
-    SettingsScreen(),
-  ];
+  List<Widget> get _pages => [HomeMap(), FavoritesScreen(), SettingsScreen()];
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Offstage(
                 offstage: _pageIndex != 1,
-                child: TickerMode(enabled: _pageIndex == 1, child: _pages[1]),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 64.0),
+                  child: TickerMode(enabled: _pageIndex == 1, child: _pages[1]),
+                ),
               ),
               Offstage(
                 offstage: _pageIndex != 2,
@@ -86,9 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Row(
                               children: [
                                 SizedBox(width: 24),
-                                const Icon(
+                                Icon(
                                   Icons.search,
-                                  color: Navi4AllColors.klRed,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.displayMedium?.color,
                                 ),
                                 SizedBox(width: 16),
                                 Expanded(
@@ -96,10 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     AppLocalizations.of(
                                       context,
                                     )!.homeSearchButtonHint,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Navi4AllColors.klRed,
-                                    ),
+                                    style: const TextStyle(fontSize: 16),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -122,10 +119,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(64),
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(32)),
+                      borderRadius: BorderRadius.all(Radius.circular(64)),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(32)),
+                      borderRadius: BorderRadius.all(Radius.circular(64)),
                       child: NavigationBar(
                         labelTextStyle:
                             WidgetStateProperty.resolveWith<TextStyle>((
@@ -133,15 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ) {
                               if (states.contains(WidgetState.selected)) {
                                 return const TextStyle(
-                                  color: Navi4AllColors.klRed,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12,
                                 );
                               }
                               return const TextStyle(
-                                color: Navi4AllColors.klRed,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12,
                               );
                             }),
                         backgroundColor: _pageIndex == 0
@@ -157,11 +150,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.place_outlined,
-                              color: Navi4AllColors.klRed,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium?.color,
                             ),
                             selectedIcon: Icon(
                               Icons.place_rounded,
-                              color: Navi4AllColors.klRed,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium?.color,
                             ),
                             label: AppLocalizations.of(
                               context,
@@ -170,11 +167,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.star_border,
-                              color: Navi4AllColors.klRed,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium?.color,
                             ),
                             selectedIcon: Icon(
                               Icons.star,
-                              color: Navi4AllColors.klRed,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium?.color,
                             ),
                             label: AppLocalizations.of(
                               context,
@@ -183,11 +184,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.settings_outlined,
-                              color: Navi4AllColors.klRed,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium?.color,
                             ),
                             selectedIcon: Icon(
                               Icons.settings,
-                              color: Navi4AllColors.klRed,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium?.color,
                             ),
                             label: AppLocalizations.of(
                               context,

@@ -45,11 +45,12 @@
     "addressInfoWalkingRoutesButtonSemantic": "Finden Sie Fußweg-Optionen.",
     "addressInfoPublicTransportRoutesButton": "ÖPNV",
     "addressInfoPublicTransportRoutesButtonSemantic": "Finden Sie ÖPNV-Optionen.",
-    "addressInfoSaveAddressButton": "Speichern Adresse",
+    "addressInfoSaveAddressButton": "Als Favorit speichern",
+    "addressInfoRemoveAddressButton": "Aus Favoriten entfernen",
     "routeOptionsRouteSettingsButton": "Routeneinstellungen",
     "routeOptionsSaveRouteButton": "Route speichern",
     "origDestPickerSwapButtonSemantic": "Start- und Zielort tauschen",
-    "origDestPickerOriginSemantic": "Startort: {origin}. Tippen Sie, um zu ändern.",
+    "origDestPickerOriginSemantic": "Startort: {origin}.",
     "@origDestPickerOriginSemantic": {
         "placeholders": {
             "origin": {
@@ -57,7 +58,7 @@
             }
         }
     },
-    "origDestPickerDestinationSemantic": "Zielort: {destination}. Tippen Sie, um zu ändern.",
+    "origDestPickerDestinationSemantic": "Zielort: {destination}.",
     "@origDestPickerDestinationSemantic": {
         "placeholders": {
             "destination": {
@@ -163,8 +164,7 @@
     "routeNavigationPauseButtonResumeText": "Fortsetzen",
     "routeNavigationStopButton": "Ende",
     "errorUnableToFetchItineraries": "Routen konnten nicht abgerufen werden.",
-    "errorNoItinerariesFound": "Keine Routen für den ausgewählten Start- und Zielort gefunden.",
-    "searchResultSemantic": "Suchergebnis: {name}, {locality}.",
+    "searchResultSemantic": "Ergebnis: {name}, {locality}.",
     "@searchResultSemantic": {
         "placeholders": {
             "name": {
@@ -185,6 +185,8 @@
     "homeBaseMapStyleTitleDark": "Dunkel",
     "homeBaseMapStyleTitleSatellite": "Satellit",
     "homeBaseMapStyleTitleUnknown": "Basis-Karte",
+    "favouritesTitle": "Favoriten",
+    "favouritesScreenPrompt": "Fügen Sie Favoriten hinzu, um sie hier zu sehen.",
     "settingsTitle": "Einstellungen",
     "settingsOptionFeedback": "Feedback",
     "settingsOptionSupport": "Support",
@@ -193,10 +195,13 @@
     "featureComingSoonMessage": "Diese Funktion kommt bald.",
     "feedbackScreenTitle": "Feedback",
     "feedbackTypeHint": "Feedbacktyp",
-    "feedbackTypeLocalData": "Lokale Daten",
+    "feedbackTypeLocalData": "Problem mit lokalen Daten",
     "feedbackTypeAppFunctionality": "App-Funktionen",
     "feedbackSubjectHint": "Betreff",
     "feedbackMessageHint": "Ihr Nachricht",
+    "feedbackImageTitle": "Bild anhängen",
+    "feedbackImageHint": "Im nächsten Schritt können Sie ein Bild zur Unterstützung Ihres Feedbacks anhängen (optional).",
+    "feedbackResetButton": "Zurücksetzen",
     "feedbackSubmitButton": "Absenden",
     "feedbackFieldErrorRequired": "Dieses Feld ist erforderlich.",
     "legalPrivacyScreenTitle": "Rechtliches & Datenschutz",
@@ -204,5 +209,166 @@
     "legalPrivacyDataProtection": "AGB & Datenschutz",
     "placeScreenChangeRadiusCancel": "Abbrechen",
     "placeScreenChangeRadiusConfirm": "Ändern",
-    "userLocationDeniedSnackbarText": "Aktivieren Sie den Standortzugriff in den Systemeinstellungen, um diese Funktion zu nutzen."
+    "userLocationDeniedSnackbarText": "Aktivieren Sie den Standortzugriff in den Systemeinstellungen, um diese Funktion zu nutzen.",
+    "placeScreenStartButton": "Start",
+    "placeScreenRouteButton": "Route",
+    "navigationRelativeDirectionDepart": "Abfahren",
+    "navigationRelativeDirectionHardLeft": "Scharf links",
+    "navigationRelativeDirectionLeft": "Links abbiegen",
+    "navigationRelativeDirectionSlightlyLeft": "Leicht links",
+    "navigationRelativeDirectionContinue": "Weiter",
+    "navigationRelativeDirectionSlightlyRight": "Leicht rechts",
+    "navigationRelativeDirectionRight": "Rechts abbiegen",
+    "navigationRelativeDirectionHardRight": "Scharf rechts",
+    "navigationRelativeDirectionCircleClockwise": "In den Kreisverkehr einfahren",
+    "navigationRelativeDirectionCircleCounterclockwise": "In den Kreisverkehr einfahren",
+    "navigationRelativeDirectionElevator": "Den Aufzug nehmen",
+    "navigationRelativeDirectionUturnLeft": "U-Turn nach links",
+    "navigationRelativeDirectionUturnRight": "U-Turn nach rechts",
+    "navigationRelativeDirectionEnterStation": "Bahnhof betreten",
+    "navigationRelativeDirectionExitStation": "Bahnhof verlassen",
+    "navigationRelativeDirectionFollowSigns": "Folgen Sie den Schildern",
+    "navigationRelativeDirectionArrive": "Ankommen",
+    "itineraryDepartureTime": "Los um {time}",
+    "@itineraryDepartureTime": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "itineraryModeTabWalking": "Zu Fuß",
+    "itineraryModeTabPublicTransport": "ÖPNV",
+    "navigationStepDistanceToAction": "in {distance}",
+    "@navigationStepDistanceToAction": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "navigationStepDistanceToActionMetres": "in {distance} Metern",
+    "@navigationStepDistanceToActionMetres": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "navigationStepDistanceToActionKilometres": "in {distance} Kilometern",
+    "@navigationStepDistanceToActionKilometres": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "navigationGettingDirections": "Wegbeschreibung wird erstellt",
+    "navigationNoRouteFound": "Keine Route gefunden",
+    "routingDisclaimerTitle": "Achtung",
+    "routingDisclaimerMessage": "Die von dieser App bereitgestellte Navigationsanleitung befindet sich derzeit in der Beta-Testphase und kann fehlerhaft sein. Bitte seien Sie vorsichtig und überprüfen Sie die Routeninformationen selbst. Befolgen Sie immer die örtlichen Verkehrsregeln und -vorschriften und achten Sie auf die Straßenverhältnisse.",
+    "routingDisclaimerCancelButton": "Abbrechen",
+    "routingDisclaimerAcceptButton": "Fortfahren",
+    "errorUnableToFetchTravelTime": "Reisezeit konnte nicht abgerufen werden, bitte versuchen Sie es später erneut.",
+    "routingScreenNavigationStartButton": "Start",
+    "routingScreenNavigationPauseButton": "Pause",
+    "routingScreenNavigationResumeButton": "Fortsetzen",
+    "routingScreenNavigationDoneButton": "Fertig",
+    "settingsOptionChangeAppProfile": "Profil ändern",
+    "modeBicycle": "Fahrrad",
+    "modeBus": "Bus",
+    "modeCableCar": "Seilbahn",
+    "modeCar": "Auto",
+    "modeCoach": "Reisebus",
+    "modeFerry": "Fähre",
+    "modeFunicular": "Standseilbahn",
+    "modeGondola": "Gondel",
+    "modeRail": "Zug",
+    "modeSubway": "U-Bahn",
+    "modeTram": "Tram",
+    "modeTransit": "ÖV",
+    "modeWalk": "Zu Fuß",
+    "modeTrolleybus": "Oberleitungsbus",
+    "modeMonorail": "Einschienenbahn",
+    "itineraryOptionsScreenTitle": "Routeneinstellungen",
+    "itineraryOptionsScreenSemantic": "Routeneinstellungen Bildschirm",
+    "itineraryOptionsScreenDepartureTimeTitle": "Abfahrtszeit",
+    "itineraryOptionsScreenRoutingProfileItem": "Routing-Profil",
+    "itineraryOptionsScreenRoutingProfileItemHint": "Profil auswählen",
+    "itineraryOptionsScreenWalkingTitle": "Zu Fuß",
+    "itineraryOptionsScreenWalkingSpeedOption": "Geschwindigkeit",
+    "itineraryOptionsScreenWalkingSpeedOptionSemantic": "Geschwindigkeit zu Fuß. Aktuell {speed}.",
+    "@itineraryOptionsScreenWalkingSpeedOptionSemantic": {
+        "placeholders": {
+            "speed": {
+                "type": "String"
+            }
+        }
+    },
+    "itineraryOptionsScreenWalkingSpeedIncrementSemantic": "Erhöhe die Geschwindigkeit",
+    "itineraryOptionsScreenWalkingSpeedDecrementSemantic": "Verringere die Geschwindigkeit",
+    "itineraryOptionsScreenWalkingAvoidOption": "Zu Fuß vermeiden",
+    "itineraryOptionsScreenWalkingAvoidOptionStatusEnabledSemantic": "Aktiviert",
+    "itineraryOptionsScreenWalkingAvoidOptionStatusDisabledSemantic": "Deaktiviert",
+    "itineraryOptionsScreenWalkingAvoidOptionSemantic": "Zu Fuß vermeiden Option, {status}.",
+    "@itineraryOptionsScreenWalkingAvoidOptionSemantic": {
+        "placeholders": {
+            "status": {
+                "type": "String"
+            }
+        }
+    },
+    "itineraryOptionsScreenModesTitle": "Verkehrsmittel auswählen",
+    "itineraryOptionsScreenBicycleTitle": "Fahrrad",
+    "itineraryOptionsScreenBicycleSpeedOption": "Geschwindigkeit",
+    "itineraryOptionsScreenBicycleSpeedIncrementSemantic": "Erhöhe die Geschwindigkeit",
+    "itineraryOptionsScreenBicycleSpeedDecrementSemantic": "Verringere die Geschwindigkeit",
+    "itineraryOptionsScreenApplyButtonTitle": "Anwenden",
+    "itineraryOptionsScreenResetButtonTitle": "Zurücksetzen",
+    "routingProfileLabelStandard": "Standard",
+    "routingProfileLabelVisionImpairment": "Sehbehinderung",
+    "routingProfileLabelWheelchair": "Rollstuhl",
+    "routingProfileLabelRollator": "Rollator",
+    "routingProfileLabelSlightWalkingDisability": "Leichte Gehbehinderung",
+    "routingProfileLabelModerateWalkingDisability": "Mittlere Gehbehinderung",
+    "routingProfileLabelSevereWalkingDisability": "Schwere Gehbehinderung",
+    "routingProfileLabelStroller": "Kinderwagen",
+    "altModeButtonDone": "Fertig",
+    "homeScreenSemantic": "Startbildschirm",
+    "favoritesScreenSemantic": "Favoritenbildschirm. Mit {count} Favoriten.",
+    "@favoritesScreenSemantic": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "placeScreenSemantic": "{name}, in {description}.",
+    "@placeScreenSemantic": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            },
+            "description": {
+                "type": "String"
+            }
+        }
+    },
+    "settingsScreenSemantic": "Einstellungsbildschirm",
+    "placeScreenSearchBarSemantic": "Suche nach einem anderen Ort.",
+    "searchScreenSearchFieldSemantic": "Suchfeld. Eingabe: {input}.",
+    "@searchScreenSearchFieldSemantic": {
+        "placeholders": {
+            "input": {
+                "type": "String"
+            }
+        }
+    },
+    "itinerariesScreenSemantic": "Reisebildschirm.",
+    "routingScreenSemantic": "Navigationsbildschirm.",
+    "routingScreenExitRoutingButtonSemantic": "Navigation beenden.",
+    "routingScreenReroutingDialogTitle": "Neuberechnung der Route",
+    "routingScreenReroutingDialogMessage": "Sie haben die geplante Route verlassen. Möchten Sie eine neue Route finden?",
+    "routingScreenReroutingDialogCancelButton": "Abbrechen",
+    "routingScreenReroutingDialogConfirmButton": "Neuberechnen"
 }

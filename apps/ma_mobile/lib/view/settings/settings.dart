@@ -3,7 +3,6 @@ import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/view/onboarding/onboarding.dart';
 import 'package:smartroots/view/settings/feedback.dart';
-import 'package:smartroots/view/settings/legal_privacy.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:smartroots/core/config.dart';
 
@@ -20,116 +19,140 @@ class SettingsScreen extends StatelessWidget {
     await launchUrl(emailLaunchUri);
   }
 
+  void _launchLegalAndPrivacy(BuildContext context) async {
+    final Uri url = Uri.parse(Settings.legalAndPrivacyUrl);
+    try {
+      await launchUrl(url);
+    } catch (e) {
+      // TODO: Improve error handling
+      // Show a snackbar with the error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorUnableToOpenPrivacyPolicy,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 32),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Text(
-                AppLocalizations.of(context)!.settingsTitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: SmartRootsColors.maBlueExtraExtraDark,
+        child: Semantics(
+          focused: true,
+          label: AppLocalizations.of(context)!.homeSettingsScreenSemantic,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 32),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Semantics(
+                  excludeSemantics: true,
+                  child: Text(
+                    AppLocalizations.of(context)!.settingsTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(16),
-                shrinkWrap: true,
-                children: [
-                  ListTile(
-                    leading: Icon(
-                      Icons.play_circle_outline,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
-                    title: Text(
-                      AppLocalizations.of(context)!.settingsOptionSetupGuide,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+              SizedBox(height: 16),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.all(16),
+                  shrinkWrap: true,
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        Icons.play_circle_outline,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.settingsOptionSetupGuide,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
+                        ),
+                      ),
+                      onTap: () => Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => OnboardingScreen(),
+                        ),
                       ),
                     ),
-                    onTap: () => Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => OnboardingScreen(),
+                    Divider(color: SmartRootsColors.maBlue, height: 0),
+                    ListTile(
+                      leading: Icon(
+                        Icons.feedback_outlined,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
+                      ),
+                      title: Text(
+                        AppLocalizations.of(context)!.settingsOptionFeedback,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
+                        ),
+                      ),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const FeedbackScreen(),
+                        ),
                       ),
                     ),
-                  ),
-                  Divider(color: SmartRootsColors.maBlue, height: 0),
-                  ListTile(
-                    leading: Icon(
-                      Icons.feedback_outlined,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
-                    title: Text(
-                      AppLocalizations.of(context)!.settingsOptionFeedback,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                    Divider(color: SmartRootsColors.maBlue, height: 0),
+                    ListTile(
+                      leading: Icon(
+                        Icons.support_agent_outlined,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
-                    ),
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const FeedbackScreen(),
+                      title: Text(
+                        AppLocalizations.of(context)!.settingsOptionSupport,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
+                        ),
                       ),
+                      onTap: () => _launchSupport(),
                     ),
-                  ),
-                  Divider(color: SmartRootsColors.maBlue, height: 0),
-                  ListTile(
-                    leading: Icon(
-                      Icons.support_agent_outlined,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
-                    title: Text(
-                      AppLocalizations.of(context)!.settingsOptionSupport,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                    Divider(color: SmartRootsColors.maBlue, height: 0),
+                    ListTile(
+                      leading: Icon(
+                        Icons.privacy_tip_outlined,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                       ),
-                    ),
-                    onTap: () => _launchSupport(),
-                  ),
-                  Divider(color: SmartRootsColors.maBlue, height: 0),
-                  ListTile(
-                    leading: Icon(
-                      Icons.privacy_tip_outlined,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
-                    title: Text(
-                      AppLocalizations.of(
-                        context,
-                      )!.settingsOptionLegalAndPrivacy,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                      title: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.settingsOptionLegalAndPrivacy,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
+                        ),
                       ),
+                      onTap: () => _launchLegalAndPrivacy(context),
                     ),
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const LegalPrivacyScreen(),
-                      ),
-                    ),
-                  ),
-                  Divider(color: SmartRootsColors.maBlue, height: 0),
-                ],
+                    Divider(color: SmartRootsColors.maBlue, height: 0),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 96),
-          ],
+              SizedBox(height: 96),
+            ],
+          ),
         ),
       ),
     );

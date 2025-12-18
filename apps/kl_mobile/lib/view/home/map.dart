@@ -10,7 +10,6 @@ import 'package:navi4all/controllers/theme_controller.dart';
 import 'package:navi4all/core/config.dart';
 import 'package:navi4all/core/persistence/preference_helper.dart';
 import 'package:navi4all/core/theme/base_map_style.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
 import 'package:navi4all/view/common/selection_tile.dart';
 import 'package:navi4all/view/common/sheet_button.dart';
@@ -26,7 +25,7 @@ class HomeMap extends StatefulWidget {
 class _HomeMapState extends State<HomeMap> {
   late MapLibreMapController _mapController;
   bool _canInteractWithMap = false;
-  List<Map<String, dynamic>> _parkingSites = [];
+  final List<Map<String, dynamic>> _parkingSites = [];
   final Map<String, Map<String, dynamic>> _symbolIdToSite = {};
 
   Future<void> _panToUserLocation() async {
@@ -92,7 +91,6 @@ class _HomeMapState extends State<HomeMap> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Navi4AllColors.klRed,
                       ),
                     ),
                   ),
@@ -308,14 +306,20 @@ class _HomeMapState extends State<HomeMap> {
                     shape: CircleBorder(),
                     backgroundColor: Theme.of(context).colorScheme.secondary,
                     onPressed: () => _onLayersButtonPressed(),
-                    child: Icon(Icons.layers, color: Navi4AllColors.klRed),
+                    child: Icon(
+                      Icons.layers,
+                      color: Theme.of(context).textTheme.displayMedium?.color,
+                    ),
                   ),
                   SizedBox(height: 16),
                   FloatingActionButton(
                     shape: CircleBorder(),
                     backgroundColor: Theme.of(context).colorScheme.secondary,
                     onPressed: () => _panToUserLocation(),
-                    child: Icon(Icons.my_location, color: Navi4AllColors.klRed),
+                    child: Icon(
+                      Icons.my_location,
+                      color: Theme.of(context).textTheme.displayMedium?.color,
+                    ),
                   ),
                 ],
               ),
@@ -324,37 +328,5 @@ class _HomeMapState extends State<HomeMap> {
         ),
       ],
     );
-  }
-
-  void _updateMarkers() {
-    _mapController.clearCircles();
-
-    List<CircleOptions> circles = [];
-    for (var site in _parkingSites) {
-      String markerColor = "#3685E2";
-      if (!site["has_realtime_data"]) {
-        markerColor = "#3685E2";
-      } else if (site["disabled_parking_available"]) {
-        markerColor = "#089161";
-      } else {
-        markerColor = "#F4B1A4";
-      }
-
-      circles.add(
-        CircleOptions(
-          geometry: site["coordinates"],
-          circleColor: markerColor,
-          circleRadius: 6.0,
-          circleStrokeWidth: 1.0,
-          circleStrokeColor: "#FFFFFF",
-        ),
-      );
-    }
-
-    _mapController.addCircles(circles).then((symbols) {
-      for (int i = 0; i < symbols.length; i++) {
-        _symbolIdToSite[symbols[i].id] = _parkingSites[i];
-      }
-    });
   }
 }

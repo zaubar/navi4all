@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:smartroots/core/analytics/events.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
-import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/view/home/map.dart';
-import 'package:smartroots/view/favourites/favourites.dart';
+import 'package:smartroots/view/favourites/favorites.dart';
 import 'package:smartroots/view/settings/settings.dart';
 import 'package:smartroots/view/search/search.dart';
 
@@ -17,11 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _pageIndex = 0;
-  List<Widget> get _pages => [
-    HomeMap(),
-    FavouritesScreen(_pageIndex == 1),
-    SettingsScreen(),
-  ];
+  List<Widget> get _pages => [HomeMap(), FavoritesScreen(), SettingsScreen()];
 
   @override
   Widget build(BuildContext context) {
@@ -54,57 +49,61 @@ class _HomeScreenState extends State<HomeScreen> {
                         left: 16,
                         right: 16,
                       ),
-                      child: Material(
-                        elevation: _pageIndex == 0 ? 4 : 0,
-                        borderRadius: BorderRadius.circular(28),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const SearchScreen(),
-                              ),
-                            );
+                      child: Semantics(
+                        excludeSemantics: true,
+                        label: AppLocalizations.of(
+                          context,
+                        )!.searchTextFieldHintSemantic,
+                        child: Material(
+                          elevation: _pageIndex == 0 ? 4 : 0,
+                          borderRadius: BorderRadius.circular(28),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const SearchScreen(),
+                                ),
+                              );
 
-                            // Analytics event
-                            MatomoTracker.instance.trackEvent(
-                              eventInfo: EventInfo(
-                                category: EventCategory.homeMapScreen
-                                    .toString(),
-                                action: EventAction.homeMapScreenSearchClicked
-                                    .toString(),
+                              // Analytics event
+                              MatomoTracker.instance.trackEvent(
+                                eventInfo: EventInfo(
+                                  category: EventCategory.homeMapScreen
+                                      .toString(),
+                                  action: EventAction.homeMapScreenSearchClicked
+                                      .toString(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 56,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(32),
+                                color: _pageIndex == 0
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Theme.of(context).colorScheme.tertiary,
                               ),
-                            );
-                          },
-                          child: Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(32),
-                              color: _pageIndex == 0
-                                  ? Theme.of(context).colorScheme.secondary
-                                  : Theme.of(context).colorScheme.tertiary,
-                            ),
-                            child: Row(
-                              children: [
-                                SizedBox(width: 24),
-                                const Icon(
-                                  Icons.search,
-                                  color: SmartRootsColors.maBlueExtraExtraDark,
-                                ),
-                                SizedBox(width: 16),
-                                Expanded(
-                                  child: Text(
-                                    AppLocalizations.of(
+                              child: Row(
+                                children: [
+                                  SizedBox(width: 24),
+                                  Icon(
+                                    Icons.search,
+                                    color: Theme.of(
                                       context,
-                                    )!.homeSearchButtonHint,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color:
-                                          SmartRootsColors.maBlueExtraExtraDark,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+                                    ).textTheme.displayMedium!.color,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 16),
+                                  Expanded(
+                                    child: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.homeSearchButtonHint,
+                                      style: const TextStyle(fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -123,10 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(64),
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(32)),
+                      borderRadius: BorderRadius.all(Radius.circular(64)),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(32)),
+                      borderRadius: BorderRadius.all(Radius.circular(64)),
                       child: NavigationBar(
                         labelTextStyle:
                             WidgetStateProperty.resolveWith<TextStyle>((
@@ -134,15 +133,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             ) {
                               if (states.contains(WidgetState.selected)) {
                                 return const TextStyle(
-                                  color: SmartRootsColors.maBlueExtraExtraDark,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12,
+                                  fontSize: 13,
                                 );
                               }
                               return const TextStyle(
-                                color: SmartRootsColors.maBlueExtraExtraDark,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                                fontSize: 13,
                               );
                             }),
                         backgroundColor: _pageIndex == 0
@@ -158,11 +155,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.place_outlined,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             selectedIcon: Icon(
                               Icons.place_rounded,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             label: AppLocalizations.of(
                               context,
@@ -171,11 +172,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.star_border,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             selectedIcon: Icon(
                               Icons.star,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             label: AppLocalizations.of(
                               context,
@@ -184,11 +189,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.settings_outlined,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             selectedIcon: Icon(
                               Icons.settings,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium!.color,
                             ),
                             label: AppLocalizations.of(
                               context,

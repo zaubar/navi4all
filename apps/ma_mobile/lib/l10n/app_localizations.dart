@@ -98,7 +98,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'ParkStark'**
+  /// **'Park-Stark'**
   String get appTitle;
 
   /// No description provided for @commonModeWalking.
@@ -106,6 +106,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Walking'**
   String get commonModeWalking;
+
+  /// No description provided for @commonModeBicycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bicycle'**
+  String get commonModeBicycle;
 
   /// No description provided for @commonModeBus.
   ///
@@ -122,7 +128,7 @@ abstract class AppLocalizations {
   /// No description provided for @commonModeUBahn.
   ///
   /// In en, this message translates to:
-  /// **'Subway'**
+  /// **'U-Bahn'**
   String get commonModeUBahn;
 
   /// No description provided for @commonModeSBahn.
@@ -136,6 +142,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Train'**
   String get commonModeTrain;
+
+  /// No description provided for @commonModeCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Car'**
+  String get commonModeCar;
 
   /// No description provided for @commonHomeScreenButton.
   ///
@@ -164,7 +176,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingWelcomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to\nParkStark'**
+  /// **'Welcome to Park-Stark'**
   String get onboardingWelcomeTitle;
 
   /// No description provided for @onboardingWelcomeSubtitle.
@@ -209,6 +221,30 @@ abstract class AppLocalizations {
   /// **'Real-time data unavailable'**
   String get onboardingSymbolInformationParkingUnknown;
 
+  /// No description provided for @onboardingFavoritesInformationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your favourites'**
+  String get onboardingFavoritesInformationTitle;
+
+  /// No description provided for @onboardingFavoritesInformationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourite frequently used parking spots to find them quickly.'**
+  String get onboardingFavoritesInformationSubtitle;
+
+  /// No description provided for @onboardingFavoritesNotFavorited.
+  ///
+  /// In en, this message translates to:
+  /// **'Not added to favourites'**
+  String get onboardingFavoritesNotFavorited;
+
+  /// No description provided for @onboardingFavoritesFavorited.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to favourites'**
+  String get onboardingFavoritesFavorited;
+
   /// No description provided for @onboardingUserLocationTitle.
   ///
   /// In en, this message translates to:
@@ -221,10 +257,22 @@ abstract class AppLocalizations {
   /// **'With access to your location, we can show you parking spots nearby and navigate there directly.'**
   String get onboardingUserLocationSubtitle;
 
+  /// No description provided for @onboardingAudioGuidanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio guidance'**
+  String get onboardingAudioGuidanceTitle;
+
+  /// No description provided for @onboardingAudioGuidanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'To customise navigation audio settings, visit your device\'s sound or accessibility settings.'**
+  String get onboardingAudioGuidanceSubtitle;
+
   /// No description provided for @onboardingFinishTitle.
   ///
   /// In en, this message translates to:
-  /// **'Perfect - You\'re all set!'**
+  /// **'Perfect! You\'re all set.'**
   String get onboardingFinishTitle;
 
   /// No description provided for @onboardingFinishSubtitle.
@@ -274,6 +322,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search here'**
   String get searchTextFieldHint;
+
+  /// No description provided for @searchTextFieldHintSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a destination.'**
+  String get searchTextFieldHintSemantic;
 
   /// No description provided for @searchTextFieldOriginHintSemantic.
   ///
@@ -362,7 +416,7 @@ abstract class AppLocalizations {
   /// No description provided for @origDestPickerDestinationSemantic.
   ///
   /// In en, this message translates to:
-  /// **'Destination: {destination}. Tap to change.'**
+  /// **'Destination: {destination}.'**
   String origDestPickerDestinationSemantic(String destination);
 
   /// No description provided for @journeyOptionSemantic.
@@ -473,16 +527,10 @@ abstract class AppLocalizations {
   /// **'Unable to fetch itineraries.'**
   String get errorUnableToFetchItineraries;
 
-  /// No description provided for @errorNoItinerariesFound.
-  ///
-  /// In en, this message translates to:
-  /// **'No itineraries found for the selected origin and destination.'**
-  String get errorNoItinerariesFound;
-
   /// No description provided for @searchResultSemantic.
   ///
   /// In en, this message translates to:
-  /// **'Search result: {name}, {locality}.'**
+  /// **'Result: {name}, {locality}.'**
   String searchResultSemantic(String name, String locality);
 
   /// No description provided for @origDestCurrentLocation.
@@ -686,13 +734,13 @@ abstract class AppLocalizations {
   /// No description provided for @feedbackTypeLocalData.
   ///
   /// In en, this message translates to:
-  /// **'Local Data'**
+  /// **'Problem with parking spot'**
   String get feedbackTypeLocalData;
 
   /// No description provided for @feedbackTypeAppFunctionality.
   ///
   /// In en, this message translates to:
-  /// **'App Features'**
+  /// **'App features'**
   String get feedbackTypeAppFunctionality;
 
   /// No description provided for @feedbackSubjectHint.
@@ -707,10 +755,28 @@ abstract class AppLocalizations {
   /// **'Your feedback'**
   String get feedbackMessageHint;
 
+  /// No description provided for @feedbackImageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach image'**
+  String get feedbackImageTitle;
+
+  /// No description provided for @feedbackImageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'In the next step, attach an image in support of your feedback (optional).'**
+  String get feedbackImageHint;
+
+  /// No description provided for @feedbackResetButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get feedbackResetButton;
+
   /// No description provided for @feedbackSubmitButton.
   ///
   /// In en, this message translates to:
-  /// **'Submit'**
+  /// **'Continue'**
   String get feedbackSubmitButton;
 
   /// No description provided for @feedbackFieldErrorRequired.
@@ -863,6 +929,12 @@ abstract class AppLocalizations {
   /// **'Arrive'**
   String get navigationRelativeDirectionArrive;
 
+  /// No description provided for @navigationStepDistanceToAction.
+  ///
+  /// In en, this message translates to:
+  /// **'in {distance}'**
+  String navigationStepDistanceToAction(String distance);
+
   /// No description provided for @navigationStepDistanceToActionMetres.
   ///
   /// In en, this message translates to:
@@ -934,6 +1006,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes'**
   String get availabilityChangeDialogConfirmButton;
+
+  /// No description provided for @searchScreenErrorNoSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found. Try searching for other places, addresses or transit stations.'**
+  String get searchScreenErrorNoSuggestions;
+
+  /// No description provided for @homeMapScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Map screen.'**
+  String get homeMapScreenSemantic;
+
+  /// No description provided for @homeMapScreenLayersButtonSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Change map style.'**
+  String get homeMapScreenLayersButtonSemantic;
+
+  /// No description provided for @homeMapScreenCurrentLocationButtonSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to current location.'**
+  String get homeMapScreenCurrentLocationButtonSemantic;
+
+  /// No description provided for @homeFavoritesScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourites screen.'**
+  String get homeFavoritesScreenSemantic;
+
+  /// No description provided for @favoritesScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites screen. With {count} favorites.'**
+  String favoritesScreenSemantic(int count);
+
+  /// No description provided for @favoritesListItemSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, {description}. Status: {status}.'**
+  String favoritesListItemSemantic(String name, String description, String status);
+
+  /// No description provided for @homeSettingsScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings screen.'**
+  String get homeSettingsScreenSemantic;
+
+  /// No description provided for @searchScreenSearchFieldSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Search field. Input: {input}.'**
+  String searchScreenSearchFieldSemantic(String input);
+
+  /// No description provided for @searchScreenRecentSearchItemSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent search: {name}.'**
+  String searchScreenRecentSearchItemSemantic(String name);
+
+  /// No description provided for @placeScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} parking spaces found within {radius} metres.'**
+  String placeScreenSemantic(int count, int radius);
+
+  /// No description provided for @placeScreenSearchBarSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} selected. Tap to go back.'**
+  String placeScreenSearchBarSemantic(String name);
+
+  /// No description provided for @placeScreenSearchRadiusButtonSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Change search radius. Currently: {radius} metres.'**
+  String placeScreenSearchRadiusButtonSemantic(int radius);
+
+  /// No description provided for @placeListItemSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}. {status}.'**
+  String placeListItemSemantic(String name, String status);
+
+  /// No description provided for @placeScreenDialogRadiusSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Search radius. Currently {radius} metres.'**
+  String placeScreenDialogRadiusSemantic(int radius);
+
+  /// No description provided for @placeScreenDialogRadiusIncrementSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase radius by 100 metres.'**
+  String get placeScreenDialogRadiusIncrementSemantic;
+
+  /// No description provided for @placeScreenDialogRadiusDecrementSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease radius by 100 metres.'**
+  String get placeScreenDialogRadiusDecrementSemantic;
+
+  /// No description provided for @parkingLocationScreenSearchBarSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} selected. Tap to go back.'**
+  String parkingLocationScreenSearchBarSemantic(String name);
+
+  /// No description provided for @parkingLocationScreenAddToFavoritesButtonSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites.'**
+  String get parkingLocationScreenAddToFavoritesButtonSemantic;
+
+  /// No description provided for @parkingLocationScreenRemoveFromFavoritesButtonSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites.'**
+  String get parkingLocationScreenRemoveFromFavoritesButtonSemantic;
+
+  /// No description provided for @parkingLocationScreenRouteExternalButtonSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Route using external maps app.'**
+  String get parkingLocationScreenRouteExternalButtonSemantic;
+
+  /// No description provided for @parkingLocationScreenRouteInternalButtonSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Route using Park-Stark.'**
+  String get parkingLocationScreenRouteInternalButtonSemantic;
+
+  /// No description provided for @parkingLocationScreenEstimatedDrivingTimeSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated driving time: {time}.'**
+  String parkingLocationScreenEstimatedDrivingTimeSemantic(String time);
+
+  /// No description provided for @parkingLocationScreenOccupancyStatusSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Occupancy status: {status}.'**
+  String parkingLocationScreenOccupancyStatusSemantic(String status);
+
+  /// No description provided for @routingScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation screen.'**
+  String get routingScreenSemantic;
+
+  /// No description provided for @routingScreenExitRoutingButtonSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit navigation.'**
+  String get routingScreenExitRoutingButtonSemantic;
+
+  /// No description provided for @routingScreenReroutingDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rerouting'**
+  String get routingScreenReroutingDialogTitle;
+
+  /// No description provided for @routingScreenReroutingDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have deviated from the planned route. Would you like to find a new route?'**
+  String get routingScreenReroutingDialogMessage;
+
+  /// No description provided for @routingScreenReroutingDialogCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get routingScreenReroutingDialogCancelButton;
+
+  /// No description provided for @routingScreenReroutingDialogConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reroute'**
+  String get routingScreenReroutingDialogConfirmButton;
+
+  /// No description provided for @errorUnableToOpenPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open privacy policy.'**
+  String get errorUnableToOpenPrivacyPolicy;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

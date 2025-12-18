@@ -1,4 +1,4 @@
-# ParkStark - Mannheim
+# Park-Stark - Mannheim
 
 ![Mannheim](./mannheim.png)
 

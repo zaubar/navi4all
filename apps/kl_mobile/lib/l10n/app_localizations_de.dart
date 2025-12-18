@@ -125,7 +125,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get addressInfoPublicTransportRoutesButtonSemantic => 'Finden Sie ÖPNV-Optionen.';
 
   @override
-  String get addressInfoSaveAddressButton => 'Speichern Adresse';
+  String get addressInfoSaveAddressButton => 'Als Favorit speichern';
+
+  @override
+  String get addressInfoRemoveAddressButton => 'Aus Favoriten entfernen';
 
   @override
   String get routeOptionsRouteSettingsButton => 'Routeneinstellungen';
@@ -138,12 +141,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String origDestPickerOriginSemantic(String origin) {
-    return 'Startort: $origin. Tippen Sie, um zu ändern.';
+    return 'Startort: $origin.';
   }
 
   @override
   String origDestPickerDestinationSemantic(String destination) {
-    return 'Zielort: $destination. Tippen Sie, um zu ändern.';
+    return 'Zielort: $destination.';
   }
 
   @override
@@ -217,11 +220,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get errorUnableToFetchItineraries => 'Routen konnten nicht abgerufen werden.';
 
   @override
-  String get errorNoItinerariesFound => 'Keine Routen für den ausgewählten Start- und Zielort gefunden.';
-
-  @override
   String searchResultSemantic(String name, String locality) {
-    return 'Suchergebnis: $name, $locality.';
+    return 'Ergebnis: $name, $locality.';
   }
 
   @override
@@ -255,6 +255,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homeBaseMapStyleTitleUnknown => 'Basis-Karte';
 
   @override
+  String get favouritesTitle => 'Favoriten';
+
+  @override
+  String get favouritesScreenPrompt => 'Fügen Sie Favoriten hinzu, um sie hier zu sehen.';
+
+  @override
   String get settingsTitle => 'Einstellungen';
 
   @override
@@ -279,7 +285,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get feedbackTypeHint => 'Feedbacktyp';
 
   @override
-  String get feedbackTypeLocalData => 'Lokale Daten';
+  String get feedbackTypeLocalData => 'Problem mit lokalen Daten';
 
   @override
   String get feedbackTypeAppFunctionality => 'App-Funktionen';
@@ -289,6 +295,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get feedbackMessageHint => 'Ihr Nachricht';
+
+  @override
+  String get feedbackImageTitle => 'Bild anhängen';
+
+  @override
+  String get feedbackImageHint => 'Im nächsten Schritt können Sie ein Bild zur Unterstützung Ihres Feedbacks anhängen (optional).';
+
+  @override
+  String get feedbackResetButton => 'Zurücksetzen';
 
   @override
   String get feedbackSubmitButton => 'Absenden';
@@ -313,4 +328,307 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get userLocationDeniedSnackbarText => 'Aktivieren Sie den Standortzugriff in den Systemeinstellungen, um diese Funktion zu nutzen.';
+
+  @override
+  String get placeScreenStartButton => 'Start';
+
+  @override
+  String get placeScreenRouteButton => 'Route';
+
+  @override
+  String get navigationRelativeDirectionDepart => 'Abfahren';
+
+  @override
+  String get navigationRelativeDirectionHardLeft => 'Scharf links';
+
+  @override
+  String get navigationRelativeDirectionLeft => 'Links abbiegen';
+
+  @override
+  String get navigationRelativeDirectionSlightlyLeft => 'Leicht links';
+
+  @override
+  String get navigationRelativeDirectionContinue => 'Weiter';
+
+  @override
+  String get navigationRelativeDirectionSlightlyRight => 'Leicht rechts';
+
+  @override
+  String get navigationRelativeDirectionRight => 'Rechts abbiegen';
+
+  @override
+  String get navigationRelativeDirectionHardRight => 'Scharf rechts';
+
+  @override
+  String get navigationRelativeDirectionCircleClockwise => 'In den Kreisverkehr einfahren';
+
+  @override
+  String get navigationRelativeDirectionCircleCounterclockwise => 'In den Kreisverkehr einfahren';
+
+  @override
+  String get navigationRelativeDirectionElevator => 'Den Aufzug nehmen';
+
+  @override
+  String get navigationRelativeDirectionUturnLeft => 'U-Turn nach links';
+
+  @override
+  String get navigationRelativeDirectionUturnRight => 'U-Turn nach rechts';
+
+  @override
+  String get navigationRelativeDirectionEnterStation => 'Bahnhof betreten';
+
+  @override
+  String get navigationRelativeDirectionExitStation => 'Bahnhof verlassen';
+
+  @override
+  String get navigationRelativeDirectionFollowSigns => 'Folgen Sie den Schildern';
+
+  @override
+  String get navigationRelativeDirectionArrive => 'Ankommen';
+
+  @override
+  String itineraryDepartureTime(String time) {
+    return 'Los um $time';
+  }
+
+  @override
+  String get itineraryModeTabWalking => 'Zu Fuß';
+
+  @override
+  String get itineraryModeTabPublicTransport => 'ÖPNV';
+
+  @override
+  String navigationStepDistanceToAction(String distance) {
+    return 'in $distance';
+  }
+
+  @override
+  String navigationStepDistanceToActionMetres(String distance) {
+    return 'in $distance Metern';
+  }
+
+  @override
+  String navigationStepDistanceToActionKilometres(String distance) {
+    return 'in $distance Kilometern';
+  }
+
+  @override
+  String get navigationGettingDirections => 'Wegbeschreibung wird erstellt';
+
+  @override
+  String get navigationNoRouteFound => 'Keine Route gefunden';
+
+  @override
+  String get routingDisclaimerTitle => 'Achtung';
+
+  @override
+  String get routingDisclaimerMessage => 'Die von dieser App bereitgestellte Navigationsanleitung befindet sich derzeit in der Beta-Testphase und kann fehlerhaft sein. Bitte seien Sie vorsichtig und überprüfen Sie die Routeninformationen selbst. Befolgen Sie immer die örtlichen Verkehrsregeln und -vorschriften und achten Sie auf die Straßenverhältnisse.';
+
+  @override
+  String get routingDisclaimerCancelButton => 'Abbrechen';
+
+  @override
+  String get routingDisclaimerAcceptButton => 'Fortfahren';
+
+  @override
+  String get errorUnableToFetchTravelTime => 'Reisezeit konnte nicht abgerufen werden, bitte versuchen Sie es später erneut.';
+
+  @override
+  String get routingScreenNavigationStartButton => 'Start';
+
+  @override
+  String get routingScreenNavigationPauseButton => 'Pause';
+
+  @override
+  String get routingScreenNavigationResumeButton => 'Fortsetzen';
+
+  @override
+  String get routingScreenNavigationDoneButton => 'Fertig';
+
+  @override
+  String get settingsOptionChangeAppProfile => 'Profil ändern';
+
+  @override
+  String get modeBicycle => 'Fahrrad';
+
+  @override
+  String get modeBus => 'Bus';
+
+  @override
+  String get modeCableCar => 'Seilbahn';
+
+  @override
+  String get modeCar => 'Auto';
+
+  @override
+  String get modeCoach => 'Reisebus';
+
+  @override
+  String get modeFerry => 'Fähre';
+
+  @override
+  String get modeFunicular => 'Standseilbahn';
+
+  @override
+  String get modeGondola => 'Gondel';
+
+  @override
+  String get modeRail => 'Zug';
+
+  @override
+  String get modeSubway => 'U-Bahn';
+
+  @override
+  String get modeTram => 'Tram';
+
+  @override
+  String get modeTransit => 'ÖV';
+
+  @override
+  String get modeWalk => 'Zu Fuß';
+
+  @override
+  String get modeTrolleybus => 'Oberleitungsbus';
+
+  @override
+  String get modeMonorail => 'Einschienenbahn';
+
+  @override
+  String get itineraryOptionsScreenTitle => 'Routeneinstellungen';
+
+  @override
+  String get itineraryOptionsScreenSemantic => 'Routeneinstellungen Bildschirm';
+
+  @override
+  String get itineraryOptionsScreenDepartureTimeTitle => 'Abfahrtszeit';
+
+  @override
+  String get itineraryOptionsScreenRoutingProfileItem => 'Routing-Profil';
+
+  @override
+  String get itineraryOptionsScreenRoutingProfileItemHint => 'Profil auswählen';
+
+  @override
+  String get itineraryOptionsScreenWalkingTitle => 'Zu Fuß';
+
+  @override
+  String get itineraryOptionsScreenWalkingSpeedOption => 'Geschwindigkeit';
+
+  @override
+  String itineraryOptionsScreenWalkingSpeedOptionSemantic(String speed) {
+    return 'Geschwindigkeit zu Fuß. Aktuell $speed.';
+  }
+
+  @override
+  String get itineraryOptionsScreenWalkingSpeedIncrementSemantic => 'Erhöhe die Geschwindigkeit';
+
+  @override
+  String get itineraryOptionsScreenWalkingSpeedDecrementSemantic => 'Verringere die Geschwindigkeit';
+
+  @override
+  String get itineraryOptionsScreenWalkingAvoidOption => 'Zu Fuß vermeiden';
+
+  @override
+  String get itineraryOptionsScreenWalkingAvoidOptionStatusEnabledSemantic => 'Aktiviert';
+
+  @override
+  String get itineraryOptionsScreenWalkingAvoidOptionStatusDisabledSemantic => 'Deaktiviert';
+
+  @override
+  String itineraryOptionsScreenWalkingAvoidOptionSemantic(String status) {
+    return 'Zu Fuß vermeiden Option, $status.';
+  }
+
+  @override
+  String get itineraryOptionsScreenModesTitle => 'Verkehrsmittel auswählen';
+
+  @override
+  String get itineraryOptionsScreenBicycleTitle => 'Fahrrad';
+
+  @override
+  String get itineraryOptionsScreenBicycleSpeedOption => 'Geschwindigkeit';
+
+  @override
+  String get itineraryOptionsScreenBicycleSpeedIncrementSemantic => 'Erhöhe die Geschwindigkeit';
+
+  @override
+  String get itineraryOptionsScreenBicycleSpeedDecrementSemantic => 'Verringere die Geschwindigkeit';
+
+  @override
+  String get itineraryOptionsScreenApplyButtonTitle => 'Anwenden';
+
+  @override
+  String get itineraryOptionsScreenResetButtonTitle => 'Zurücksetzen';
+
+  @override
+  String get routingProfileLabelStandard => 'Standard';
+
+  @override
+  String get routingProfileLabelVisionImpairment => 'Sehbehinderung';
+
+  @override
+  String get routingProfileLabelWheelchair => 'Rollstuhl';
+
+  @override
+  String get routingProfileLabelRollator => 'Rollator';
+
+  @override
+  String get routingProfileLabelSlightWalkingDisability => 'Leichte Gehbehinderung';
+
+  @override
+  String get routingProfileLabelModerateWalkingDisability => 'Mittlere Gehbehinderung';
+
+  @override
+  String get routingProfileLabelSevereWalkingDisability => 'Schwere Gehbehinderung';
+
+  @override
+  String get routingProfileLabelStroller => 'Kinderwagen';
+
+  @override
+  String get altModeButtonDone => 'Fertig';
+
+  @override
+  String get homeScreenSemantic => 'Startbildschirm';
+
+  @override
+  String favoritesScreenSemantic(int count) {
+    return 'Favoritenbildschirm. Mit $count Favoriten.';
+  }
+
+  @override
+  String placeScreenSemantic(String name, String description) {
+    return '$name, in $description.';
+  }
+
+  @override
+  String get settingsScreenSemantic => 'Einstellungsbildschirm';
+
+  @override
+  String get placeScreenSearchBarSemantic => 'Suche nach einem anderen Ort.';
+
+  @override
+  String searchScreenSearchFieldSemantic(String input) {
+    return 'Suchfeld. Eingabe: $input.';
+  }
+
+  @override
+  String get itinerariesScreenSemantic => 'Reisebildschirm.';
+
+  @override
+  String get routingScreenSemantic => 'Navigationsbildschirm.';
+
+  @override
+  String get routingScreenExitRoutingButtonSemantic => 'Navigation beenden.';
+
+  @override
+  String get routingScreenReroutingDialogTitle => 'Neuberechnung der Route';
+
+  @override
+  String get routingScreenReroutingDialogMessage => 'Sie haben die geplante Route verlassen. Möchten Sie eine neue Route finden?';
+
+  @override
+  String get routingScreenReroutingDialogCancelButton => 'Abbrechen';
+
+  @override
+  String get routingScreenReroutingDialogConfirmButton => 'Neuberechnen';
 }

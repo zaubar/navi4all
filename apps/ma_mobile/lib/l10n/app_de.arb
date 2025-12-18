@@ -1,27 +1,35 @@
 {
     "@@locale": "de",
-    "appTitle": "ParkStark",
+    "appTitle": "Park-Stark",
     "commonModeWalking": "Zu Fuß",
+    "commonModeBicycle": "Fahrrad",
     "commonModeBus": "Bus",
-    "commonModeTram": "Straßenbahn",
+    "commonModeTram": "Tram",
     "commonModeUBahn": "U-Bahn",
     "commonModeSBahn": "S-Bahn",
-    "commonModeTrain": "Bahn",
+    "commonModeTrain": "Zug",
+    "commonModeCar": "Auto",
     "commonHomeScreenButton": "Startbildschirm",
     "commonBackButtonSemantic": "Zurück",
     "commonMicButtonSemantic": "Spracheingabe",
     "commonContinueButtonSemantic": "Weiter",
-    "onboardingWelcomeTitle": "Willkommen bei\nParkStark",
-    "onboardingWelcomeSubtitle": "Gemeinsam finden wir allgemeinen Schwerbehindertenparkplätzen – schnell und unkompliziert.",
+    "onboardingWelcomeTitle": "Willkommen bei Park-Stark",
+    "onboardingWelcomeSubtitle": "Gemeinsam finden wir allgemeine Schwerbehindertenparkplätze – schnell und unkompliziert.",
     "onboardingWelcomeHint": "Drücken Sie die Taste, um fortzufahren.",
     "onboardingSymbolInformationTitle": "So funktioniert's",
     "onboardingSymbolInformationSubtitle": "Diese Symbole helfen Ihnen, den passenden Parkplatz zu finden.",
     "onboardingSymbolInformationParkingAvailable": "Parkplatz verfügbar",
     "onboardingSymbolInformationParkingUnavailable": "Parkplatz belegt",
     "onboardingSymbolInformationParkingUnknown": "Echtzeitstatus unbekannt",
+    "onboardingFavoritesInformationTitle": "Favoriten speichern",
+    "onboardingFavoritesInformationSubtitle": "Speichern Sie häufig genutzte Parkplätze, um sie schnell zu finden.",
+    "onboardingFavoritesNotFavorited": "Nicht als Favorit gespeichert",
+    "onboardingFavoritesFavorited": "Als Favorit gespeichert",
     "onboardingUserLocationTitle": "Standort aktivieren",
     "onboardingUserLocationSubtitle": "Mit Ihrer Standortfreigabe zeigen wir Ihnen die nächsten verfügbaren Parkplätze und navigieren Sie direkt dorthin.",
-    "onboardingFinishTitle": "Perfekt – Sie sind startbereit!",
+    "onboardingAudioGuidanceTitle": "Audioanleitung",
+    "onboardingAudioGuidanceSubtitle": "Um die Audioeinstellungen für die Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.",
+    "onboardingFinishTitle": "Perfekt! Sie sind startbereit.",
     "onboardingFinishSubtitle": "Entdecken Sie jetzt barrierefreie Parkplätze in Ihrer Nähe.",
     "onboardingFinishAppTutorialButton": "Zum App-Tutorial",
     "onboardingFinishHomeScreenButton": "Zum Startbildschirm",
@@ -30,6 +38,7 @@
     "homeRouteButton": "Route",
     "homeSettingsButton": "Einstellungen",
     "searchTextFieldHint": "Hier suchen",
+    "searchTextFieldHintSemantic": "Suchen Sie nach einem Zielort.",
     "searchTextFieldOriginHintSemantic": "Textfeld für die Eingabe. Tippen Sie, um einen Startort zu suchen.",
     "searchTextFieldDestinationHintSemantic": "Textfeld für die Eingabe. Tippen Sie, um einen Zielort zu suchen.",
     "searchScreenPrompt": "Beginnen Sie mit der Eingabe, um nach Orten, Adressen oder Haltestellen zu suchen.",
@@ -58,7 +67,7 @@
             }
         }
     },
-    "origDestPickerDestinationSemantic": "Zielort: {destination}. Tippen Sie, um zu ändern.",
+    "origDestPickerDestinationSemantic": "Zielort: {destination}.",
     "@origDestPickerDestinationSemantic": {
         "placeholders": {
             "destination": {
@@ -164,8 +173,7 @@
     "routeNavigationPauseButtonResumeText": "Fortsetzen",
     "routeNavigationStopButton": "Ende",
     "errorUnableToFetchItineraries": "Routen konnten nicht abgerufen werden.",
-    "errorNoItinerariesFound": "Keine Routen für den ausgewählten Start- und Zielort gefunden.",
-    "searchResultSemantic": "Suchergebnis: {name}, {locality}.",
+    "searchResultSemantic": "Ergebnis: {name}, {locality}.",
     "@searchResultSemantic": {
         "placeholders": {
             "name": {
@@ -209,11 +217,14 @@
     "featureComingSoonMessage": "Diese Funktion kommt bald.",
     "feedbackScreenTitle": "Feedback",
     "feedbackTypeHint": "Feedbacktyp",
-    "feedbackTypeLocalData": "Lokale Daten",
+    "feedbackTypeLocalData": "Problem mit Parkplatz",
     "feedbackTypeAppFunctionality": "App-Funktionen",
     "feedbackSubjectHint": "Betreff",
     "feedbackMessageHint": "Ihr Nachricht",
-    "feedbackSubmitButton": "Absenden",
+    "feedbackImageTitle": "Bild anhängen",
+    "feedbackImageHint": "Im nächsten Schritt können Sie ein Bild zur Unterstützung Ihres Feedbacks anhängen (optional).",
+    "feedbackResetButton": "Zurücksetzen",
+    "feedbackSubmitButton": "Weiter",
     "feedbackFieldErrorRequired": "Dieses Feld ist erforderlich.",
     "legalPrivacyScreenTitle": "Rechtliches & Datenschutz",
     "legalPrivacyLocationAccess": "Standortzugriff",
@@ -226,7 +237,7 @@
     "navigationRelativeDirectionHardLeft": "Scharf links",
     "navigationRelativeDirectionLeft": "Links abbiegen",
     "navigationRelativeDirectionSlightlyLeft": "Leicht links",
-    "navigationRelativeDirectionContinue": "Weiter",
+    "navigationRelativeDirectionContinue": "Weiter geradeaus",
     "navigationRelativeDirectionSlightlyRight": "Leicht rechts",
     "navigationRelativeDirectionRight": "Rechts abbiegen",
     "navigationRelativeDirectionHardRight": "Scharf rechts",
@@ -239,6 +250,14 @@
     "navigationRelativeDirectionExitStation": "Bahnhof verlassen",
     "navigationRelativeDirectionFollowSigns": "Folgen Sie den Schildern",
     "navigationRelativeDirectionArrive": "Ankommen",
+    "navigationStepDistanceToAction": "in {distance}",
+    "@navigationStepDistanceToAction": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
     "navigationStepDistanceToActionMetres": "in {distance} Metern",
     "@navigationStepDistanceToActionMetres": {
         "placeholders": {
@@ -261,8 +280,135 @@
     "routingDisclaimerMessage": "Die von dieser App bereitgestellte Navigationsanleitung befindet sich derzeit in der Beta-Testphase und kann fehlerhaft sein. Bitte seien Sie vorsichtig und überprüfen Sie die Routeninformationen selbst. Befolgen Sie immer die örtlichen Verkehrsregeln und -vorschriften und achten Sie auf die Straßenverhältnisse.",
     "routingDisclaimerCancelButton": "Abbrechen",
     "routingDisclaimerAcceptButton": "Fortfahren",
-    "availabilityChangeDialogTitle": "Parkplatz Belegt",
+    "availabilityChangeDialogTitle": "Parkplatz belegt",
     "availabilityChangeDialogMessage": "Dieser Parkplatz ist jetzt belegt.\nMöchten Sie in der Nähe nach alternativen Plätzen suchen?",
     "availabilityChangeDialogCancelButton": "Nein",
-    "availabilityChangeDialogConfirmButton": "Ja"
+    "availabilityChangeDialogConfirmButton": "Ja",
+    "searchScreenErrorNoSuggestions": "Keine Ergebnisse gefunden. Versuchen Sie, nach anderen Orten, Adressen oder Verkehrsstationen zu suchen.",
+    "homeMapScreenSemantic": "Kartenbildschirm.",
+    "homeMapScreenLayersButtonSemantic": "Kartenstil ändern.",
+    "homeMapScreenCurrentLocationButtonSemantic": "Gehe zum aktuellen Standort.",
+    "homeFavoritesScreenSemantic": "Favoritenbildschirm.",
+    "favoritesScreenSemantic": "Favoritenbildschirm. Mit {count} Favoriten.",
+    "@favoritesScreenSemantic": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "favoritesListItemSemantic": "{name}, {description}. Status: {status}.",
+    "@favoritesListItemSemantic": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            },
+            "description": {
+                "type": "String"
+            },
+            "status": {
+                "type": "String"
+            }
+        }
+    },
+    "homeSettingsScreenSemantic": "Einstellungsbildschirm.",
+    "searchScreenSearchFieldSemantic": "Suchfeld. Eingabe: {input}.",
+    "@searchScreenSearchFieldSemantic": {
+        "placeholders": {
+            "input": {
+                "type": "String"
+            }
+        }
+    },
+    "searchScreenRecentSearchItemSemantic": "Letzte Suche: {name}.",
+    "@searchScreenRecentSearchItemSemantic": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "placeScreenSemantic": "{count} Parkplätze gefunden innerhalb von {radius} Metern.",
+    "@placeScreenSemantic": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            },
+            "radius": {
+                "type": "int"
+            }
+        }
+    },
+    "placeScreenSearchBarSemantic": "{name} ausgewählt. Tippen Sie, um zurückzugehen.",
+    "@placeScreenSearchBarSemantic": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "placeScreenSearchRadiusButtonSemantic": "Suchbereich anpassen. Aktuell: {radius} Metern.",
+    "@placeScreenSearchRadiusButtonSemantic": {
+        "placeholders": {
+            "radius": {
+                "type": "int"
+            }
+        }
+    },
+    "placeListItemSemantic": "{name}. {status}.",
+    "@placeListItemSemantic": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            },
+            "status": {
+                "type": "String"
+            }
+        }
+    },
+    "placeScreenDialogRadiusSemantic": "Suchradius. Aktuell {radius} Metern.",
+    "@placeScreenDialogRadiusSemantic": {
+        "placeholders": {
+            "radius": {
+                "type": "int"
+            }
+        }
+    },
+    "placeScreenDialogRadiusIncrementSemantic": "Suchradius um 100 Meter erhöhen.",
+    "placeScreenDialogRadiusDecrementSemantic": "Suchradius um 100 Meter verringern.",
+    "parkingLocationScreenSearchBarSemantic": "{name} selected. Tap to go back.",
+    "@parkingLocationScreenSearchBarSemantic": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "parkingLocationScreenAddToFavoritesButtonSemantic": "Zu Favoriten hinzufügen.",
+    "parkingLocationScreenRemoveFromFavoritesButtonSemantic": "Aus Favoriten entfernen.",
+    "parkingLocationScreenRouteExternalButtonSemantic": "Route mit externer Navigations-App.",
+    "parkingLocationScreenRouteInternalButtonSemantic": "Route mit Park-Stark-App.",
+    "parkingLocationScreenEstimatedDrivingTimeSemantic": "Fahrzeit mit dem Auto: {time}.",
+    "@parkingLocationScreenEstimatedDrivingTimeSemantic": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "parkingLocationScreenOccupancyStatusSemantic": "Belegungsstatus: {status}.",
+    "@parkingLocationScreenOccupancyStatusSemantic": {
+        "placeholders": {
+            "status": {
+                "type": "String"
+            }
+        }
+    },
+    "routingScreenSemantic": "Navigationsbildschirm.",
+    "routingScreenExitRoutingButtonSemantic": "Navigation beenden.",
+    "routingScreenReroutingDialogTitle": "Neuberechnung der Route",
+    "routingScreenReroutingDialogMessage": "Sie haben die geplante Route verlassen. Möchten Sie eine neue Route finden?",
+    "routingScreenReroutingDialogCancelButton": "Abbrechen",
+    "routingScreenReroutingDialogConfirmButton": "Neuberechnen",
+    "errorUnableToOpenPrivacyPolicy": "Datenschutzbestimmungen können nicht geöffnet werden."
 }

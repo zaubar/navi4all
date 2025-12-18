@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:smartroots/controllers/autocomplete_controller.dart';
 import 'package:smartroots/controllers/availability_controller.dart';
-import 'package:smartroots/controllers/favourites_controller.dart';
+import 'package:smartroots/controllers/favorites_controller.dart';
+import 'package:smartroots/controllers/routing_controller.dart';
 import 'package:smartroots/controllers/theme_controller.dart';
 import 'package:smartroots/core/config.dart';
 import 'package:smartroots/core/theme/colors.dart';
@@ -19,7 +21,7 @@ void main() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((_) => runApp(const SmartRootsApp()));
+  ]).then((_) => runApp(SmartRootsApp()));
 
   // Initialize Matomo analytics
   MatomoTracker.instance.initialize(
@@ -30,15 +32,47 @@ void main() {
 }
 
 class SmartRootsApp extends StatelessWidget {
-  const SmartRootsApp({super.key});
+  late RoutingController _routingController;
+  late CurrentPositionController _currentPositionController;
+  late ActionTrailController _actionTrailController;
+  late NavigationStatsController _navigationStatsController;
+  late NavigationInstructionsController _navigationInstructionsController;
+  late NavigationAudioController _navigationAudioController;
+  late NavigationDigressingController _navigationDigressingController;
+
+  SmartRootsApp({super.key}) {
+    _routingController = RoutingController();
+    _currentPositionController = CurrentPositionController(_routingController);
+    _actionTrailController = ActionTrailController(_routingController);
+    _navigationStatsController = NavigationStatsController(_routingController);
+    _navigationInstructionsController = NavigationInstructionsController(
+      _routingController,
+    );
+    _navigationAudioController = NavigationAudioController(
+      _navigationInstructionsController,
+    );
+    _navigationDigressingController = NavigationDigressingController(
+      _routingController,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeController(context)),
-        ChangeNotifierProvider(create: (_) => FavouritesController(context)),
+        ChangeNotifierProvider(create: (_) => FavoritesController(context)),
         ChangeNotifierProvider(create: (_) => AvailabilityController()),
+        ChangeNotifierProvider(create: (_) => AutocompleteController(context)),
+        ChangeNotifierProvider(create: (_) => _routingController),
+        ChangeNotifierProvider(create: (_) => _currentPositionController),
+        ChangeNotifierProvider(create: (_) => _actionTrailController),
+        ChangeNotifierProvider(create: (_) => _navigationStatsController),
+        ChangeNotifierProvider(
+          create: (_) => _navigationInstructionsController,
+        ),
+        ChangeNotifierProvider(create: (_) => _navigationAudioController),
+        ChangeNotifierProvider(create: (_) => _navigationDigressingController),
       ],
       child: Consumer<ThemeController>(
         builder: (context, themeController, _) => MaterialApp(
@@ -52,7 +86,12 @@ class SmartRootsApp extends StatelessWidget {
               tertiary: SmartRootsColors.maTertiaryLight,
               brightness: Brightness.light,
             ),
-            textTheme: GoogleFonts.robotoTextTheme(),
+            textTheme: GoogleFonts.robotoTextTheme(
+              Theme.of(context).textTheme.apply(
+                bodyColor: themeController.textColorLight,
+                displayColor: themeController.textColorLight,
+              ),
+            ),
             brightness: Brightness.light,
           ),
           darkTheme: ThemeData(
@@ -64,7 +103,10 @@ class SmartRootsApp extends StatelessWidget {
               brightness: Brightness.dark,
             ),
             textTheme: GoogleFonts.robotoTextTheme(
-              ThemeData(brightness: Brightness.dark).textTheme,
+              Theme.of(context).textTheme.apply(
+                bodyColor: themeController.textColorDark,
+                displayColor: themeController.textColorDark,
+              ),
             ),
             brightness: Brightness.dark,
           ),

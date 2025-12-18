@@ -18,7 +18,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<Widget> _pages = const [
     _WelcomeScreen(),
     _SymbolInformationScreen(),
+    _FavoritesInformationScreen(),
     _UserLocationScreen(),
+    _AudioGuidanceScreen(),
     _FinishScreen(),
   ];
   int _currentPage = 0;
@@ -55,50 +57,53 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: SmartRootsColors.maBlueExtraExtraDark,
-      body: Column(
-        children: [
-          SizedBox(height: 64),
-          Expanded(
-            child: PageView(
-              controller: _controller,
-              physics: const NeverScrollableScrollPhysics(),
-              onPageChanged: (index) {
-                setState(() => _currentPage = index);
-              },
-              children: _pages,
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 64),
+            Expanded(
+              child: PageView(
+                controller: _controller,
+                physics: const NeverScrollableScrollPhysics(),
+                onPageChanged: (index) {
+                  setState(() => _currentPage = index);
+                },
+                children: _pages,
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              _pages.length,
-              (index) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: index == _currentPage
-                      ? SmartRootsColors.maWhite
-                      : SmartRootsColors.maBlue,
-                  shape: BoxShape.circle,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                _pages.length,
+                (index) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: index == _currentPage
+                        ? SmartRootsColors.maWhite
+                        : SmartRootsColors.maBlue,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
-            child: AccessibleButton(
-              label: _currentPage < (_pages.length - 1)
-                  ? AppLocalizations.of(context)!.commonContinueButtonSemantic
-                  : AppLocalizations.of(
-                      context,
-                    )!.onboardingFinishHomeScreenButton,
-              style: AccessibleButtonStyle.white,
-              onTap: () => _nextPage(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+              child: AccessibleButton(
+                label: _currentPage < (_pages.length - 1)
+                    ? AppLocalizations.of(context)!.commonContinueButtonSemantic
+                    : AppLocalizations.of(
+                        context,
+                      )!.onboardingFinishHomeScreenButton,
+                style: AccessibleButtonStyle.white,
+                onTap: () => _nextPage(),
+              ),
             ),
-          ),
-          SizedBox(height: 64),
-        ],
+            Image.asset("assets/smart_logo.png", width: 64),
+            SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }
@@ -166,6 +171,7 @@ class _SymbolInformationScreen extends StatelessWidget {
           const SizedBox(height: 32),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maGreen,
+            icon: Icons.local_parking,
             hint: AppLocalizations.of(
               context,
             )!.onboardingSymbolInformationParkingAvailable,
@@ -173,6 +179,7 @@ class _SymbolInformationScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maRed,
+            icon: Icons.local_parking,
             hint: AppLocalizations.of(
               context,
             )!.onboardingSymbolInformationParkingUnavailable,
@@ -180,6 +187,7 @@ class _SymbolInformationScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maBlueExtraDark,
+            icon: Icons.local_parking,
             hint: AppLocalizations.of(
               context,
             )!.onboardingSymbolInformationParkingUnknown,
@@ -190,31 +198,72 @@ class _SymbolInformationScreen extends StatelessWidget {
   }
 }
 
+class _FavoritesInformationScreen extends StatelessWidget {
+  const _FavoritesInformationScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.onboardingFavoritesInformationTitle,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            AppLocalizations.of(
+              context,
+            )!.onboardingFavoritesInformationSubtitle,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+          ),
+          const SizedBox(height: 32),
+          _SymbolLegendRow(
+            iconColor: SmartRootsColors.maBlueExtraExtraDark,
+            icon: Icons.star_border,
+            hint: AppLocalizations.of(context)!.onboardingFavoritesNotFavorited,
+          ),
+          const SizedBox(height: 16),
+          _SymbolLegendRow(
+            iconColor: SmartRootsColors.maBlueExtraExtraDark,
+            icon: Icons.star,
+            hint: AppLocalizations.of(context)!.onboardingFavoritesFavorited,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SymbolLegendRow extends StatelessWidget {
   final Color iconColor;
+  final IconData icon;
   final String hint;
 
-  const _SymbolLegendRow({required this.iconColor, required this.hint});
+  const _SymbolLegendRow({
+    required this.iconColor,
+    required this.icon,
+    required this.hint,
+  });
 
   @override
   Widget build(BuildContext context) => Row(
     children: [
       Container(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           color: iconColor,
           borderRadius: BorderRadius.circular(32),
           border: Border.all(color: SmartRootsColors.maWhite, width: 1),
         ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.local_parking,
-              size: 16,
-              color: SmartRootsColors.maWhite,
-            ),
-          ],
-        ),
+        child: Row(children: [Icon(icon, color: SmartRootsColors.maWhite)]),
       ),
       const SizedBox(width: 16),
       Expanded(
@@ -254,6 +303,36 @@ class _UserLocationScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             AppLocalizations.of(context)!.onboardingUserLocationSubtitle,
+            style: const TextStyle(fontSize: 16, color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AudioGuidanceScreen extends StatelessWidget {
+  const _AudioGuidanceScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.onboardingAudioGuidanceTitle,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            AppLocalizations.of(context)!.onboardingAudioGuidanceSubtitle,
             style: const TextStyle(fontSize: 16, color: Colors.white),
           ),
         ],

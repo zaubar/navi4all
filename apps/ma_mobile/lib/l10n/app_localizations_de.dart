@@ -9,16 +9,19 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get appTitle => 'ParkStark';
+  String get appTitle => 'Park-Stark';
 
   @override
   String get commonModeWalking => 'Zu Fuß';
 
   @override
+  String get commonModeBicycle => 'Fahrrad';
+
+  @override
   String get commonModeBus => 'Bus';
 
   @override
-  String get commonModeTram => 'Straßenbahn';
+  String get commonModeTram => 'Tram';
 
   @override
   String get commonModeUBahn => 'U-Bahn';
@@ -27,7 +30,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonModeSBahn => 'S-Bahn';
 
   @override
-  String get commonModeTrain => 'Bahn';
+  String get commonModeTrain => 'Zug';
+
+  @override
+  String get commonModeCar => 'Auto';
 
   @override
   String get commonHomeScreenButton => 'Startbildschirm';
@@ -42,10 +48,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonContinueButtonSemantic => 'Weiter';
 
   @override
-  String get onboardingWelcomeTitle => 'Willkommen bei\nParkStark';
+  String get onboardingWelcomeTitle => 'Willkommen bei Park-Stark';
 
   @override
-  String get onboardingWelcomeSubtitle => 'Gemeinsam finden wir allgemeinen Schwerbehindertenparkplätzen – schnell und unkompliziert.';
+  String get onboardingWelcomeSubtitle => 'Gemeinsam finden wir allgemeine Schwerbehindertenparkplätze – schnell und unkompliziert.';
 
   @override
   String get onboardingWelcomeHint => 'Drücken Sie die Taste, um fortzufahren.';
@@ -66,13 +72,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingSymbolInformationParkingUnknown => 'Echtzeitstatus unbekannt';
 
   @override
+  String get onboardingFavoritesInformationTitle => 'Favoriten speichern';
+
+  @override
+  String get onboardingFavoritesInformationSubtitle => 'Speichern Sie häufig genutzte Parkplätze, um sie schnell zu finden.';
+
+  @override
+  String get onboardingFavoritesNotFavorited => 'Nicht als Favorit gespeichert';
+
+  @override
+  String get onboardingFavoritesFavorited => 'Als Favorit gespeichert';
+
+  @override
   String get onboardingUserLocationTitle => 'Standort aktivieren';
 
   @override
   String get onboardingUserLocationSubtitle => 'Mit Ihrer Standortfreigabe zeigen wir Ihnen die nächsten verfügbaren Parkplätze und navigieren Sie direkt dorthin.';
 
   @override
-  String get onboardingFinishTitle => 'Perfekt – Sie sind startbereit!';
+  String get onboardingAudioGuidanceTitle => 'Audioanleitung';
+
+  @override
+  String get onboardingAudioGuidanceSubtitle => 'Um die Audioeinstellungen für die Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
+
+  @override
+  String get onboardingFinishTitle => 'Perfekt! Sie sind startbereit.';
 
   @override
   String get onboardingFinishSubtitle => 'Entdecken Sie jetzt barrierefreie Parkplätze in Ihrer Nähe.';
@@ -97,6 +121,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get searchTextFieldHint => 'Hier suchen';
+
+  @override
+  String get searchTextFieldHintSemantic => 'Suchen Sie nach einem Zielort.';
 
   @override
   String get searchTextFieldOriginHintSemantic => 'Textfeld für die Eingabe. Tippen Sie, um einen Startort zu suchen.';
@@ -146,7 +173,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String origDestPickerDestinationSemantic(String destination) {
-    return 'Zielort: $destination. Tippen Sie, um zu ändern.';
+    return 'Zielort: $destination.';
   }
 
   @override
@@ -220,11 +247,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get errorUnableToFetchItineraries => 'Routen konnten nicht abgerufen werden.';
 
   @override
-  String get errorNoItinerariesFound => 'Keine Routen für den ausgewählten Start- und Zielort gefunden.';
-
-  @override
   String searchResultSemantic(String name, String locality) {
-    return 'Suchergebnis: $name, $locality.';
+    return 'Ergebnis: $name, $locality.';
   }
 
   @override
@@ -243,7 +267,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homeSearchButtonHint => 'Hier suchen';
 
   @override
-  String get homeChangeBaseMapTitle => 'Map Style';
+  String get homeChangeBaseMapTitle => 'Kartenstil';
 
   @override
   String get homeBaseMapStyleTitleLight => 'Hell';
@@ -327,7 +351,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get feedbackTypeHint => 'Feedbacktyp';
 
   @override
-  String get feedbackTypeLocalData => 'Lokale Daten';
+  String get feedbackTypeLocalData => 'Problem mit Parkplatz';
 
   @override
   String get feedbackTypeAppFunctionality => 'App-Funktionen';
@@ -339,7 +363,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get feedbackMessageHint => 'Ihr Nachricht';
 
   @override
-  String get feedbackSubmitButton => 'Absenden';
+  String get feedbackImageTitle => 'Bild anhängen';
+
+  @override
+  String get feedbackImageHint => 'Im nächsten Schritt können Sie ein Bild zur Unterstützung Ihres Feedbacks anhängen (optional).';
+
+  @override
+  String get feedbackResetButton => 'Zurücksetzen';
+
+  @override
+  String get feedbackSubmitButton => 'Weiter';
 
   @override
   String get feedbackFieldErrorRequired => 'Dieses Feld ist erforderlich.';
@@ -378,7 +411,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navigationRelativeDirectionSlightlyLeft => 'Leicht links';
 
   @override
-  String get navigationRelativeDirectionContinue => 'Weiter';
+  String get navigationRelativeDirectionContinue => 'Weiter geradeaus';
 
   @override
   String get navigationRelativeDirectionSlightlyRight => 'Leicht rechts';
@@ -417,6 +450,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navigationRelativeDirectionArrive => 'Ankommen';
 
   @override
+  String navigationStepDistanceToAction(String distance) {
+    return 'in $distance';
+  }
+
+  @override
   String navigationStepDistanceToActionMetres(String distance) {
     return 'in $distance Metern';
   }
@@ -445,7 +483,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get routingDisclaimerAcceptButton => 'Fortfahren';
 
   @override
-  String get availabilityChangeDialogTitle => 'Parkplatz Belegt';
+  String get availabilityChangeDialogTitle => 'Parkplatz belegt';
 
   @override
   String get availabilityChangeDialogMessage => 'Dieser Parkplatz ist jetzt belegt.\nMöchten Sie in der Nähe nach alternativen Plätzen suchen?';
@@ -455,4 +493,121 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get availabilityChangeDialogConfirmButton => 'Ja';
+
+  @override
+  String get searchScreenErrorNoSuggestions => 'Keine Ergebnisse gefunden. Versuchen Sie, nach anderen Orten, Adressen oder Verkehrsstationen zu suchen.';
+
+  @override
+  String get homeMapScreenSemantic => 'Kartenbildschirm.';
+
+  @override
+  String get homeMapScreenLayersButtonSemantic => 'Kartenstil ändern.';
+
+  @override
+  String get homeMapScreenCurrentLocationButtonSemantic => 'Gehe zum aktuellen Standort.';
+
+  @override
+  String get homeFavoritesScreenSemantic => 'Favoritenbildschirm.';
+
+  @override
+  String favoritesScreenSemantic(int count) {
+    return 'Favoritenbildschirm. Mit $count Favoriten.';
+  }
+
+  @override
+  String favoritesListItemSemantic(String name, String description, String status) {
+    return '$name, $description. Status: $status.';
+  }
+
+  @override
+  String get homeSettingsScreenSemantic => 'Einstellungsbildschirm.';
+
+  @override
+  String searchScreenSearchFieldSemantic(String input) {
+    return 'Suchfeld. Eingabe: $input.';
+  }
+
+  @override
+  String searchScreenRecentSearchItemSemantic(String name) {
+    return 'Letzte Suche: $name.';
+  }
+
+  @override
+  String placeScreenSemantic(int count, int radius) {
+    return '$count Parkplätze gefunden innerhalb von $radius Metern.';
+  }
+
+  @override
+  String placeScreenSearchBarSemantic(String name) {
+    return '$name ausgewählt. Tippen Sie, um zurückzugehen.';
+  }
+
+  @override
+  String placeScreenSearchRadiusButtonSemantic(int radius) {
+    return 'Suchbereich anpassen. Aktuell: $radius Metern.';
+  }
+
+  @override
+  String placeListItemSemantic(String name, String status) {
+    return '$name. $status.';
+  }
+
+  @override
+  String placeScreenDialogRadiusSemantic(int radius) {
+    return 'Suchradius. Aktuell $radius Metern.';
+  }
+
+  @override
+  String get placeScreenDialogRadiusIncrementSemantic => 'Suchradius um 100 Meter erhöhen.';
+
+  @override
+  String get placeScreenDialogRadiusDecrementSemantic => 'Suchradius um 100 Meter verringern.';
+
+  @override
+  String parkingLocationScreenSearchBarSemantic(String name) {
+    return '$name selected. Tap to go back.';
+  }
+
+  @override
+  String get parkingLocationScreenAddToFavoritesButtonSemantic => 'Zu Favoriten hinzufügen.';
+
+  @override
+  String get parkingLocationScreenRemoveFromFavoritesButtonSemantic => 'Aus Favoriten entfernen.';
+
+  @override
+  String get parkingLocationScreenRouteExternalButtonSemantic => 'Route mit externer Navigations-App.';
+
+  @override
+  String get parkingLocationScreenRouteInternalButtonSemantic => 'Route mit Park-Stark-App.';
+
+  @override
+  String parkingLocationScreenEstimatedDrivingTimeSemantic(String time) {
+    return 'Fahrzeit mit dem Auto: $time.';
+  }
+
+  @override
+  String parkingLocationScreenOccupancyStatusSemantic(String status) {
+    return 'Belegungsstatus: $status.';
+  }
+
+  @override
+  String get routingScreenSemantic => 'Navigationsbildschirm.';
+
+  @override
+  String get routingScreenExitRoutingButtonSemantic => 'Navigation beenden.';
+
+  @override
+  String get routingScreenReroutingDialogTitle => 'Neuberechnung der Route';
+
+  @override
+  String get routingScreenReroutingDialogMessage => 'Sie haben die geplante Route verlassen. Möchten Sie eine neue Route finden?';
+
+  @override
+  String get routingScreenReroutingDialogCancelButton => 'Abbrechen';
+
+  @override
+  String get routingScreenReroutingDialogConfirmButton => 'Neuberechnen';
+
+  @override
+  String get errorUnableToOpenPrivacyPolicy => 'Datenschutzbestimmungen können nicht geöffnet werden.';
 }

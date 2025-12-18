@@ -9,10 +9,13 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'ParkStark';
+  String get appTitle => 'Park-Stark';
 
   @override
   String get commonModeWalking => 'Walking';
+
+  @override
+  String get commonModeBicycle => 'Bicycle';
 
   @override
   String get commonModeBus => 'Bus';
@@ -21,13 +24,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonModeTram => 'Tram';
 
   @override
-  String get commonModeUBahn => 'Subway';
+  String get commonModeUBahn => 'U-Bahn';
 
   @override
   String get commonModeSBahn => 'S-Bahn';
 
   @override
   String get commonModeTrain => 'Train';
+
+  @override
+  String get commonModeCar => 'Car';
 
   @override
   String get commonHomeScreenButton => 'Home Screen';
@@ -42,7 +48,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonContinueButtonSemantic => 'Continue';
 
   @override
-  String get onboardingWelcomeTitle => 'Welcome to\nParkStark';
+  String get onboardingWelcomeTitle => 'Welcome to Park-Stark';
 
   @override
   String get onboardingWelcomeSubtitle => 'Find accessible parking spots quickly and easily.';
@@ -66,13 +72,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingSymbolInformationParkingUnknown => 'Real-time data unavailable';
 
   @override
+  String get onboardingFavoritesInformationTitle => 'Save your favourites';
+
+  @override
+  String get onboardingFavoritesInformationSubtitle => 'Favourite frequently used parking spots to find them quickly.';
+
+  @override
+  String get onboardingFavoritesNotFavorited => 'Not added to favourites';
+
+  @override
+  String get onboardingFavoritesFavorited => 'Added to favourites';
+
+  @override
   String get onboardingUserLocationTitle => 'Location access';
 
   @override
   String get onboardingUserLocationSubtitle => 'With access to your location, we can show you parking spots nearby and navigate there directly.';
 
   @override
-  String get onboardingFinishTitle => 'Perfect - You\'re all set!';
+  String get onboardingAudioGuidanceTitle => 'Audio guidance';
+
+  @override
+  String get onboardingAudioGuidanceSubtitle => 'To customise navigation audio settings, visit your device\'s sound or accessibility settings.';
+
+  @override
+  String get onboardingFinishTitle => 'Perfect! You\'re all set.';
 
   @override
   String get onboardingFinishSubtitle => 'Now you can find accessible parking spots nearby.';
@@ -97,6 +121,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchTextFieldHint => 'Search here';
+
+  @override
+  String get searchTextFieldHintSemantic => 'Search for a destination.';
 
   @override
   String get searchTextFieldOriginHintSemantic => 'Text input. Type to search for an origin location.';
@@ -146,7 +173,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String origDestPickerDestinationSemantic(String destination) {
-    return 'Destination: $destination. Tap to change.';
+    return 'Destination: $destination.';
   }
 
   @override
@@ -220,11 +247,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorUnableToFetchItineraries => 'Unable to fetch itineraries.';
 
   @override
-  String get errorNoItinerariesFound => 'No itineraries found for the selected origin and destination.';
-
-  @override
   String searchResultSemantic(String name, String locality) {
-    return 'Search result: $name, $locality.';
+    return 'Result: $name, $locality.';
   }
 
   @override
@@ -327,10 +351,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackTypeHint => 'Feedback type';
 
   @override
-  String get feedbackTypeLocalData => 'Local Data';
+  String get feedbackTypeLocalData => 'Problem with parking spot';
 
   @override
-  String get feedbackTypeAppFunctionality => 'App Features';
+  String get feedbackTypeAppFunctionality => 'App features';
 
   @override
   String get feedbackSubjectHint => 'Subject';
@@ -339,7 +363,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackMessageHint => 'Your feedback';
 
   @override
-  String get feedbackSubmitButton => 'Submit';
+  String get feedbackImageTitle => 'Attach image';
+
+  @override
+  String get feedbackImageHint => 'In the next step, attach an image in support of your feedback (optional).';
+
+  @override
+  String get feedbackResetButton => 'Reset';
+
+  @override
+  String get feedbackSubmitButton => 'Continue';
 
   @override
   String get feedbackFieldErrorRequired => 'This field is required.';
@@ -417,6 +450,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navigationRelativeDirectionArrive => 'Arrive';
 
   @override
+  String navigationStepDistanceToAction(String distance) {
+    return 'in $distance';
+  }
+
+  @override
   String navigationStepDistanceToActionMetres(String distance) {
     return 'in $distance metres';
   }
@@ -455,4 +493,121 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get availabilityChangeDialogConfirmButton => 'Yes';
+
+  @override
+  String get searchScreenErrorNoSuggestions => 'No results found. Try searching for other places, addresses or transit stations.';
+
+  @override
+  String get homeMapScreenSemantic => 'Map screen.';
+
+  @override
+  String get homeMapScreenLayersButtonSemantic => 'Change map style.';
+
+  @override
+  String get homeMapScreenCurrentLocationButtonSemantic => 'Go to current location.';
+
+  @override
+  String get homeFavoritesScreenSemantic => 'Favourites screen.';
+
+  @override
+  String favoritesScreenSemantic(int count) {
+    return 'Favorites screen. With $count favorites.';
+  }
+
+  @override
+  String favoritesListItemSemantic(String name, String description, String status) {
+    return '$name, $description. Status: $status.';
+  }
+
+  @override
+  String get homeSettingsScreenSemantic => 'Settings screen.';
+
+  @override
+  String searchScreenSearchFieldSemantic(String input) {
+    return 'Search field. Input: $input.';
+  }
+
+  @override
+  String searchScreenRecentSearchItemSemantic(String name) {
+    return 'Recent search: $name.';
+  }
+
+  @override
+  String placeScreenSemantic(int count, int radius) {
+    return '$count parking spaces found within $radius metres.';
+  }
+
+  @override
+  String placeScreenSearchBarSemantic(String name) {
+    return '$name selected. Tap to go back.';
+  }
+
+  @override
+  String placeScreenSearchRadiusButtonSemantic(int radius) {
+    return 'Change search radius. Currently: $radius metres.';
+  }
+
+  @override
+  String placeListItemSemantic(String name, String status) {
+    return '$name. $status.';
+  }
+
+  @override
+  String placeScreenDialogRadiusSemantic(int radius) {
+    return 'Search radius. Currently $radius metres.';
+  }
+
+  @override
+  String get placeScreenDialogRadiusIncrementSemantic => 'Increase radius by 100 metres.';
+
+  @override
+  String get placeScreenDialogRadiusDecrementSemantic => 'Decrease radius by 100 metres.';
+
+  @override
+  String parkingLocationScreenSearchBarSemantic(String name) {
+    return '$name selected. Tap to go back.';
+  }
+
+  @override
+  String get parkingLocationScreenAddToFavoritesButtonSemantic => 'Add to favorites.';
+
+  @override
+  String get parkingLocationScreenRemoveFromFavoritesButtonSemantic => 'Remove from favorites.';
+
+  @override
+  String get parkingLocationScreenRouteExternalButtonSemantic => 'Route using external maps app.';
+
+  @override
+  String get parkingLocationScreenRouteInternalButtonSemantic => 'Route using Park-Stark.';
+
+  @override
+  String parkingLocationScreenEstimatedDrivingTimeSemantic(String time) {
+    return 'Estimated driving time: $time.';
+  }
+
+  @override
+  String parkingLocationScreenOccupancyStatusSemantic(String status) {
+    return 'Occupancy status: $status.';
+  }
+
+  @override
+  String get routingScreenSemantic => 'Navigation screen.';
+
+  @override
+  String get routingScreenExitRoutingButtonSemantic => 'Exit navigation.';
+
+  @override
+  String get routingScreenReroutingDialogTitle => 'Rerouting';
+
+  @override
+  String get routingScreenReroutingDialogMessage => 'You have deviated from the planned route. Would you like to find a new route?';
+
+  @override
+  String get routingScreenReroutingDialogCancelButton => 'Cancel';
+
+  @override
+  String get routingScreenReroutingDialogConfirmButton => 'Reroute';
+
+  @override
+  String get errorUnableToOpenPrivacyPolicy => 'Unable to open privacy policy.';
 }

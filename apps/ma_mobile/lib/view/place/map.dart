@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:geolocator/geolocator.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:provider/provider.dart';
 import 'package:smartroots/controllers/theme_controller.dart';
@@ -21,23 +23,23 @@ class PlaceMap extends StatefulWidget {
   State<StatefulWidget> createState() => _PlaceMapState();
 }
 
-class _PlaceMapState extends State<PlaceMap> {
+class _PlaceMapState extends State<PlaceMap> with WidgetsBindingObserver {
   late MapLibreMapController _mapController;
+  Timer? _refreshTimer;
   bool _canInteractWithMap = false;
-  List<Map<String, dynamic>> _parkingSites = [];
-  final Map<String, Map<String, dynamic>> _symbolIdToSite = {};
+  List<Place> _parkingLocations = [];
   int? _lastRadius;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
 
   Future<void> _onStyleLoaded() async {
     // Clear existing markers and listeners
     await _mapController.clearCircles();
     _mapController.onCircleTapped.clear();
-
-    // Fetch and draw map layers
-    _fetchMapLayers().then((_) {
-      // Add symbol tap listener
-      _mapController.onCircleTapped.add(_onCircleTapped);
-    });
 
     // Load custom marker icons
     final bytes4 = await rootBundle.load('assets/place.png');
@@ -46,20 +48,22 @@ class _PlaceMapState extends State<PlaceMap> {
 
     await Future.delayed(const Duration(milliseconds: 250));
     setState(() => _canInteractWithMap = true);
+
+    // Fetch and draw map layers
+    _drawMapLayers();
   }
 
-  Future<void> _fetchMapLayers() async {
+  Future<void> _drawMapLayers() async {
     // Clear existing layers
     _mapController.clearSymbols();
-    _mapController.clearCircles();
     _mapController.clearFills();
 
     // Draw radius circle
     _lastRadius = widget.radius;
     _drawRadius();
 
-    // Fetch parking sites and draw markers
-    await _fetchParkingSites();
+    // Fetch parking locations and draw markers
+    await _refreshData();
 
     // Draw place marker
     _drawPlace();
@@ -81,20 +85,40 @@ class _PlaceMapState extends State<PlaceMap> {
     );
   }
 
-  Future<void> _fetchParkingSites() async {
+  Future<void> _refreshData() async {
+    // Schedule periodic data refresh
+    if (_refreshTimer == null || !_refreshTimer!.isActive) {
+      _refreshTimer = Timer.periodic(
+        Duration(seconds: Settings.dataRefreshIntervalSeconds),
+        (_) => _refreshData(),
+      );
+    }
+
+    if (!_canInteractWithMap) {
+      return;
+    }
+
+    // Fetch and display parking locations
+    await _fetchParkingLocations();
+
+    // Add feature tap listener
+    _mapController.onFeatureTapped.clear();
+    _mapController.onFeatureTapped.add(_onFeatureTapped);
+  }
+
+  Future<void> _fetchParkingLocations() async {
     POIParkingService parkingService = POIParkingService();
     try {
-      List<Map<String, dynamic>> result = await parkingService
-          .getParkingLocations(
-            focusPointLat: widget.place.coordinates.lat,
-            focusPointLon: widget.place.coordinates.lon,
-            radius: widget.radius,
-          );
-
+      List<Place> parkingLocations;
+      Map<String, dynamic> geoJson;
+      (parkingLocations, geoJson) = await parkingService.getParkingLocations(
+        focusPoint: widget.place.coordinates,
+        radius: widget.radius,
+      );
       setState(() {
-        _parkingSites = result;
+        _parkingLocations = parkingLocations;
       });
-      _updateMarkers();
+      _updateMarkers(geoJson);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -106,94 +130,71 @@ class _PlaceMapState extends State<PlaceMap> {
     }
   }
 
-  void _onCircleTapped(Circle circle) {
-    final site = _symbolIdToSite[circle.id] ?? {};
-    if (site.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ParkingLocationScreen(parkingLocation: site),
-        ),
-      );
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      // Cancel periodic data refresh
+      _refreshTimer?.cancel();
+    } else if (state == AppLifecycleState.resumed) {
+      _refreshData();
     }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _refreshTimer?.cancel();
+    _mapController.onFeatureTapped.clear();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     if (_lastRadius != null && widget.radius != _lastRadius) {
       // Radius changed, update map
-      _fetchMapLayers();
+      _drawMapLayers();
     }
 
     return Stack(
       children: [
         Consumer<ThemeController>(
-          builder: (context, themeController, child) => MapLibreMap(
-            annotationOrder: [
-              AnnotationType.fill,
-              AnnotationType.circle,
-              AnnotationType.symbol,
-            ],
-            myLocationEnabled: true,
-            styleString:
-                Settings.baseMapStyleUrls[themeController.baseMapStyle]!,
-            onMapCreated: (controller) => _mapController = controller,
-            minMaxZoomPreference: MinMaxZoomPreference(5.0, null),
-            cameraTargetBounds: CameraTargetBounds(
-              LatLngBounds(
-                southwest: LatLng(47.2701, 5.8663),
-                northeast: LatLng(55.0581, 15.0419),
+          builder: (context, themeController, child) => Semantics(
+            excludeSemantics: true,
+            child: MapLibreMap(
+              annotationOrder: [
+                AnnotationType.fill,
+                AnnotationType.circle,
+                AnnotationType.symbol,
+              ],
+              myLocationEnabled: true,
+              styleString:
+                  Settings.baseMapStyleUrls[themeController.baseMapStyle]!,
+              onMapCreated: (controller) => _mapController = controller,
+              minMaxZoomPreference: MinMaxZoomPreference(5.0, null),
+              cameraTargetBounds: CameraTargetBounds(
+                LatLngBounds(
+                  southwest: LatLng(47.2701, 5.8663),
+                  northeast: LatLng(55.0581, 15.0419),
+                ),
               ),
-            ),
-            initialCameraPosition: CameraPosition(
-              target: LatLng(
-                widget.place.coordinates.lat - 0.003,
-                widget.place.coordinates.lon,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(
+                  widget.place.coordinates.lat - 0.003,
+                  widget.place.coordinates.lon,
+                ),
+                zoom: 14,
               ),
-              zoom: 14,
+              onStyleLoadedCallback: _onStyleLoaded,
+              compassViewMargins: const Point(16, 160),
+              compassViewPosition: CompassViewPosition.topRight,
             ),
-            onStyleLoadedCallback: _onStyleLoaded,
-            compassViewMargins: const Point(16, 160),
-            compassViewPosition: CompassViewPosition.topRight,
           ),
         ),
         // Fill screen with background while map is loading
         !_canInteractWithMap
             ? Container(color: Theme.of(context).colorScheme.surface)
             : SizedBox.shrink(),
-        /*SafeArea(
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16, bottom: 128),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FloatingActionButton(
-                    onPressed: () {},
-                    child: Icon(Icons.layers),
-                  ),
-                  SizedBox(height: 16),
-                  FloatingActionButton(
-                    onPressed: () {
-                      _mapController.requestMyLocationLatLng().then((latLng) {
-                        if (latLng != null) {
-                          _mapController.animateCamera(
-                            CameraUpdate.newCameraPosition(
-                              CameraPosition(target: latLng, zoom: 14.0),
-                            ),
-                            duration: const Duration(seconds: 2),
-                          );
-                        }
-                      });
-                    },
-                    child: Icon(Icons.my_location),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),*/
       ],
     );
   }
@@ -246,30 +247,142 @@ class _PlaceMapState extends State<PlaceMap> {
     );
   }
 
-  void _updateMarkers() {
-    for (var site in _parkingSites) {
-      String markerColor = "#3685E2";
-      if (!site["has_realtime_data"]) {
-        markerColor = "#3685E2";
-      } else if (site["disabled_parking_available"]) {
-        markerColor = "#089161";
-      } else {
-        markerColor = "#F4B1A4";
+  void _updateMarkers(Map<String, dynamic> geoJson) async {
+    // Remove existing parking layers and sources
+    for (String layerId in (await _mapController.getLayerIds())) {
+      if (layerId.startsWith('parking_')) {
+        await _mapController.removeLayer(layerId);
       }
+    }
+    for (String sourceId in (await _mapController.getSourceIds())) {
+      if (sourceId.startsWith('parking_')) {
+        await _mapController.removeSource(sourceId);
+      }
+    }
 
-      _mapController
-          .addCircle(
-            CircleOptions(
-              geometry: site["coordinates"],
-              circleColor: markerColor,
-              circleRadius: 6.0,
-              circleStrokeWidth: 1.0,
-              circleStrokeColor: "#FFFFFF",
-            ),
-          )
-          .then((symbol) {
-            _symbolIdToSite[symbol.id] = site;
-          });
+    // Separate features by availability status
+    List<Map<String, dynamic>> unknownFeatures = [];
+    List<Map<String, dynamic>> occupiedFeatures = [];
+    List<Map<String, dynamic>> availableFeatures = [];
+
+    for (var feature in geoJson['features']) {
+      var properties = feature['properties'];
+      if (properties['disabled_parking_available'] == true) {
+        availableFeatures.add(feature);
+      } else if (properties['has_realtime_data'] == true) {
+        occupiedFeatures.add(feature);
+      } else {
+        unknownFeatures.add(feature);
+      }
+    }
+
+    // Create separate GeoJSON for each group
+    Map<String, dynamic> unknownGeoJson = {
+      'type': 'FeatureCollection',
+      'features': unknownFeatures,
+    };
+    Map<String, dynamic> occupiedGeoJson = {
+      'type': 'FeatureCollection',
+      'features': occupiedFeatures,
+    };
+    Map<String, dynamic> availableGeoJson = {
+      'type': 'FeatureCollection',
+      'features': availableFeatures,
+    };
+
+    // Add sources for each availability group
+    await _mapController.addSource(
+      'parking_unknown',
+      GeojsonSourceProperties(data: unknownGeoJson),
+    );
+
+    await _mapController.addSource(
+      'parking_occupied',
+      GeojsonSourceProperties(data: occupiedGeoJson),
+    );
+
+    await _mapController.addSource(
+      'parking_available',
+      GeojsonSourceProperties(data: availableGeoJson),
+    );
+
+    // Add layer for unclustered points - Unknown (Blue)
+    await _mapController.addLayer(
+      'parking_unknown',
+      'parking_unknown_layer',
+      CircleLayerProperties(
+        circleColor: '#3685E2',
+        circleRadius: 6.0,
+        circleStrokeWidth: 1.0,
+        circleStrokeColor: '#FFFFFF',
+      ),
+    );
+
+    // Add layer for unclustered points - Occupied (Red)
+    await _mapController.addLayer(
+      'parking_occupied',
+      'parking_occupied_layer',
+      CircleLayerProperties(
+        circleColor: '#F4B1A4',
+        circleRadius: 6.0,
+        circleStrokeWidth: 1.0,
+        circleStrokeColor: '#FFFFFF',
+      ),
+    );
+
+    // Add layer for unclustered points - Available (Green)
+    await _mapController.addLayer(
+      'parking_available',
+      'parking_available_layer',
+      CircleLayerProperties(
+        circleColor: '#089161',
+        circleRadius: 6.0,
+        circleStrokeWidth: 1.0,
+        circleStrokeColor: '#FFFFFF',
+      ),
+    );
+  }
+
+  void _onFeatureTapped(
+    Point<double> point,
+    LatLng coordinates,
+    String id,
+    String layerId,
+    Annotation? annotation,
+  ) {
+    // Fetch selected place by feature ID, sorted by distance
+    // This is necessary as feature IDs may not be unique
+    Place? selectedPlace;
+    List<Place> orderedParkingLocations = _parkingLocations.where((location) {
+      return location.id == id;
+    }).toList();
+    orderedParkingLocations.sort((a, b) {
+      double distanceA = Geolocator.distanceBetween(
+        coordinates.latitude,
+        coordinates.longitude,
+        a.coordinates.lat,
+        a.coordinates.lon,
+      );
+      double distanceB = Geolocator.distanceBetween(
+        coordinates.latitude,
+        coordinates.longitude,
+        b.coordinates.lat,
+        b.coordinates.lon,
+      );
+      return distanceA.compareTo(distanceB);
+    });
+    selectedPlace = orderedParkingLocations.isNotEmpty
+        ? orderedParkingLocations.first
+        : null;
+
+    if (selectedPlace != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              ParkingLocationScreen(parkingLocation: selectedPlace!),
+        ),
+      );
     }
   }
 }

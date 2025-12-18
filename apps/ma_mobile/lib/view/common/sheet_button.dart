@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smartroots/core/theme/colors.dart';
 
 class SheetButton extends StatelessWidget {
   final IconData? icon;
@@ -22,6 +21,7 @@ class SheetButton extends StatelessWidget {
     return Semantics(
       label: semanticLabel,
       excludeSemantics: semanticLabel != null,
+      button: true,
       child: Material(
         color: Theme.of(context).colorScheme.tertiary,
         borderRadius: BorderRadius.circular(32),
@@ -30,7 +30,7 @@ class SheetButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(32),
           child: Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(32)),
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
@@ -38,7 +38,7 @@ class SheetButton extends StatelessWidget {
                 icon != null
                     ? Icon(
                         icon,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
+                        color: Theme.of(context).textTheme.displayMedium!.color,
                         size: 20,
                       )
                     : const SizedBox.shrink(),
@@ -52,10 +52,7 @@ class SheetButton extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: SmartRootsColors.maBlueExtraExtraDark,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       )
                     : const SizedBox.shrink(),
@@ -68,4 +65,4 @@ class SheetButton extends StatelessWidget {
   }
 }
 
-enum AccessibleButtonStyle { white, pink, red }
+enum SheetButtonStyle { white, pink, red }

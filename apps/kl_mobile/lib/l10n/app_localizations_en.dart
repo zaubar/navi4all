@@ -45,7 +45,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingWelcomeTitle => 'Welcome to\nNavi4All';
 
   @override
-  String get onboardingWelcomeSubtitle => 'The app that guides you\nthrough Kaiserslautern.';
+  String get onboardingWelcomeSubtitle =>
+      'The app that guides you\nthrough Kaiserslautern.';
 
   @override
   String get onboardingWelcomeHint => 'Press the button to continue.';
@@ -57,7 +58,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingProfileSelectionBlindUserTitle => 'Blind User';
 
   @override
-  String get onboardingProfileSelectionVisionImpairedUserTitle => 'Vision Impaired User';
+  String get onboardingProfileSelectionVisionImpairedUserTitle =>
+      'Vision Impaired User';
 
   @override
   String get onboardingProfileSelectionGeneralUserTitle => 'General User';
@@ -66,13 +68,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingUserLocationTitle => 'We need access to your location';
 
   @override
-  String get onboardingUserLocationSubtitle => 'This is necessary for search and navigation to work correctly.';
+  String get onboardingUserLocationSubtitle =>
+      'This is necessary for search and navigation to work correctly.';
 
   @override
   String get onboardingFinishTitle => 'All done!';
 
   @override
-  String get onboardingFinishSubtitle => 'Your profile has been selected.\nWelcome to Navi4All.';
+  String get onboardingFinishSubtitle =>
+      'Your profile has been selected.\nWelcome to Navi4All.';
 
   @override
   String get onboardingFinishAppTutorialButton => 'View App Tutorial';
@@ -96,13 +100,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchTextFieldHint => 'Search here';
 
   @override
-  String get searchTextFieldOriginHintSemantic => 'Text input. Type to search for an origin location.';
+  String get searchTextFieldOriginHintSemantic =>
+      'Text input. Type to search for an origin location.';
 
   @override
-  String get searchTextFieldDestinationHintSemantic => 'Text input. Type to search for a destination location.';
+  String get searchTextFieldDestinationHintSemantic =>
+      'Text input. Type to search for a destination location.';
 
   @override
-  String get searchScreenPrompt => 'Start typing to search for places, addresses or transit stations.';
+  String get searchScreenPrompt =>
+      'Start typing to search for places, addresses or transit stations.';
 
   @override
   String get searchScreenNoResults => 'No results found.';
@@ -116,16 +123,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addressInfoWalkingRoutesButton => 'Walking';
 
   @override
-  String get addressInfoWalkingRoutesButtonSemantic => 'Find walking route options.';
+  String get addressInfoWalkingRoutesButtonSemantic => 'Find walking routes.';
 
   @override
   String get addressInfoPublicTransportRoutesButton => 'Public Transport';
 
   @override
-  String get addressInfoPublicTransportRoutesButtonSemantic => 'Find public transport route options.';
+  String get addressInfoPublicTransportRoutesButtonSemantic =>
+      'Find public transport routes.';
 
   @override
-  String get addressInfoSaveAddressButton => 'Save Address';
+  String get addressInfoSaveAddressButton => 'Favourite';
+
+  @override
+  String get addressInfoRemoveAddressButton => 'Unfavourite';
 
   @override
   String get routeOptionsRouteSettingsButton => 'Route Settings';
@@ -138,16 +149,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String origDestPickerOriginSemantic(String origin) {
-    return 'Origin: $origin. Tap to change.';
+    return 'Origin: $origin.';
   }
 
   @override
   String origDestPickerDestinationSemantic(String destination) {
-    return 'Destination: $destination. Tap to change.';
+    return 'Destination: $destination.';
   }
 
   @override
-  String journeyOptionSemantic(String duration, String startTime, String endTime, String segmentsDescription) {
+  String journeyOptionSemantic(
+    String duration,
+    String startTime,
+    String endTime,
+    String segmentsDescription,
+  ) {
     return 'Journey option: $duration, from $startTime until $endTime, consisting of $segmentsDescription.';
   }
 
@@ -194,7 +210,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String routeNavigationStepSemantic(int index, String action, String description, String timeToStep) {
+  String routeNavigationStepSemantic(
+    int index,
+    String action,
+    String description,
+    String timeToStep,
+  ) {
     return 'Navigation step $index: $action $description $timeToStep.';
   }
 
@@ -217,11 +238,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorUnableToFetchItineraries => 'Unable to fetch itineraries.';
 
   @override
-  String get errorNoItinerariesFound => 'No itineraries found for the selected origin and destination.';
-
-  @override
   String searchResultSemantic(String name, String locality) {
-    return 'Search result: $name, $locality.';
+    return 'Result: $name, $locality.';
   }
 
   @override
@@ -255,6 +273,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBaseMapStyleTitleUnknown => 'Base Map';
 
   @override
+  String get favouritesTitle => 'Favourites';
+
+  @override
+  String get favouritesScreenPrompt => 'Add favourites to see them here.';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override
@@ -279,16 +303,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackTypeHint => 'Feedback type';
 
   @override
-  String get feedbackTypeLocalData => 'Local Data';
+  String get feedbackTypeLocalData => 'Problem with local data';
 
   @override
-  String get feedbackTypeAppFunctionality => 'App Features';
+  String get feedbackTypeAppFunctionality => 'App features';
 
   @override
   String get feedbackSubjectHint => 'Subject';
 
   @override
   String get feedbackMessageHint => 'Your feedback';
+
+  @override
+  String get feedbackImageTitle => 'Attach image';
+
+  @override
+  String get feedbackImageHint =>
+      'In the next step, attach an image in support of your feedback (optional).';
+
+  @override
+  String get feedbackResetButton => 'Reset';
 
   @override
   String get feedbackSubmitButton => 'Submit';
@@ -312,5 +346,322 @@ class AppLocalizationsEn extends AppLocalizations {
   String get placeScreenChangeRadiusConfirm => 'Change';
 
   @override
-  String get userLocationDeniedSnackbarText => 'Enable location access in system settings to use this feature.';
+  String get userLocationDeniedSnackbarText =>
+      'Enable location access in system settings to use this feature.';
+
+  @override
+  String get placeScreenStartButton => 'Start';
+
+  @override
+  String get placeScreenRouteButton => 'Route';
+
+  @override
+  String get navigationRelativeDirectionDepart => 'Depart';
+
+  @override
+  String get navigationRelativeDirectionHardLeft => 'Sharp left';
+
+  @override
+  String get navigationRelativeDirectionLeft => 'Turn left';
+
+  @override
+  String get navigationRelativeDirectionSlightlyLeft => 'Slight left';
+
+  @override
+  String get navigationRelativeDirectionContinue => 'Continue';
+
+  @override
+  String get navigationRelativeDirectionSlightlyRight => 'Slight right';
+
+  @override
+  String get navigationRelativeDirectionRight => 'Turn right';
+
+  @override
+  String get navigationRelativeDirectionHardRight => 'Sharp right';
+
+  @override
+  String get navigationRelativeDirectionCircleClockwise => 'Enter roundabout';
+
+  @override
+  String get navigationRelativeDirectionCircleCounterclockwise =>
+      'Enter roundabout';
+
+  @override
+  String get navigationRelativeDirectionElevator => 'Take the lift';
+
+  @override
+  String get navigationRelativeDirectionUturnLeft => 'Make a U-turn';
+
+  @override
+  String get navigationRelativeDirectionUturnRight => 'Make a U-turn';
+
+  @override
+  String get navigationRelativeDirectionEnterStation => 'Enter station';
+
+  @override
+  String get navigationRelativeDirectionExitStation => 'Exit station';
+
+  @override
+  String get navigationRelativeDirectionFollowSigns => 'Follow signs';
+
+  @override
+  String get navigationRelativeDirectionArrive => 'Arrive';
+
+  @override
+  String itineraryDepartureTime(String time) {
+    return 'Depart $time';
+  }
+
+  @override
+  String get itineraryModeTabWalking => 'Walking';
+
+  @override
+  String get itineraryModeTabPublicTransport => 'Transit';
+
+  @override
+  String navigationStepDistanceToAction(String distance) {
+    return 'in $distance';
+  }
+
+  @override
+  String navigationStepDistanceToActionMetres(String distance) {
+    return 'in $distance metres';
+  }
+
+  @override
+  String navigationStepDistanceToActionKilometres(String distance) {
+    return 'in $distance kilometres';
+  }
+
+  @override
+  String get navigationGettingDirections => 'Getting directions';
+
+  @override
+  String get navigationNoRouteFound => 'No route found';
+
+  @override
+  String get routingDisclaimerTitle => 'Attention';
+
+  @override
+  String get routingDisclaimerMessage =>
+      'Navigation guidance provided by this app is currently under beta testing and may be incorrect. Please exercise caution and verify route details independently. Always follow local traffic laws and regulations and pay attention to road conditions.';
+
+  @override
+  String get routingDisclaimerCancelButton => 'Cancel';
+
+  @override
+  String get routingDisclaimerAcceptButton => 'Continue';
+
+  @override
+  String get errorUnableToFetchTravelTime =>
+      'Unable to fetch travel time, try again later.';
+
+  @override
+  String get routingScreenNavigationStartButton => 'Start';
+
+  @override
+  String get routingScreenNavigationPauseButton => 'Pause';
+
+  @override
+  String get routingScreenNavigationResumeButton => 'Resume';
+
+  @override
+  String get routingScreenNavigationDoneButton => 'Done';
+
+  @override
+  String get settingsOptionChangeAppProfile => 'Change Profile';
+
+  @override
+  String get modeBicycle => 'Bicycle';
+
+  @override
+  String get modeBus => 'Bus';
+
+  @override
+  String get modeCableCar => 'Cable Car';
+
+  @override
+  String get modeCar => 'Car';
+
+  @override
+  String get modeCoach => 'Coach';
+
+  @override
+  String get modeFerry => 'Ferry';
+
+  @override
+  String get modeFunicular => 'Funicular';
+
+  @override
+  String get modeGondola => 'Gondola';
+
+  @override
+  String get modeRail => 'Train';
+
+  @override
+  String get modeSubway => 'U-Bahn';
+
+  @override
+  String get modeTram => 'Tram';
+
+  @override
+  String get modeTransit => 'Transit';
+
+  @override
+  String get modeWalk => 'Walk';
+
+  @override
+  String get modeTrolleybus => 'Trolleybus';
+
+  @override
+  String get modeMonorail => 'Monorail';
+
+  @override
+  String get itineraryOptionsScreenTitle => 'Route Settings';
+
+  @override
+  String get itineraryOptionsScreenSemantic => 'Route settings screen';
+
+  @override
+  String get itineraryOptionsScreenDepartureTimeTitle => 'Departure Time';
+
+  @override
+  String get itineraryOptionsScreenRoutingProfileItem => 'Routing Profile';
+
+  @override
+  String get itineraryOptionsScreenRoutingProfileItemHint => 'Select a profile';
+
+  @override
+  String get itineraryOptionsScreenWalkingTitle => 'Walking';
+
+  @override
+  String get itineraryOptionsScreenWalkingSpeedOption => 'Speed';
+
+  @override
+  String itineraryOptionsScreenWalkingSpeedOptionSemantic(String speed) {
+    return 'Walking speed. Currently $speed.';
+  }
+
+  @override
+  String get itineraryOptionsScreenWalkingSpeedIncrementSemantic =>
+      'Increase walking speed';
+
+  @override
+  String get itineraryOptionsScreenWalkingSpeedDecrementSemantic =>
+      'Decrease walking speed';
+
+  @override
+  String get itineraryOptionsScreenWalkingAvoidOption => 'Avoid walking';
+
+  @override
+  String get itineraryOptionsScreenWalkingAvoidOptionStatusEnabledSemantic =>
+      'Enabled';
+
+  @override
+  String get itineraryOptionsScreenWalkingAvoidOptionStatusDisabledSemantic =>
+      'Disabled';
+
+  @override
+  String itineraryOptionsScreenWalkingAvoidOptionSemantic(String status) {
+    return 'Avoid walking option, $status.';
+  }
+
+  @override
+  String get itineraryOptionsScreenModesTitle => 'Transit Modes';
+
+  @override
+  String get itineraryOptionsScreenBicycleTitle => 'Bicycle';
+
+  @override
+  String get itineraryOptionsScreenBicycleSpeedOption => 'Speed';
+
+  @override
+  String get itineraryOptionsScreenBicycleSpeedIncrementSemantic =>
+      'Increase bicycle speed';
+
+  @override
+  String get itineraryOptionsScreenBicycleSpeedDecrementSemantic =>
+      'Decrease bicycle speed';
+
+  @override
+  String get itineraryOptionsScreenApplyButtonTitle => 'Apply';
+
+  @override
+  String get itineraryOptionsScreenResetButtonTitle => 'Reset';
+
+  @override
+  String get routingProfileLabelStandard => 'Standard';
+
+  @override
+  String get routingProfileLabelVisionImpairment => 'Vision Impairment';
+
+  @override
+  String get routingProfileLabelWheelchair => 'Wheelchair';
+
+  @override
+  String get routingProfileLabelRollator => 'Rollator';
+
+  @override
+  String get routingProfileLabelSlightWalkingDisability =>
+      'Slight Walking Disability';
+
+  @override
+  String get routingProfileLabelModerateWalkingDisability =>
+      'Moderate Walking Disability';
+
+  @override
+  String get routingProfileLabelSevereWalkingDisability =>
+      'Severe Walking Disability';
+
+  @override
+  String get routingProfileLabelStroller => 'Stroller';
+
+  @override
+  String get altModeButtonDone => 'Done';
+
+  @override
+  String get homeScreenSemantic => 'Home screen';
+
+  @override
+  String favoritesScreenSemantic(int count) {
+    return 'Favorites screen. With $count favorites.';
+  }
+
+  @override
+  String placeScreenSemantic(String name, String description) {
+    return '$name, in $description.';
+  }
+
+  @override
+  String get settingsScreenSemantic => 'Settings screen';
+
+  @override
+  String get placeScreenSearchBarSemantic => 'Search for another location.';
+
+  @override
+  String searchScreenSearchFieldSemantic(String input) {
+    return 'Search field. Input: $input.';
+  }
+
+  @override
+  String get itinerariesScreenSemantic => 'Journeys screen.';
+
+  @override
+  String get routingScreenSemantic => 'Navigation screen.';
+
+  @override
+  String get routingScreenExitRoutingButtonSemantic => 'Exit navigation.';
+
+  @override
+  String get routingScreenReroutingDialogTitle => 'Rerouting';
+
+  @override
+  String get routingScreenReroutingDialogMessage =>
+      'You have deviated from the planned route. Would you like to find a new route?';
+
+  @override
+  String get routingScreenReroutingDialogCancelButton => 'Cancel';
+
+  @override
+  String get routingScreenReroutingDialogConfirmButton => 'Reroute';
 }

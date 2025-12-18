@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:smartroots/core/analytics/events.dart';
+import 'package:smartroots/core/config.dart';
+import 'package:smartroots/core/persistence/preference_helper.dart';
 import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
-import 'package:smartroots/view/search/search.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 import 'package:smartroots/view/common/sliding_bottom_sheet.dart';
 import 'package:smartroots/view/place/map.dart';
@@ -13,6 +16,7 @@ import 'package:smartroots/view/parking_location/parking_location.dart';
 import 'package:smartroots/services/poi_parking.dart';
 import 'package:smartroots/view/common/sheet_button.dart';
 import 'package:smartroots/core/utils.dart';
+import 'package:smartroots/view/place/search_radius_dialog.dart';
 
 class PlaceScreen extends StatefulWidget {
   final Place place;
@@ -22,29 +26,51 @@ class PlaceScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _PlaceScreenState();
 }
 
-class _PlaceScreenState extends State<PlaceScreen> {
-  int _selectedRadius = 500;
-  int _changedRadius = 500;
-  List<Map<String, dynamic>> _parkingSites = [];
+class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
+  Timer? _refreshTimer;
+  int _selectedRadius = Settings.searchRadiusDefault;
+  List<Place> _parkingLocations = [];
 
   @override
   void initState() {
-    _fetchParkingSites();
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _initializeSearchRadius();
   }
 
-  Future<void> _fetchParkingSites() async {
+  Future<void> _initializeSearchRadius() async {
+    int searchRadius = await PreferenceHelper.getSearchRadius();
+    setState(() {
+      _selectedRadius = searchRadius;
+    });
+
+    _refreshData();
+  }
+
+  Future<void> _refreshData() async {
+    // Schedule periodic data refresh
+    if (_refreshTimer == null || !_refreshTimer!.isActive) {
+      _refreshTimer = Timer.periodic(
+        Duration(seconds: Settings.dataRefreshIntervalSeconds),
+        (_) => _refreshData(),
+      );
+    }
+
+    // Fetch parking locations
+    await _fetchParkingLocations();
+  }
+
+  Future<void> _fetchParkingLocations() async {
     POIParkingService parkingService = POIParkingService();
     try {
-      List<Map<String, dynamic>> result = await parkingService
-          .getParkingLocations(
-            focusPointLat: widget.place.coordinates.lat,
-            focusPointLon: widget.place.coordinates.lon,
-            radius: _selectedRadius,
-          );
+      List<Place> result;
+      (result, _) = await parkingService.getParkingLocations(
+        focusPoint: widget.place.coordinates,
+        radius: _selectedRadius,
+      );
 
       setState(() {
-        _parkingSites = result;
+        _parkingLocations = result;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -61,120 +87,47 @@ class _PlaceScreenState extends State<PlaceScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(32),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    AppLocalizations.of(context)!.placeScreenChangeRadiusButton,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 32),
-                DropdownMenu(
-                  inputDecorationTheme: InputDecorationTheme(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  textStyle: TextStyle(
-                    color: SmartRootsColors.maBlueExtraExtraDark,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  dropdownMenuEntries: [
-                    for (var value in [100, 200, 300, 400, 500])
-                      DropdownMenuEntry(
-                        value: value,
-                        label: '${value}m',
-                        labelWidget: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                '${value}m',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: SmartRootsColors.maBlueExtraExtraDark,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                  initialSelection: _selectedRadius,
-                  onSelected: (value) {
-                    setState(() {
-                      _changedRadius = value as int;
-                    });
-                  },
-                ),
-                SizedBox(height: 32),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SheetButton(
-                        label: AppLocalizations.of(
-                          context,
-                        )!.placeScreenChangeRadiusCancel,
-                        onTap: () {
-                          _changedRadius = _selectedRadius;
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: SheetButton(
-                        label: AppLocalizations.of(
-                          context,
-                        )!.placeScreenChangeRadiusConfirm,
-                        onTap: () {
-                          setState(() {
-                            _selectedRadius = _changedRadius;
-                            _fetchParkingSites();
-                            Navigator.of(context).pop();
-                          });
+        return SearchRadiusDialog(
+          selectedRadius: _selectedRadius,
+          onConfirm: (changedRadius) {
+            setState(() {
+              _selectedRadius = changedRadius;
+            });
+            _refreshData();
 
-                          // Analytics event
-                          MatomoTracker.instance.trackEvent(
-                            eventInfo: EventInfo(
-                              category: EventCategory.placeScreen.toString(),
-                              action: EventAction.placeScreenSearchRadiusChanged
-                                  .toString(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+            // Analytics event
+            MatomoTracker.instance.trackEvent(
+              eventInfo: EventInfo(
+                category: EventCategory.placeScreen.toString(),
+                action: EventAction.placeScreenSearchRadiusChanged.toString(),
+              ),
+            );
+
+            // Update saved search radius
+            PreferenceHelper.setSearchRadius(changedRadius);
+          },
+          onCancel: () {},
         );
       },
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      // Cancel periodic data refresh
+      _refreshTimer?.cancel();
+    } else if (state == AppLifecycleState.resumed) {
+      _refreshData();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -183,62 +136,76 @@ class _PlaceScreenState extends State<PlaceScreen> {
       body: Stack(
         children: [
           PlaceMap(place: widget.place, radius: _selectedRadius),
-          SlidingBottomSheet(
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16.0,
-                      horizontal: 24.0,
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            widget.place.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+          Semantics(
+            label: AppLocalizations.of(
+              context,
+            )!.placeScreenSemantic(_parkingLocations.length, _selectedRadius),
+            child: SlidingBottomSheet(
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 24.0,
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Semantics(
+                              excludeSemantics: true,
+                              child: Text(
+                                widget.place.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            widget.place.description,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: SmartRootsColors.maBlueExtraExtraDark,
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Semantics(
+                              excludeSemantics: true,
+                              child: Text(
+                                widget.place.description,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: SheetButton(
-                            label: AppLocalizations.of(
-                              context,
-                            )!.placeScreenChangeRadiusButton,
-                            onTap: () => _changeRadiusOnTap(),
-                            shrinkWrap: true,
+                          SizedBox(height: 16),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: SheetButton(
+                              label: AppLocalizations.of(
+                                context,
+                              )!.placeScreenChangeRadiusButton,
+                              semanticLabel: AppLocalizations.of(context)!
+                                  .placeScreenSearchRadiusButtonSemantic(
+                                    _selectedRadius,
+                                  ),
+                              onTap: () => _changeRadiusOnTap(),
+                              shrinkWrap: true,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ],
+              ),
+              listItems: [
+                for (Place parkingLocation in _parkingLocations)
+                  PlaceListItem(
+                    place: widget.place,
+                    parkingLocation: parkingLocation,
+                  ),
               ],
             ),
-            listItems: [
-              for (var site in _parkingSites)
-                PlaceListItem(place: widget.place, parkingSite: site),
-            ],
           ),
           SafeArea(
             child: Align(
@@ -248,44 +215,47 @@ class _PlaceScreenState extends State<PlaceScreen> {
                 child: Material(
                   elevation: 4,
                   borderRadius: BorderRadius.circular(28),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const SearchScreen(),
+                  child: Semantics(
+                    label: AppLocalizations.of(
+                      context,
+                    )!.placeScreenSearchBarSemantic(widget.place.name),
+                    excludeSemantics: true,
+                    button: true,
+                    focused: true,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        height: 56,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(32),
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
-                      );
-                    },
-                    child: Container(
-                      height: 56,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(32),
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              color: SmartRootsColors.maBlueExtraExtraDark,
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          Expanded(
-                            child: Text(
-                              widget.place.name,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: SmartRootsColors.maBlueExtraExtraDark,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
                             ),
-                          ),
-                          SizedBox(width: 16),
-                        ],
+                            Expanded(
+                              child: Text(
+                                widget.place.name,
+                                style: const TextStyle(fontSize: 16),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -301,10 +271,10 @@ class _PlaceScreenState extends State<PlaceScreen> {
 
 class PlaceListItem extends StatelessWidget {
   final Place place;
-  final Map<String, dynamic> parkingSite;
+  final Place parkingLocation;
   const PlaceListItem({
     required this.place,
-    required this.parkingSite,
+    required this.parkingLocation,
     super.key,
   });
 
@@ -314,87 +284,88 @@ class PlaceListItem extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => ParkingLocationScreen(
-              place: place,
-              parkingLocation: parkingSite,
-            ),
+            builder: (context) =>
+                ParkingLocationScreen(parkingLocation: parkingLocation),
           ),
         );
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    parkingSite["name"],
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: SmartRootsColors.maBlueExtraExtraDark,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.directions_car_outlined,
-                        color: SmartRootsColors.maBlueExtraExtraDark,
-                        size: 20,
+      child: Semantics(
+        excludeSemantics: true,
+        label: AppLocalizations.of(context)!.placeListItemSemantic(
+          parkingLocation.name,
+          TextFormatter.getOccupancyText(context, parkingLocation),
+        ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      parkingLocation.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          '',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: SmartRootsColors.maBlueExtraExtraDark,
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.directions_car_outlined,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium!.color,
+                          size: 20,
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(width: 16),
-            Text(
-              getOccupancyText(context, parkingSite),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: SmartRootsColors.maBlueExtraExtraDark,
-                fontSize: 16,
+              SizedBox(width: 16),
+              Text(
+                TextFormatter.getOccupancyText(context, parkingLocation),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 16),
               ),
-            ),
-            SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: parkingSite['has_realtime_data']
-                    ? parkingSite['disabled_parking_available']
-                          ? SmartRootsColors.maGreen
-                          : SmartRootsColors.maRed
-                    : SmartRootsColors.maBlueExtraDark,
-                borderRadius: BorderRadius.circular(32),
+              SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: (parkingLocation.attributes?['has_realtime_data'])
+                      ? (parkingLocation
+                                .attributes?['disabled_parking_available'])
+                            ? SmartRootsColors.maGreen
+                            : SmartRootsColors.maRed
+                      : SmartRootsColors.maBlueExtraDark,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.local_parking,
+                      size: 16,
+                      color: SmartRootsColors.maWhite,
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.local_parking,
-                    size: 16,
-                    color: SmartRootsColors.maWhite,
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

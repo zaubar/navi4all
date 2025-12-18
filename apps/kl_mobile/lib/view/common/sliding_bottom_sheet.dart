@@ -27,60 +27,73 @@ class SlidingBottomSheet extends StatelessWidget {
       minChildSize: minSize,
       initialChildSize: initSize,
       maxChildSize: maxSize,
-      builder: ((BuildContext context, ScrollController controller) => Material(
-        elevation: 4.0,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(32.0),
-          topRight: Radius.circular(32.0),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(32.0),
-              topRight: Radius.circular(32.0),
-            ),
-          ),
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 16.0),
-              Container(
-                width: 32.0,
-                height: 4.0,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(8.0),
+      builder: ((BuildContext context, ScrollController controller) =>
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  spreadRadius: 0,
+                  blurRadius: 2.0,
+                  offset: Offset(0, -1.0),
                 ),
+              ],
+            ),
+            child: Material(
+              elevation: 4.0,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32.0),
+                topRight: Radius.circular(32.0),
               ),
-              SingleChildScrollView(
-                controller: controller,
-                child: stickyHeader,
+              child: Column(
+                children: <Widget>[
+                  SizedBox(height: 16.0),
+                  Container(
+                    width: 32.0,
+                    height: 4.0,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    controller: controller,
+                    child: stickyHeader,
+                  ),
+                  listItems != null
+                      ? Expanded(
+                          child: ListView.separated(
+                            padding: EdgeInsets.zero,
+                            controller: controller,
+                            shrinkWrap: true,
+                            itemCount: listItems!.length,
+                            itemBuilder: (BuildContext context, int index) =>
+                                listItems![index],
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
+                                    const Divider(
+                                      height: 1,
+                                      color: Navi4AllColors.klPink,
+                                      indent: 16,
+                                      endIndent: 16,
+                                    ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                  body != null
+                      ? SingleChildScrollView(
+                          controller: controller,
+                          child: body!,
+                        )
+                      : SizedBox.shrink(),
+                ],
               ),
-              listItems != null
-                  ? Expanded(
-                      child: ListView.separated(
-                        padding: EdgeInsets.zero,
-                        controller: controller,
-                        shrinkWrap: true,
-                        itemCount: listItems!.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                            listItems![index],
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const Divider(
-                              height: 1,
-                              color: Navi4AllColors.klPink,
-                              indent: 16,
-                              endIndent: 16,
-                            ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
-              body != null
-                  ? SingleChildScrollView(controller: controller, child: body!)
-                  : SizedBox.shrink(),
-            ],
-          ),
-        ),
-      )),
+            ),
+          )),
     ),
   );
 }

@@ -308,7 +308,7 @@ abstract class AppLocalizations {
   /// No description provided for @addressInfoWalkingRoutesButtonSemantic.
   ///
   /// In en, this message translates to:
-  /// **'Find walking route options.'**
+  /// **'Find walking routes.'**
   String get addressInfoWalkingRoutesButtonSemantic;
 
   /// No description provided for @addressInfoPublicTransportRoutesButton.
@@ -320,14 +320,20 @@ abstract class AppLocalizations {
   /// No description provided for @addressInfoPublicTransportRoutesButtonSemantic.
   ///
   /// In en, this message translates to:
-  /// **'Find public transport route options.'**
+  /// **'Find public transport routes.'**
   String get addressInfoPublicTransportRoutesButtonSemantic;
 
   /// No description provided for @addressInfoSaveAddressButton.
   ///
   /// In en, this message translates to:
-  /// **'Save Address'**
+  /// **'Favourite'**
   String get addressInfoSaveAddressButton;
+
+  /// No description provided for @addressInfoRemoveAddressButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfavourite'**
+  String get addressInfoRemoveAddressButton;
 
   /// No description provided for @routeOptionsRouteSettingsButton.
   ///
@@ -350,13 +356,13 @@ abstract class AppLocalizations {
   /// No description provided for @origDestPickerOriginSemantic.
   ///
   /// In en, this message translates to:
-  /// **'Origin: {origin}. Tap to change.'**
+  /// **'Origin: {origin}.'**
   String origDestPickerOriginSemantic(String origin);
 
   /// No description provided for @origDestPickerDestinationSemantic.
   ///
   /// In en, this message translates to:
-  /// **'Destination: {destination}. Tap to change.'**
+  /// **'Destination: {destination}.'**
   String origDestPickerDestinationSemantic(String destination);
 
   /// No description provided for @journeyOptionSemantic.
@@ -467,16 +473,10 @@ abstract class AppLocalizations {
   /// **'Unable to fetch itineraries.'**
   String get errorUnableToFetchItineraries;
 
-  /// No description provided for @errorNoItinerariesFound.
-  ///
-  /// In en, this message translates to:
-  /// **'No itineraries found for the selected origin and destination.'**
-  String get errorNoItinerariesFound;
-
   /// No description provided for @searchResultSemantic.
   ///
   /// In en, this message translates to:
-  /// **'Search result: {name}, {locality}.'**
+  /// **'Result: {name}, {locality}.'**
   String searchResultSemantic(String name, String locality);
 
   /// No description provided for @origDestCurrentLocation.
@@ -539,6 +539,18 @@ abstract class AppLocalizations {
   /// **'Base Map'**
   String get homeBaseMapStyleTitleUnknown;
 
+  /// No description provided for @favouritesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favourites'**
+  String get favouritesTitle;
+
+  /// No description provided for @favouritesScreenPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Add favourites to see them here.'**
+  String get favouritesScreenPrompt;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:
@@ -590,13 +602,13 @@ abstract class AppLocalizations {
   /// No description provided for @feedbackTypeLocalData.
   ///
   /// In en, this message translates to:
-  /// **'Local Data'**
+  /// **'Problem with local data'**
   String get feedbackTypeLocalData;
 
   /// No description provided for @feedbackTypeAppFunctionality.
   ///
   /// In en, this message translates to:
-  /// **'App Features'**
+  /// **'App features'**
   String get feedbackTypeAppFunctionality;
 
   /// No description provided for @feedbackSubjectHint.
@@ -610,6 +622,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your feedback'**
   String get feedbackMessageHint;
+
+  /// No description provided for @feedbackImageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach image'**
+  String get feedbackImageTitle;
+
+  /// No description provided for @feedbackImageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'In the next step, attach an image in support of your feedback (optional).'**
+  String get feedbackImageHint;
+
+  /// No description provided for @feedbackResetButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get feedbackResetButton;
 
   /// No description provided for @feedbackSubmitButton.
   ///
@@ -658,6 +688,576 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enable location access in system settings to use this feature.'**
   String get userLocationDeniedSnackbarText;
+
+  /// No description provided for @placeScreenStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get placeScreenStartButton;
+
+  /// No description provided for @placeScreenRouteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Route'**
+  String get placeScreenRouteButton;
+
+  /// No description provided for @navigationRelativeDirectionDepart.
+  ///
+  /// In en, this message translates to:
+  /// **'Depart'**
+  String get navigationRelativeDirectionDepart;
+
+  /// No description provided for @navigationRelativeDirectionHardLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharp left'**
+  String get navigationRelativeDirectionHardLeft;
+
+  /// No description provided for @navigationRelativeDirectionLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn left'**
+  String get navigationRelativeDirectionLeft;
+
+  /// No description provided for @navigationRelativeDirectionSlightlyLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Slight left'**
+  String get navigationRelativeDirectionSlightlyLeft;
+
+  /// No description provided for @navigationRelativeDirectionContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get navigationRelativeDirectionContinue;
+
+  /// No description provided for @navigationRelativeDirectionSlightlyRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Slight right'**
+  String get navigationRelativeDirectionSlightlyRight;
+
+  /// No description provided for @navigationRelativeDirectionRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn right'**
+  String get navigationRelativeDirectionRight;
+
+  /// No description provided for @navigationRelativeDirectionHardRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharp right'**
+  String get navigationRelativeDirectionHardRight;
+
+  /// No description provided for @navigationRelativeDirectionCircleClockwise.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter roundabout'**
+  String get navigationRelativeDirectionCircleClockwise;
+
+  /// No description provided for @navigationRelativeDirectionCircleCounterclockwise.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter roundabout'**
+  String get navigationRelativeDirectionCircleCounterclockwise;
+
+  /// No description provided for @navigationRelativeDirectionElevator.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the lift'**
+  String get navigationRelativeDirectionElevator;
+
+  /// No description provided for @navigationRelativeDirectionUturnLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Make a U-turn'**
+  String get navigationRelativeDirectionUturnLeft;
+
+  /// No description provided for @navigationRelativeDirectionUturnRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Make a U-turn'**
+  String get navigationRelativeDirectionUturnRight;
+
+  /// No description provided for @navigationRelativeDirectionEnterStation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter station'**
+  String get navigationRelativeDirectionEnterStation;
+
+  /// No description provided for @navigationRelativeDirectionExitStation.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit station'**
+  String get navigationRelativeDirectionExitStation;
+
+  /// No description provided for @navigationRelativeDirectionFollowSigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow signs'**
+  String get navigationRelativeDirectionFollowSigns;
+
+  /// No description provided for @navigationRelativeDirectionArrive.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrive'**
+  String get navigationRelativeDirectionArrive;
+
+  /// No description provided for @itineraryDepartureTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Depart {time}'**
+  String itineraryDepartureTime(String time);
+
+  /// No description provided for @itineraryModeTabWalking.
+  ///
+  /// In en, this message translates to:
+  /// **'Walking'**
+  String get itineraryModeTabWalking;
+
+  /// No description provided for @itineraryModeTabPublicTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit'**
+  String get itineraryModeTabPublicTransport;
+
+  /// No description provided for @navigationStepDistanceToAction.
+  ///
+  /// In en, this message translates to:
+  /// **'in {distance}'**
+  String navigationStepDistanceToAction(String distance);
+
+  /// No description provided for @navigationStepDistanceToActionMetres.
+  ///
+  /// In en, this message translates to:
+  /// **'in {distance} metres'**
+  String navigationStepDistanceToActionMetres(String distance);
+
+  /// No description provided for @navigationStepDistanceToActionKilometres.
+  ///
+  /// In en, this message translates to:
+  /// **'in {distance} kilometres'**
+  String navigationStepDistanceToActionKilometres(String distance);
+
+  /// No description provided for @navigationGettingDirections.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting directions'**
+  String get navigationGettingDirections;
+
+  /// No description provided for @navigationNoRouteFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No route found'**
+  String get navigationNoRouteFound;
+
+  /// No description provided for @routingDisclaimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention'**
+  String get routingDisclaimerTitle;
+
+  /// No description provided for @routingDisclaimerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation guidance provided by this app is currently under beta testing and may be incorrect. Please exercise caution and verify route details independently. Always follow local traffic laws and regulations and pay attention to road conditions.'**
+  String get routingDisclaimerMessage;
+
+  /// No description provided for @routingDisclaimerCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get routingDisclaimerCancelButton;
+
+  /// No description provided for @routingDisclaimerAcceptButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get routingDisclaimerAcceptButton;
+
+  /// No description provided for @errorUnableToFetchTravelTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to fetch travel time, try again later.'**
+  String get errorUnableToFetchTravelTime;
+
+  /// No description provided for @routingScreenNavigationStartButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get routingScreenNavigationStartButton;
+
+  /// No description provided for @routingScreenNavigationPauseButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get routingScreenNavigationPauseButton;
+
+  /// No description provided for @routingScreenNavigationResumeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get routingScreenNavigationResumeButton;
+
+  /// No description provided for @routingScreenNavigationDoneButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get routingScreenNavigationDoneButton;
+
+  /// No description provided for @settingsOptionChangeAppProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Profile'**
+  String get settingsOptionChangeAppProfile;
+
+  /// No description provided for @modeBicycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bicycle'**
+  String get modeBicycle;
+
+  /// No description provided for @modeBus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus'**
+  String get modeBus;
+
+  /// No description provided for @modeCableCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Car'**
+  String get modeCableCar;
+
+  /// No description provided for @modeCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Car'**
+  String get modeCar;
+
+  /// No description provided for @modeCoach.
+  ///
+  /// In en, this message translates to:
+  /// **'Coach'**
+  String get modeCoach;
+
+  /// No description provided for @modeFerry.
+  ///
+  /// In en, this message translates to:
+  /// **'Ferry'**
+  String get modeFerry;
+
+  /// No description provided for @modeFunicular.
+  ///
+  /// In en, this message translates to:
+  /// **'Funicular'**
+  String get modeFunicular;
+
+  /// No description provided for @modeGondola.
+  ///
+  /// In en, this message translates to:
+  /// **'Gondola'**
+  String get modeGondola;
+
+  /// No description provided for @modeRail.
+  ///
+  /// In en, this message translates to:
+  /// **'Train'**
+  String get modeRail;
+
+  /// No description provided for @modeSubway.
+  ///
+  /// In en, this message translates to:
+  /// **'U-Bahn'**
+  String get modeSubway;
+
+  /// No description provided for @modeTram.
+  ///
+  /// In en, this message translates to:
+  /// **'Tram'**
+  String get modeTram;
+
+  /// No description provided for @modeTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit'**
+  String get modeTransit;
+
+  /// No description provided for @modeWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk'**
+  String get modeWalk;
+
+  /// No description provided for @modeTrolleybus.
+  ///
+  /// In en, this message translates to:
+  /// **'Trolleybus'**
+  String get modeTrolleybus;
+
+  /// No description provided for @modeMonorail.
+  ///
+  /// In en, this message translates to:
+  /// **'Monorail'**
+  String get modeMonorail;
+
+  /// No description provided for @itineraryOptionsScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Route Settings'**
+  String get itineraryOptionsScreenTitle;
+
+  /// No description provided for @itineraryOptionsScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Route settings screen'**
+  String get itineraryOptionsScreenSemantic;
+
+  /// No description provided for @itineraryOptionsScreenDepartureTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Departure Time'**
+  String get itineraryOptionsScreenDepartureTimeTitle;
+
+  /// No description provided for @itineraryOptionsScreenRoutingProfileItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Routing Profile'**
+  String get itineraryOptionsScreenRoutingProfileItem;
+
+  /// No description provided for @itineraryOptionsScreenRoutingProfileItemHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a profile'**
+  String get itineraryOptionsScreenRoutingProfileItemHint;
+
+  /// No description provided for @itineraryOptionsScreenWalkingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Walking'**
+  String get itineraryOptionsScreenWalkingTitle;
+
+  /// No description provided for @itineraryOptionsScreenWalkingSpeedOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get itineraryOptionsScreenWalkingSpeedOption;
+
+  /// No description provided for @itineraryOptionsScreenWalkingSpeedOptionSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Walking speed. Currently {speed}.'**
+  String itineraryOptionsScreenWalkingSpeedOptionSemantic(String speed);
+
+  /// No description provided for @itineraryOptionsScreenWalkingSpeedIncrementSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase walking speed'**
+  String get itineraryOptionsScreenWalkingSpeedIncrementSemantic;
+
+  /// No description provided for @itineraryOptionsScreenWalkingSpeedDecrementSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease walking speed'**
+  String get itineraryOptionsScreenWalkingSpeedDecrementSemantic;
+
+  /// No description provided for @itineraryOptionsScreenWalkingAvoidOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid walking'**
+  String get itineraryOptionsScreenWalkingAvoidOption;
+
+  /// No description provided for @itineraryOptionsScreenWalkingAvoidOptionStatusEnabledSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get itineraryOptionsScreenWalkingAvoidOptionStatusEnabledSemantic;
+
+  /// No description provided for @itineraryOptionsScreenWalkingAvoidOptionStatusDisabledSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get itineraryOptionsScreenWalkingAvoidOptionStatusDisabledSemantic;
+
+  /// No description provided for @itineraryOptionsScreenWalkingAvoidOptionSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Avoid walking option, {status}.'**
+  String itineraryOptionsScreenWalkingAvoidOptionSemantic(String status);
+
+  /// No description provided for @itineraryOptionsScreenModesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit Modes'**
+  String get itineraryOptionsScreenModesTitle;
+
+  /// No description provided for @itineraryOptionsScreenBicycleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bicycle'**
+  String get itineraryOptionsScreenBicycleTitle;
+
+  /// No description provided for @itineraryOptionsScreenBicycleSpeedOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get itineraryOptionsScreenBicycleSpeedOption;
+
+  /// No description provided for @itineraryOptionsScreenBicycleSpeedIncrementSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase bicycle speed'**
+  String get itineraryOptionsScreenBicycleSpeedIncrementSemantic;
+
+  /// No description provided for @itineraryOptionsScreenBicycleSpeedDecrementSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease bicycle speed'**
+  String get itineraryOptionsScreenBicycleSpeedDecrementSemantic;
+
+  /// No description provided for @itineraryOptionsScreenApplyButtonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get itineraryOptionsScreenApplyButtonTitle;
+
+  /// No description provided for @itineraryOptionsScreenResetButtonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get itineraryOptionsScreenResetButtonTitle;
+
+  /// No description provided for @routingProfileLabelStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get routingProfileLabelStandard;
+
+  /// No description provided for @routingProfileLabelVisionImpairment.
+  ///
+  /// In en, this message translates to:
+  /// **'Vision Impairment'**
+  String get routingProfileLabelVisionImpairment;
+
+  /// No description provided for @routingProfileLabelWheelchair.
+  ///
+  /// In en, this message translates to:
+  /// **'Wheelchair'**
+  String get routingProfileLabelWheelchair;
+
+  /// No description provided for @routingProfileLabelRollator.
+  ///
+  /// In en, this message translates to:
+  /// **'Rollator'**
+  String get routingProfileLabelRollator;
+
+  /// No description provided for @routingProfileLabelSlightWalkingDisability.
+  ///
+  /// In en, this message translates to:
+  /// **'Slight Walking Disability'**
+  String get routingProfileLabelSlightWalkingDisability;
+
+  /// No description provided for @routingProfileLabelModerateWalkingDisability.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate Walking Disability'**
+  String get routingProfileLabelModerateWalkingDisability;
+
+  /// No description provided for @routingProfileLabelSevereWalkingDisability.
+  ///
+  /// In en, this message translates to:
+  /// **'Severe Walking Disability'**
+  String get routingProfileLabelSevereWalkingDisability;
+
+  /// No description provided for @routingProfileLabelStroller.
+  ///
+  /// In en, this message translates to:
+  /// **'Stroller'**
+  String get routingProfileLabelStroller;
+
+  /// No description provided for @altModeButtonDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get altModeButtonDone;
+
+  /// No description provided for @homeScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Home screen'**
+  String get homeScreenSemantic;
+
+  /// No description provided for @favoritesScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites screen. With {count} favorites.'**
+  String favoritesScreenSemantic(int count);
+
+  /// No description provided for @placeScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, in {description}.'**
+  String placeScreenSemantic(String name, String description);
+
+  /// No description provided for @settingsScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings screen'**
+  String get settingsScreenSemantic;
+
+  /// No description provided for @placeScreenSearchBarSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for another location.'**
+  String get placeScreenSearchBarSemantic;
+
+  /// No description provided for @searchScreenSearchFieldSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Search field. Input: {input}.'**
+  String searchScreenSearchFieldSemantic(String input);
+
+  /// No description provided for @itinerariesScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Journeys screen.'**
+  String get itinerariesScreenSemantic;
+
+  /// No description provided for @routingScreenSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation screen.'**
+  String get routingScreenSemantic;
+
+  /// No description provided for @routingScreenExitRoutingButtonSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit navigation.'**
+  String get routingScreenExitRoutingButtonSemantic;
+
+  /// No description provided for @routingScreenReroutingDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rerouting'**
+  String get routingScreenReroutingDialogTitle;
+
+  /// No description provided for @routingScreenReroutingDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have deviated from the planned route. Would you like to find a new route?'**
+  String get routingScreenReroutingDialogMessage;
+
+  /// No description provided for @routingScreenReroutingDialogCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get routingScreenReroutingDialogCancelButton;
+
+  /// No description provided for @routingScreenReroutingDialogConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reroute'**
+  String get routingScreenReroutingDialogConfirmButton;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

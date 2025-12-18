@@ -42,14 +42,15 @@
         }
     },
     "addressInfoWalkingRoutesButton": "Walking",
-    "addressInfoWalkingRoutesButtonSemantic": "Find walking route options.",
+    "addressInfoWalkingRoutesButtonSemantic": "Find walking routes.",
     "addressInfoPublicTransportRoutesButton": "Public Transport",
-    "addressInfoPublicTransportRoutesButtonSemantic": "Find public transport route options.",
-    "addressInfoSaveAddressButton": "Save Address",
+    "addressInfoPublicTransportRoutesButtonSemantic": "Find public transport routes.",
+    "addressInfoSaveAddressButton": "Favourite",
+    "addressInfoRemoveAddressButton": "Unfavourite",
     "routeOptionsRouteSettingsButton": "Route Settings",
     "routeOptionsSaveRouteButton": "Save Route",
     "origDestPickerSwapButtonSemantic": "Swap origin and destination.",
-    "origDestPickerOriginSemantic": "Origin: {origin}. Tap to change.",
+    "origDestPickerOriginSemantic": "Origin: {origin}.",
     "@origDestPickerOriginSemantic": {
         "placeholders": {
             "origin": {
@@ -57,7 +58,7 @@
             }
         }
     },
-    "origDestPickerDestinationSemantic": "Destination: {destination}. Tap to change.",
+    "origDestPickerDestinationSemantic": "Destination: {destination}.",
     "@origDestPickerDestinationSemantic": {
         "placeholders": {
             "destination": {
@@ -163,8 +164,7 @@
     "routeNavigationPauseButtonResumeText": "Resume",
     "routeNavigationStopButton": "Stop",
     "errorUnableToFetchItineraries": "Unable to fetch itineraries.",
-    "errorNoItinerariesFound": "No itineraries found for the selected origin and destination.",
-    "searchResultSemantic": "Search result: {name}, {locality}.",
+    "searchResultSemantic": "Result: {name}, {locality}.",
     "@searchResultSemantic": {
         "placeholders": {
             "name": {
@@ -185,6 +185,8 @@
     "homeBaseMapStyleTitleDark": "Dark",
     "homeBaseMapStyleTitleSatellite": "Satellite",
     "homeBaseMapStyleTitleUnknown": "Base Map",
+    "favouritesTitle": "Favourites",
+    "favouritesScreenPrompt": "Add favourites to see them here.",
     "settingsTitle": "Settings",
     "settingsOptionFeedback": "Feedback",
     "settingsOptionSupport": "Support",
@@ -193,10 +195,13 @@
     "featureComingSoonMessage": "This feature is coming soon.",
     "feedbackScreenTitle": "Feedback",
     "feedbackTypeHint": "Feedback type",
-    "feedbackTypeLocalData": "Local Data",
-    "feedbackTypeAppFunctionality": "App Features",
+    "feedbackTypeLocalData": "Problem with local data",
+    "feedbackTypeAppFunctionality": "App features",
     "feedbackSubjectHint": "Subject",
     "feedbackMessageHint": "Your feedback",
+    "feedbackImageTitle": "Attach image",
+    "feedbackImageHint": "In the next step, attach an image in support of your feedback (optional).",
+    "feedbackResetButton": "Reset",
     "feedbackSubmitButton": "Submit",
     "feedbackFieldErrorRequired": "This field is required.",
     "legalPrivacyScreenTitle": "Legal & Privacy",
@@ -204,5 +209,166 @@
     "legalPrivacyDataProtection": "Data Protection",
     "placeScreenChangeRadiusCancel": "Cancel",
     "placeScreenChangeRadiusConfirm": "Change",
-    "userLocationDeniedSnackbarText": "Enable location access in system settings to use this feature."
+    "userLocationDeniedSnackbarText": "Enable location access in system settings to use this feature.",
+    "placeScreenStartButton": "Start",
+    "placeScreenRouteButton": "Route",
+    "navigationRelativeDirectionDepart": "Depart",
+    "navigationRelativeDirectionHardLeft": "Sharp left",
+    "navigationRelativeDirectionLeft": "Turn left",
+    "navigationRelativeDirectionSlightlyLeft": "Slight left",
+    "navigationRelativeDirectionContinue": "Continue",
+    "navigationRelativeDirectionSlightlyRight": "Slight right",
+    "navigationRelativeDirectionRight": "Turn right",
+    "navigationRelativeDirectionHardRight": "Sharp right",
+    "navigationRelativeDirectionCircleClockwise": "Enter roundabout",
+    "navigationRelativeDirectionCircleCounterclockwise": "Enter roundabout",
+    "navigationRelativeDirectionElevator": "Take the lift",
+    "navigationRelativeDirectionUturnLeft": "Make a U-turn",
+    "navigationRelativeDirectionUturnRight": "Make a U-turn",
+    "navigationRelativeDirectionEnterStation": "Enter station",
+    "navigationRelativeDirectionExitStation": "Exit station",
+    "navigationRelativeDirectionFollowSigns": "Follow signs",
+    "navigationRelativeDirectionArrive": "Arrive",
+    "itineraryDepartureTime": "Depart {time}",
+    "@itineraryDepartureTime": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
+    "itineraryModeTabWalking": "Walking",
+    "itineraryModeTabPublicTransport": "Transit",
+    "navigationStepDistanceToAction": "in {distance}",
+    "@navigationStepDistanceToAction": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "navigationStepDistanceToActionMetres": "in {distance} metres",
+    "@navigationStepDistanceToActionMetres": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "navigationStepDistanceToActionKilometres": "in {distance} kilometres",
+    "@navigationStepDistanceToActionKilometres": {
+        "placeholders": {
+            "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "navigationGettingDirections": "Getting directions",
+    "navigationNoRouteFound": "No route found",
+    "routingDisclaimerTitle": "Attention",
+    "routingDisclaimerMessage": "Navigation guidance provided by this app is currently under beta testing and may be incorrect. Please exercise caution and verify route details independently. Always follow local traffic laws and regulations and pay attention to road conditions.",
+    "routingDisclaimerCancelButton": "Cancel",
+    "routingDisclaimerAcceptButton": "Continue",
+    "errorUnableToFetchTravelTime": "Unable to fetch travel time, try again later.",
+    "routingScreenNavigationStartButton": "Start",
+    "routingScreenNavigationPauseButton": "Pause",
+    "routingScreenNavigationResumeButton": "Resume",
+    "routingScreenNavigationDoneButton": "Done",
+    "settingsOptionChangeAppProfile": "Change Profile",
+    "modeBicycle": "Bicycle",
+    "modeBus": "Bus",
+    "modeCableCar": "Cable Car",
+    "modeCar": "Car",
+    "modeCoach": "Coach",
+    "modeFerry": "Ferry",
+    "modeFunicular": "Funicular",
+    "modeGondola": "Gondola",
+    "modeRail": "Train",
+    "modeSubway": "U-Bahn",
+    "modeTram": "Tram",
+    "modeTransit": "Transit",
+    "modeWalk": "Walk",
+    "modeTrolleybus": "Trolleybus",
+    "modeMonorail": "Monorail",
+    "itineraryOptionsScreenTitle": "Route Settings",
+    "itineraryOptionsScreenSemantic": "Route settings screen",
+    "itineraryOptionsScreenDepartureTimeTitle": "Departure Time",
+    "itineraryOptionsScreenRoutingProfileItem": "Routing Profile",
+    "itineraryOptionsScreenRoutingProfileItemHint": "Select a profile",
+    "itineraryOptionsScreenWalkingTitle": "Walking",
+    "itineraryOptionsScreenWalkingSpeedOption": "Speed",
+    "itineraryOptionsScreenWalkingSpeedOptionSemantic": "Walking speed. Currently {speed}.",
+    "@itineraryOptionsScreenWalkingSpeedOptionSemantic": {
+        "placeholders": {
+            "speed": {
+                "type": "String"
+            }
+        }
+    },
+    "itineraryOptionsScreenWalkingSpeedIncrementSemantic": "Increase walking speed",
+    "itineraryOptionsScreenWalkingSpeedDecrementSemantic": "Decrease walking speed",
+    "itineraryOptionsScreenWalkingAvoidOption": "Avoid walking",
+    "itineraryOptionsScreenWalkingAvoidOptionStatusEnabledSemantic": "Enabled",
+    "itineraryOptionsScreenWalkingAvoidOptionStatusDisabledSemantic": "Disabled",
+    "itineraryOptionsScreenWalkingAvoidOptionSemantic": "Avoid walking option, {status}.",
+    "@itineraryOptionsScreenWalkingAvoidOptionSemantic": {
+        "placeholders": {
+            "status": {
+                "type": "String"
+            }
+        }
+    },
+    "itineraryOptionsScreenModesTitle": "Transit Modes",
+    "itineraryOptionsScreenBicycleTitle": "Bicycle",
+    "itineraryOptionsScreenBicycleSpeedOption": "Speed",
+    "itineraryOptionsScreenBicycleSpeedIncrementSemantic": "Increase bicycle speed",
+    "itineraryOptionsScreenBicycleSpeedDecrementSemantic": "Decrease bicycle speed",
+    "itineraryOptionsScreenApplyButtonTitle": "Apply",
+    "itineraryOptionsScreenResetButtonTitle": "Reset",
+    "routingProfileLabelStandard": "Standard",
+    "routingProfileLabelVisionImpairment": "Vision Impairment",
+    "routingProfileLabelWheelchair": "Wheelchair",
+    "routingProfileLabelRollator": "Rollator",
+    "routingProfileLabelSlightWalkingDisability": "Slight Walking Disability",
+    "routingProfileLabelModerateWalkingDisability": "Moderate Walking Disability",
+    "routingProfileLabelSevereWalkingDisability": "Severe Walking Disability",
+    "routingProfileLabelStroller": "Stroller",
+    "altModeButtonDone": "Done",
+    "homeScreenSemantic": "Home screen",
+    "favoritesScreenSemantic": "Favorites screen. With {count} favorites.",
+    "@favoritesScreenSemantic": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "placeScreenSemantic": "{name}, in {description}.",
+    "@placeScreenSemantic": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            },
+            "description": {
+                "type": "String"
+            }
+        }
+    },
+    "settingsScreenSemantic": "Settings screen",
+    "placeScreenSearchBarSemantic": "Search for another location.",
+    "searchScreenSearchFieldSemantic": "Search field. Input: {input}.",
+    "@searchScreenSearchFieldSemantic": {
+        "placeholders": {
+            "input": {
+                "type": "String"
+            }
+        }
+    },
+    "itinerariesScreenSemantic": "Journeys screen.",
+    "routingScreenSemantic": "Navigation screen.",
+    "routingScreenExitRoutingButtonSemantic": "Exit navigation.",
+    "routingScreenReroutingDialogTitle": "Rerouting",
+    "routingScreenReroutingDialogMessage": "You have deviated from the planned route. Would you like to find a new route?",
+    "routingScreenReroutingDialogCancelButton": "Cancel",
+    "routingScreenReroutingDialogConfirmButton": "Reroute"
 }
