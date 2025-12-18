@@ -56,15 +56,25 @@ class OpenTripPlannerAdaptor:
         )
 
         # Reformat request payload
-        # Temporarily add 2 hrs to the request to work with UTC
         request_dict = OTPPlanRequestModel(
             date=request.date,
-            time=(datetime.strptime(request.time, "%H:%M:%S") + timedelta(hours=1)).strftime("%H:%M:%S"),
+            time=(
+                datetime.strptime(request.time, "%H:%M:%S") + timedelta(hours=1)
+            ).strftime("%H:%M:%S"),
             from_=OTPInputCoordinates(lat=request.origin.lat, lon=request.origin.lon),
             to=OTPInputCoordinates(
                 lat=request.destination.lat, lon=request.destination.lon
             ),
             wheelchair=request.accessible,
+            walk_speed=(request.walk.speed * 1000) / 3600 if request.walk else None,
+            walk_reluctance=4.0
+            if request.walk and request.walk.avoid
+            else 2.0
+            if request.walk
+            else None,
+            bike_speed=(request.bicycle.speed * 1000) / 3600
+            if request.bicycle
+            else None,
             num_itineraries=request.num_itineraries,
             arrive_by=request.time_is_arrival,
             transport_modes=[
@@ -126,7 +136,9 @@ class OpenTripPlannerAdaptor:
                             id=leg.route.id,
                             short_name=leg.route.short_name,
                             mode=leg.mode,
-                        ) if leg.route else None,
+                        )
+                        if leg.route
+                        else None,
                     )
                     for leg in itinerary.legs
                 ],

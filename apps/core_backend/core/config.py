@@ -31,8 +31,6 @@ class Settings(BaseSettings):
         if values.GEOCODING_PROVIDER != SupportedGeocodingProviders.NONE:
             if values.GEOCODING_PROVIDER_API_URL is None:
                 raise ValueError("GEOCODING_PROVIDER_API_URL must be set")
-            if values.GEOCODING_PROVIDER_API_KEY is None:
-                raise ValueError("GEOCODING_PROVIDER_API_KEY must be set")
     
         # Map routing engine URLs
         values.ROUTING_ENGINE_URLS[RoutingEngine.open_trip_planner] = values.OPEN_TRIP_PLANNER_URL

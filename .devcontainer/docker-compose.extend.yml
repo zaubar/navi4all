@@ -13,8 +13,8 @@ services:
     networks:
       proxy:
 
-  navi4all-redis:
+  navi4all-redis-dev:
     image: redis:latest
-    container_name: navi4all-redis
+    container_name: navi4all-redis-dev
     networks:
       proxy:

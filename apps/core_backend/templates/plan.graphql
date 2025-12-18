@@ -7,6 +7,9 @@ query RoutingPlan(
     $numItineraries: Int!,
     $arriveBy: Boolean!,
     $transportModes: [TransportMode!]
+    $walkSpeed: Float,
+    $walkReluctance: Float,
+    $bikeSpeed: Float
 ) {
     plan(
         date: $date,
@@ -17,6 +20,9 @@ query RoutingPlan(
         numItineraries: $numItineraries,
         arriveBy: $arriveBy,
         transportModes: $transportModes
+        walkSpeed: $walkSpeed,
+        walkReluctance: $walkReluctance,
+        bikeSpeed: $bikeSpeed
     ) {
         date
         from {

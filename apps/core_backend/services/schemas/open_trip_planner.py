@@ -236,6 +236,10 @@ class OTPPlanRequestModel(BaseModel):
     num_itineraries: int = 3
     arrive_by: bool = False
     transport_modes: list[OTPTransportMode]
+    walk_speed: float | None = None
+    walk_reluctance: float | None = None
+    bike_speed: float | None = None
+    
 
     @field_validator("date", mode="before")
     @classmethod
