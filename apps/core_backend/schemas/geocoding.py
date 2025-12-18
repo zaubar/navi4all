@@ -3,7 +3,6 @@ from schemas.coordinates import Coordinates
 from schemas.place import Place
 from enum import Enum
 from datetime import datetime
-from fastapi import HTTPException
 
 
 class SupportedGeocodingProviders(str, Enum):
