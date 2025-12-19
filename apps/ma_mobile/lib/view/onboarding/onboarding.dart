@@ -20,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _SymbolInformationScreen(),
     _FavoritesInformationScreen(),
     _UserLocationScreen(),
-    _AudioGuidanceScreen(),
+    _NavigationGuidanceScreen(),
     _FinishScreen(),
   ];
   int _currentPage = 0;
@@ -311,8 +311,8 @@ class _UserLocationScreen extends StatelessWidget {
   }
 }
 
-class _AudioGuidanceScreen extends StatelessWidget {
-  const _AudioGuidanceScreen();
+class _NavigationGuidanceScreen extends StatelessWidget {
+  const _NavigationGuidanceScreen();
 
   @override
   Widget build(BuildContext context) {
@@ -323,7 +323,7 @@ class _AudioGuidanceScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            AppLocalizations.of(context)!.onboardingAudioGuidanceTitle,
+            AppLocalizations.of(context)!.onboardingNavigationGuidanceTitle,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 28,
@@ -332,7 +332,7 @@ class _AudioGuidanceScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            AppLocalizations.of(context)!.onboardingAudioGuidanceSubtitle,
+            AppLocalizations.of(context)!.onboardingNavigationGuidanceSubtitle,
             style: const TextStyle(fontSize: 16, color: Colors.white),
           ),
         ],

@@ -257,17 +257,17 @@ abstract class AppLocalizations {
   /// **'With access to your location, we can show you parking spots nearby and navigate there directly.'**
   String get onboardingUserLocationSubtitle;
 
-  /// No description provided for @onboardingAudioGuidanceTitle.
+  /// No description provided for @onboardingNavigationGuidanceTitle.
   ///
   /// In en, this message translates to:
-  /// **'Audio guidance'**
-  String get onboardingAudioGuidanceTitle;
+  /// **'Navigation guidance'**
+  String get onboardingNavigationGuidanceTitle;
 
-  /// No description provided for @onboardingAudioGuidanceSubtitle.
+  /// No description provided for @onboardingNavigationGuidanceSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'To customise navigation audio settings, visit your device\'s sound or accessibility settings.'**
-  String get onboardingAudioGuidanceSubtitle;
+  /// **'Navigation guidance will pause if you lock your device. To continue receiving guidance, keep your device unlocked.\n\nTo customise navigation voice settings, visit your device\'s sound or accessibility settings.'**
+  String get onboardingNavigationGuidanceSubtitle;
 
   /// No description provided for @onboardingFinishTitle.
   ///

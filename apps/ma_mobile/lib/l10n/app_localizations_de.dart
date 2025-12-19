@@ -90,10 +90,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingUserLocationSubtitle => 'Mit Ihrer Standortfreigabe zeigen wir Ihnen die nächsten verfügbaren Parkplätze und navigieren Sie direkt dorthin.';
 
   @override
-  String get onboardingAudioGuidanceTitle => 'Audioanleitung';
+  String get onboardingNavigationGuidanceTitle => 'Navigationsanleitung';
 
   @override
-  String get onboardingAudioGuidanceSubtitle => 'Um die Audioeinstellungen für die Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
+  String get onboardingNavigationGuidanceSubtitle => 'Die Navigationsanleitung wird pausiert, wenn Sie Ihr Gerät sperren. Um die Anleitung weiterhin zu erhalten, halten Sie Ihr Gerät entsperrt.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
 
   @override
   String get onboardingFinishTitle => 'Perfekt! Sie sind startbereit.';

@@ -90,10 +90,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingUserLocationSubtitle => 'With access to your location, we can show you parking spots nearby and navigate there directly.';
 
   @override
-  String get onboardingAudioGuidanceTitle => 'Audio guidance';
+  String get onboardingNavigationGuidanceTitle => 'Navigation guidance';
 
   @override
-  String get onboardingAudioGuidanceSubtitle => 'To customise navigation audio settings, visit your device\'s sound or accessibility settings.';
+  String get onboardingNavigationGuidanceSubtitle => 'Navigation guidance will pause if you lock your device. To continue receiving guidance, keep your device unlocked.\n\nTo customise navigation voice settings, visit your device\'s sound or accessibility settings.';
 
   @override
   String get onboardingFinishTitle => 'Perfect! You\'re all set.';
