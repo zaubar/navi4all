@@ -17,6 +17,13 @@ Landteilstraße 33
 E-Mail: info[at]smartmannheim.de  
 Impressum: https://smartmannheim.de/impressum/
 
+**Datenschutzbeauftragter**
+Thorsten Jordan
+ENSECUR GmbH
+Kaiserstraße 86
+76133 Karlsruhe
+E-Mail: thorsten.jordan@ensecur.de
+
 ---
 
 ## 2. Grundsätzliches zur Datennutzung
