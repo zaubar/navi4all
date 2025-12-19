@@ -11,6 +11,7 @@ from schemas.routing import (
     LegSummary,
     LegDetailed,
     Step,
+    Route,
     Coordinates,
     ItineraryResponseModel,
     ItineraryDetailed,
@@ -27,15 +28,11 @@ import json
 
 
 class OpenTripPlannerAdaptor:
-    def __init__(self):
+    def __init__(self, url: str):
         """Initalize adaptor settings and setup persistent itinerary cache."""
 
-        # Ensure a valid URL is configured
-        self.routing_engine_url = settings.OPEN_TRIP_PLANNER_URL
-        if not self.routing_engine_url:
-            raise ValueError(
-                "A valid OpenTripPlanner URL must be configured to use this adaptor."
-            )
+        # Initialise adaptor URL
+        self.url = url
 
         # Setup Redis client to cache itineraries
         self.redis_client = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
@@ -59,15 +56,25 @@ class OpenTripPlannerAdaptor:
         )
 
         # Reformat request payload
-        # Temporarily add 2 hrs to the request to work with UTC
         request_dict = OTPPlanRequestModel(
             date=request.date,
-            time=(datetime.strptime(request.time, "%H:%M:%S") + timedelta(hours=2)).strftime("%H:%M:%S"),
+            time=(
+                datetime.strptime(request.time, "%H:%M:%S") + timedelta(hours=1)
+            ).strftime("%H:%M:%S"),
             from_=OTPInputCoordinates(lat=request.origin.lat, lon=request.origin.lon),
             to=OTPInputCoordinates(
                 lat=request.destination.lat, lon=request.destination.lon
             ),
             wheelchair=request.accessible,
+            walk_speed=(request.walk.speed * 1000) / 3600 if request.walk else None,
+            walk_reluctance=4.0
+            if request.walk and request.walk.avoid
+            else 2.0
+            if request.walk
+            else None,
+            bike_speed=(request.bicycle.speed * 1000) / 3600
+            if request.bicycle
+            else None,
             num_itineraries=request.num_itineraries,
             arrive_by=request.time_is_arrival,
             transport_modes=[
@@ -78,7 +85,7 @@ class OpenTripPlannerAdaptor:
 
         # Make the request to the routing engine
         router_response = await async_client.post(
-            settings.OPEN_TRIP_PLANNER_URL,
+            self.url,
             json={"query": request_template, "variables": request_dict},
         )
 
@@ -125,6 +132,13 @@ class OpenTripPlannerAdaptor:
                             )
                             for step in leg.steps
                         ],
+                        route=Route(
+                            id=leg.route.id,
+                            short_name=leg.route.short_name,
+                            mode=leg.mode,
+                        )
+                        if leg.route
+                        else None,
                     )
                     for leg in itinerary.legs
                 ],

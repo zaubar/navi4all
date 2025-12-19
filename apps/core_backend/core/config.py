@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from pydantic import model_validator
 from schemas.geocoding import SupportedGeocodingProviders
+from schemas.routing import RoutingEngine
 
 
 class Settings(BaseSettings):
@@ -17,6 +18,8 @@ class Settings(BaseSettings):
 
     # Adaptor settings
     OPEN_TRIP_PLANNER_URL: str
+    OPEN_TRIP_PLANNER_KL_URL: str
+    ROUTING_ENGINE_URLS: dict[RoutingEngine, str] = {}
     OPEN_TRIP_PLANNER_PLAN_TEMPLATE: str = "plan.graphql"
 
     GEOCODING_PROVIDER: SupportedGeocodingProviders
@@ -28,8 +31,11 @@ class Settings(BaseSettings):
         if values.GEOCODING_PROVIDER != SupportedGeocodingProviders.NONE:
             if values.GEOCODING_PROVIDER_API_URL is None:
                 raise ValueError("GEOCODING_PROVIDER_API_URL must be set")
-            if values.GEOCODING_PROVIDER_API_KEY is None:
-                raise ValueError("GEOCODING_PROVIDER_API_KEY must be set")
+    
+        # Map routing engine URLs
+        values.ROUTING_ENGINE_URLS[RoutingEngine.open_trip_planner] = values.OPEN_TRIP_PLANNER_URL
+        values.ROUTING_ENGINE_URLS[RoutingEngine.open_trip_planner_kl] = values.OPEN_TRIP_PLANNER_KL_URL
+    
         return values
 
 

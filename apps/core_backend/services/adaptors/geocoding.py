@@ -28,7 +28,7 @@ class GeocodingAdaptor:
             "api_key": self.api_key,
             "text": request.query,
             # TODO: Make layer exclusion dynamic
-            "layers": "-continent,-empire,-country,-dependency,-disputed,-region,-macrocounty,-county,-localadmin,-locality,-borough",
+            "layers": "-country,-region,-macrocounty,-borough,-county,-localadmin,-locality",
         }
         if request.focus_point:
             request_params["focus.point.lat"] = request.focus_point.lat

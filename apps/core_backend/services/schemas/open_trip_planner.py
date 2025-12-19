@@ -3,10 +3,12 @@ from datetime import datetime
 from enum import Enum
 from core.utils import to_snake_case
 
+
 class OTPInputCoordinates(BaseModel):
     lat: float
     lon: float
     address: str | None = None
+
 
 class OTPMode(str, Enum):
     airplane = "AIRPLANE"
@@ -30,9 +32,11 @@ class OTPMode(str, Enum):
     trolleybus = "TROLLEYBUS"
     monorail = "MONORAIL"
 
+
 class OTPGeometry(BaseModel):
     length: int
     points: str
+
 
 class OTPRealtimeState(Enum):
     scheduled = "SCHEDULED"
@@ -41,13 +45,15 @@ class OTPRealtimeState(Enum):
     added = "ADDED"
     modified = "MODIFIED"
 
+
 class OTPVertexType(Enum):
     normal = "NORMAL"
     transit = "TRANSIT"
     bike_park = "BIKEPARK"
     bike_share = "BIKESHARE"
     park_and_ride = "PARKANDRIDE"
-    
+
+
 class OTPRelativeDirection(Enum):
     depart = "DEPART"
     hard_left = "HARD_LEFT"
@@ -66,6 +72,7 @@ class OTPRelativeDirection(Enum):
     exit_station = "EXIT_STATION"
     follow_signs = "FOLLOW_SIGNS"
 
+
 class OTPAbsoluteDirection(Enum):
     north = "NORTH"
     northeast = "NORTHEAST"
@@ -76,11 +83,13 @@ class OTPAbsoluteDirection(Enum):
     west = "WEST"
     northwest = "NORTHWEST"
 
+
 class OTPStop(BaseModel):
     id: str
     name: str
     lat: float
     lon: float
+
 
 class OTPPlace(BaseModel):
     name: str | None = None
@@ -90,7 +99,7 @@ class OTPPlace(BaseModel):
     arrival_time: datetime | None = None
     departure_time: datetime | None = None
     stop: OTPStop | None = None
-    
+
     @field_validator("arrival_time", "departure_time", mode="before")
     @classmethod
     def validate_times(cls, value: int | None):
@@ -102,16 +111,26 @@ class OTPPlace(BaseModel):
         else:
             raise ValueError("Time must be a timestamp in milliseconds since epoch.")
 
+
 class OTPRoute(BaseModel):
     id: str
     short_name: str | None = None
     mode: OTPMode
+
+    @model_validator(mode="before")
+    @classmethod
+    def remap_model_fields(cls, values: dict[str, any]):
+        for key in list(values.keys()):
+            values[to_snake_case(key)] = values.pop(key)
+        return values
+
 
 class OTPTrip(BaseModel):
     id: str
     route: OTPRoute
     trip_short_name: str | None = None
     trip_headsign: str | None = None
+
 
 class OTPStep(BaseModel):
     distance: float
@@ -121,7 +140,7 @@ class OTPStep(BaseModel):
     absolute_direction: OTPAbsoluteDirection
     street_name: str
     bogus_name: bool
-    
+
     @model_validator(mode="before")
     @classmethod
     def remap_model_fields(cls, values: dict[str, any]):
@@ -129,11 +148,13 @@ class OTPStep(BaseModel):
             values[to_snake_case(key)] = values.pop(key)
         return values
 
+
 class OTPPickupDropoffType(Enum):
     scheduled = "SCHEDULED"
     none = "NONE"
     call_agency = "CALL_AGENCY"
     coordinate_with_driver = "COORDINATE_WITH_DRIVER"
+
 
 class OTPLeg(BaseModel):
     start_time: datetime
@@ -157,7 +178,7 @@ class OTPLeg(BaseModel):
     pickup_type: OTPPickupDropoffType | None = None
     dropoff_type: OTPPickupDropoffType | None = None
     accessibility_score: float | None
-    
+
     @model_validator(mode="before")
     @classmethod
     def remap_model_fields(cls, values: dict[str, any]):
@@ -167,7 +188,7 @@ class OTPLeg(BaseModel):
             else:
                 values[to_snake_case(key)] = values.pop(key)
         return values
-    
+
     @field_validator("start_time", "end_time", mode="before")
     @classmethod
     def validate_timestamp(cls, value: int | datetime):
@@ -176,6 +197,7 @@ class OTPLeg(BaseModel):
         if isinstance(value, int):
             return datetime.fromtimestamp(value / 1000)
         raise ValueError("Invalid value for start_time or end_time field.")
+
 
 class OTPItinerary(BaseModel):
     start_time: datetime
@@ -183,14 +205,14 @@ class OTPItinerary(BaseModel):
     duration: int
     legs: list[OTPLeg]
     accessibility_score: float | None
-    
+
     @model_validator(mode="before")
     @classmethod
     def remap_model_fields(cls, values):
         for key in list(values.keys()):
             values[to_snake_case(key)] = values.pop(key)
         return values
-    
+
     @field_validator("start_time", "end_time", mode="before")
     @classmethod
     def validate_timestamp(cls, value: int | datetime):
@@ -200,8 +222,10 @@ class OTPItinerary(BaseModel):
             return datetime.fromtimestamp(value / 1000)
         raise ValueError("Invalid value for start_time or end_time field.")
 
+
 class OTPTransportMode(BaseModel):
     mode: OTPMode
+
 
 class OTPPlanRequestModel(BaseModel):
     date: str
@@ -212,6 +236,10 @@ class OTPPlanRequestModel(BaseModel):
     num_itineraries: int = 3
     arrive_by: bool = False
     transport_modes: list[OTPTransportMode]
+    walk_speed: float | None = None
+    walk_reluctance: float | None = None
+    bike_speed: float | None = None
+    
 
     @field_validator("date", mode="before")
     @classmethod
@@ -230,6 +258,7 @@ class OTPPlanRequestModel(BaseModel):
             return value
         except ValueError:
             raise ValueError("Time must be in the format 'HH:MM:SS'.")
+
 
 class OTPPlanResponseModel(BaseModel):
     date: datetime

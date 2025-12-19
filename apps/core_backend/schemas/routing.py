@@ -67,6 +67,12 @@ class Step(BaseModel):
     bogus_name: bool
 
 
+class Route(BaseModel):
+    id: str
+    short_name: str | None = None
+    mode: Mode | None = None
+
+
 class LegSummary(BaseModel):
     mode: Mode
     duration: int
@@ -77,6 +83,7 @@ class LegSummary(BaseModel):
 
 class LegDetailed(LegSummary):
     steps: list[Step]
+    route: Route | None = None
 
 
 class ItineraryBase(BaseModel):
@@ -105,6 +112,19 @@ class ItineraryDetailed(ItineraryBase):
     legs: list[LegDetailed]
 
 
+class RoutingEngine(str, Enum):
+    open_trip_planner = "otp"
+    open_trip_planner_kl = "otp_kl"
+
+
+class WalkOptions(BaseModel):
+    speed: float
+    avoid: bool
+
+class BicycleOptions(BaseModel):
+    speed: float
+
+
 """Request and response models exposed via the API"""
 
 
@@ -115,6 +135,8 @@ class RoutingPlanRequestModel(BaseModel):
     time: str
     time_is_arrival: bool = False
     transport_modes: list[Mode]
+    walk: WalkOptions | None = None
+    bicycle: BicycleOptions | None = None
     accessible: bool = False
     num_itineraries: int = 3
 
