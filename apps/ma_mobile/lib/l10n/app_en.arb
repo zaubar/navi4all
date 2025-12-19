@@ -410,5 +410,48 @@
     "routingScreenReroutingDialogMessage": "You have deviated from the planned route. Would you like to find a new route?",
     "routingScreenReroutingDialogCancelButton": "Cancel",
     "routingScreenReroutingDialogConfirmButton": "Reroute",
-    "errorUnableToOpenPrivacyPolicy": "Unable to open privacy policy."
+    "errorUnableToOpenPrivacyPolicy": "Unable to open privacy policy.",
+    "routingScreenNavigationLegActiveSemantic": "Following steps with mode: {mode}. Currently active.",
+    "@routingScreenNavigationLegActiveSemantic": {
+        "placeholders": {
+            "mode": {
+                "type": "String"
+            }
+        }
+    },
+    "routingScreenNavigationLegInactiveSemantic": "Following steps with mode: {mode}. Currently not active.",
+    "@routingScreenNavigationLegInactiveSemantic": {
+        "placeholders": {
+            "mode": {
+                "type": "String"
+            }
+        }
+    },
+    "routingScreenNavigationStepActiveSemantic": "{instruction}. Currently active.",
+    "@routingScreenNavigationStepActiveSemantic": {
+        "placeholders": {
+            "instruction": {
+                "type": "String"
+            }
+        }
+    },
+    "routingScreenNavigationStepInactiveSemantic": "{instruction}.",
+    "@routingScreenNavigationStepInactiveSemantic": {
+        "placeholders": {
+            "instruction": {
+                "type": "String"
+            }
+        }
+    },
+    "routingScreenNavigationStatsSemantic": "{time}, {distance} to destination.",
+    "@routingScreenNavigationStatsSemantic": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            },
+            "distance": {
+                "type": "String"
+            }
+        }
+    }
 }

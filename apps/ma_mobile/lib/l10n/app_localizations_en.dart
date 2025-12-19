@@ -610,4 +610,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorUnableToOpenPrivacyPolicy => 'Unable to open privacy policy.';
+
+  @override
+  String routingScreenNavigationLegActiveSemantic(String mode) {
+    return 'Following steps with mode: $mode. Currently active.';
+  }
+
+  @override
+  String routingScreenNavigationLegInactiveSemantic(String mode) {
+    return 'Following steps with mode: $mode. Currently not active.';
+  }
+
+  @override
+  String routingScreenNavigationStepActiveSemantic(String instruction) {
+    return '$instruction. Currently active.';
+  }
+
+  @override
+  String routingScreenNavigationStepInactiveSemantic(String instruction) {
+    return '$instruction.';
+  }
+
+  @override
+  String routingScreenNavigationStatsSemantic(String time, String distance) {
+    return '$time, $distance to destination.';
+  }
 }

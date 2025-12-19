@@ -610,4 +610,29 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get errorUnableToOpenPrivacyPolicy => 'Datenschutzbestimmungen können nicht geöffnet werden.';
+
+  @override
+  String routingScreenNavigationLegActiveSemantic(String mode) {
+    return 'Folgende Schritte mit Verkehrsmittel: $mode. Derzeit aktiv.';
+  }
+
+  @override
+  String routingScreenNavigationLegInactiveSemantic(String mode) {
+    return 'Folgende Schritte mit Verkehrsmittel: $mode. Derzeit nicht aktiv.';
+  }
+
+  @override
+  String routingScreenNavigationStepActiveSemantic(String instruction) {
+    return '$instruction. Derzeit aktiv.';
+  }
+
+  @override
+  String routingScreenNavigationStepInactiveSemantic(String instruction) {
+    return '$instruction.';
+  }
+
+  @override
+  String routingScreenNavigationStatsSemantic(String time, String distance) {
+    return '$time, $distance zum Zielort.';
+  }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:provider/provider.dart';
 import 'package:smartroots/controllers/availability_controller.dart';
@@ -618,22 +619,28 @@ class RoutingState extends State<RoutingScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          RoutingMap(destination: _parkingLocation),
+          Semantics(
+            excludeSemantics: true,
+            child: RoutingMap(destination: _parkingLocation),
+          ),
           Consumer<RoutingController>(
-            builder: (context, routingController, _) => SlidingBottomSheet(
-              SizedBox.shrink(),
-              listItems: _processingStatus == ProcessingStatus.completed
-                  ? _legTiles
-                  : null,
-              body:
-                  _processingStatus == ProcessingStatus.processing ||
-                      _processingStatus == ProcessingStatus.error
-                  ? NavigationProcessingTile(
-                      processingStatus: _processingStatus,
-                    )
-                  : SizedBox(height: 132.0),
-              initSize: 0.35,
-              maxSize: 0.7,
+            builder: (context, routingController, _) => Semantics(
+              sortKey: OrdinalSortKey(7),
+              child: SlidingBottomSheet(
+                SizedBox.shrink(),
+                listItems: _processingStatus == ProcessingStatus.completed
+                    ? _legTiles
+                    : null,
+                body:
+                    _processingStatus == ProcessingStatus.processing ||
+                        _processingStatus == ProcessingStatus.error
+                    ? NavigationProcessingTile(
+                        processingStatus: _processingStatus,
+                      )
+                    : SizedBox(height: 132.0),
+                initSize: 0.35,
+                maxSize: 0.7,
+              ),
             ),
           ),
           Align(
@@ -660,50 +667,73 @@ class RoutingState extends State<RoutingScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Consumer<NavigationStatsController>(
                             builder: (context, navigationStatsController, _) =>
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.directions_car_outlined,
-                                      color: Theme.of(
-                                        context,
-                                      ).textTheme.displayMedium!.color,
-                                    ),
-                                    SizedBox(width: 12.0),
-                                    navigationStatsController.timeToArrival !=
-                                            null
-                                        ? Text(
-                                            TextFormatter.formatDurationText(
-                                              navigationStatsController
-                                                  .timeToArrival!,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 16),
-                                          )
-                                        : SizedBox.shrink(),
-                                    SizedBox(width: 6.0),
-                                    Icon(
-                                      Icons.circle,
-                                      size: 6,
-                                      color: Theme.of(
-                                        context,
-                                      ).textTheme.displayMedium!.color,
-                                    ),
-                                    SizedBox(width: 6.0),
-                                    navigationStatsController
-                                                .distanceToArrival !=
-                                            null
-                                        ? Text(
-                                            TextFormatter.formatDistanceValueText(
-                                              navigationStatsController
-                                                  .distanceToArrival!,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 16),
-                                          )
-                                        : SizedBox.shrink(),
-                                  ],
+                                Semantics(
+                                  excludeSemantics: true,
+                                  sortKey: OrdinalSortKey(3),
+                                  label:
+                                      navigationStatsController.timeToArrival !=
+                                              null &&
+                                          navigationStatsController
+                                                  .distanceToArrival !=
+                                              null
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenNavigationStatsSemantic(
+                                          TextFormatter.formatDurationText(
+                                            navigationStatsController
+                                                .timeToArrival!,
+                                          ),
+                                          TextFormatter.formatDistanceValueText(
+                                            navigationStatsController
+                                                .distanceToArrival!,
+                                          ),
+                                        )
+                                      : null,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.directions_car_outlined,
+                                        color: Theme.of(
+                                          context,
+                                        ).textTheme.displayMedium!.color,
+                                      ),
+                                      SizedBox(width: 12.0),
+                                      navigationStatsController.timeToArrival !=
+                                              null
+                                          ? Text(
+                                              TextFormatter.formatDurationText(
+                                                navigationStatsController
+                                                    .timeToArrival!,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 16),
+                                            )
+                                          : SizedBox.shrink(),
+                                      SizedBox(width: 6.0),
+                                      Icon(
+                                        Icons.circle,
+                                        size: 6,
+                                        color: Theme.of(
+                                          context,
+                                        ).textTheme.displayMedium!.color,
+                                      ),
+                                      SizedBox(width: 6.0),
+                                      navigationStatsController
+                                                  .distanceToArrival !=
+                                              null
+                                          ? Text(
+                                              TextFormatter.formatDistanceValueText(
+                                                navigationStatsController
+                                                    .distanceToArrival!,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 16),
+                                            )
+                                          : SizedBox.shrink(),
+                                    ],
+                                  ),
                                 ),
                           ),
                         ),
@@ -712,88 +742,97 @@ class RoutingState extends State<RoutingScreen> {
                           builder: (context, routingController, _) => Row(
                             children: [
                               Expanded(
-                                child: SheetButton(
-                                  icon:
-                                      routingController.navigationStatus ==
-                                          NavigationStatus.idle
-                                      ? Icons.play_arrow
-                                      : routingController.navigationStatus ==
-                                            NavigationStatus.navigating
-                                      ? Icons.pause
-                                      : routingController.navigationStatus ==
-                                            NavigationStatus.arrived
-                                      ? Icons.check
-                                      : Icons.play_arrow,
-                                  label:
-                                      routingController.navigationStatus ==
-                                          NavigationStatus.idle
-                                      ? AppLocalizations.of(
-                                          context,
-                                        )!.routingScreenNavigationStartButton
-                                      : routingController.navigationStatus ==
-                                            NavigationStatus.navigating
-                                      ? AppLocalizations.of(
-                                          context,
-                                        )!.routingScreenNavigationPauseButton
-                                      : routingController.navigationStatus ==
-                                            NavigationStatus.arrived
-                                      ? AppLocalizations.of(
-                                          context,
-                                        )!.routingScreenNavigationDoneButton
-                                      : AppLocalizations.of(
-                                          context,
-                                        )!.routingScreenNavigationResumeButton,
-                                  semanticLabel:
-                                      routingController.navigationStatus ==
-                                          NavigationStatus.idle
-                                      ? AppLocalizations.of(
-                                          context,
-                                        )!.routingScreenNavigationStartButton
-                                      : routingController.navigationStatus ==
-                                            NavigationStatus.navigating
-                                      ? AppLocalizations.of(
-                                          context,
-                                        )!.routingScreenNavigationPauseButton
-                                      : routingController.navigationStatus ==
-                                            NavigationStatus.arrived
-                                      ? AppLocalizations.of(
-                                          context,
-                                        )!.routingScreenNavigationDoneButton
-                                      : AppLocalizations.of(
-                                          context,
-                                        )!.routingScreenNavigationResumeButton,
-                                  onTap: () => _toggleNavigationState(),
-                                  shrinkWrap: false,
+                                child: Semantics(
+                                  sortKey: OrdinalSortKey(4),
+                                  child: SheetButton(
+                                    icon:
+                                        routingController.navigationStatus ==
+                                            NavigationStatus.idle
+                                        ? Icons.play_arrow
+                                        : routingController.navigationStatus ==
+                                              NavigationStatus.navigating
+                                        ? Icons.pause
+                                        : routingController.navigationStatus ==
+                                              NavigationStatus.arrived
+                                        ? Icons.check
+                                        : Icons.play_arrow,
+                                    label:
+                                        routingController.navigationStatus ==
+                                            NavigationStatus.idle
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.routingScreenNavigationStartButton
+                                        : routingController.navigationStatus ==
+                                              NavigationStatus.navigating
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.routingScreenNavigationPauseButton
+                                        : routingController.navigationStatus ==
+                                              NavigationStatus.arrived
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.routingScreenNavigationDoneButton
+                                        : AppLocalizations.of(
+                                            context,
+                                          )!.routingScreenNavigationResumeButton,
+                                    semanticLabel:
+                                        routingController.navigationStatus ==
+                                            NavigationStatus.idle
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.routingScreenNavigationStartButton
+                                        : routingController.navigationStatus ==
+                                              NavigationStatus.navigating
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.routingScreenNavigationPauseButton
+                                        : routingController.navigationStatus ==
+                                              NavigationStatus.arrived
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.routingScreenNavigationDoneButton
+                                        : AppLocalizations.of(
+                                            context,
+                                          )!.routingScreenNavigationResumeButton,
+                                    onTap: () => _toggleNavigationState(),
+                                    shrinkWrap: false,
+                                  ),
                                 ),
                               ),
                               SizedBox(width: 8),
-                              AccessibleIconButton(
-                                icon:
-                                    routingController.audioStatus ==
-                                        AudioStatus.muted
-                                    ? Icons.volume_off
-                                    : Icons.volume_up,
-                                semanticLabel:
-                                    routingController.audioStatus ==
-                                        AudioStatus.muted
-                                    ? AppLocalizations.of(
-                                        context,
-                                      )!.routeNavigationMuteButtonUnmuteText
-                                    : AppLocalizations.of(
-                                        context,
-                                      )!.routeNavigationMuteButtonMuteText,
-                                onTap: () => _toggleAudioStatus(),
+                              Semantics(
+                                sortKey: OrdinalSortKey(5),
+                                child: AccessibleIconButton(
+                                  icon:
+                                      routingController.audioStatus ==
+                                          AudioStatus.muted
+                                      ? Icons.volume_off
+                                      : Icons.volume_up,
+                                  semanticLabel:
+                                      routingController.audioStatus ==
+                                          AudioStatus.muted
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.routeNavigationMuteButtonUnmuteText
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!.routeNavigationMuteButtonMuteText,
+                                  onTap: () => _toggleAudioStatus(),
+                                ),
                               ),
                               SizedBox(width: 8),
-                              AccessibleIconButton(
-                                icon: Icons.close,
-                                semanticLabel: AppLocalizations.of(
-                                  context,
-                                )!.routingScreenExitRoutingButtonSemantic,
-                                onTap: () {
-                                  routingController.stopNavigation();
-                                  Navigator.of(context).pop();
-                                },
+                              Semantics(
+                                sortKey: OrdinalSortKey(6),
+                                child: AccessibleIconButton(
+                                  icon: Icons.close,
+                                  semanticLabel: AppLocalizations.of(
+                                    context,
+                                  )!.routingScreenExitRoutingButtonSemantic,
+                                  onTap: () {
+                                    routingController.stopNavigation();
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
                               ),
                             ],
                           ),
@@ -825,7 +864,7 @@ class RoutingState extends State<RoutingScreen> {
                             ),
                         excludeSemantics: true,
                         button: true,
-                        focused: true,
+                        sortKey: OrdinalSortKey(1),
                         child:
                             routingController.navigationStatus !=
                                 NavigationStatus.navigating
@@ -936,6 +975,7 @@ class RoutingState extends State<RoutingScreen> {
                             ),
                         excludeSemantics: true,
                         button: false,
+                        sortKey: OrdinalSortKey(2),
                         child: Material(
                           elevation: 4,
                           borderRadius:

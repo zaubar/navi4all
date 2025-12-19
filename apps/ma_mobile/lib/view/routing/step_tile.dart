@@ -11,76 +11,108 @@ class StepTile extends StatelessWidget {
 
   const StepTile({super.key, required this.step, this.activeStep});
 
+  String _getSemanticLabel(BuildContext context) {
+    // Build semantic label for step
+    String semanticLabel = "";
+
+    // Exclude distance for final audio stage
+    if (step.distance >= 1000) {
+      semanticLabel += AppLocalizations.of(context)!
+          .navigationStepDistanceToActionKilometres(
+            '${TextFormatter.formatKilometersDistanceFromMeters(step.distance)}. ',
+          );
+    } else {
+      semanticLabel +=
+          '${AppLocalizations.of(context)!.navigationStepDistanceToActionMetres(TextFormatter.formatMetersDistanceFromMeters(step.distance).toString())}. ';
+    }
+    semanticLabel += getRelativeDirectionTextMapping(
+      step.relativeDirection,
+      context,
+    );
+
+    return step == activeStep
+        ? AppLocalizations.of(
+            context,
+          )!.routingScreenNavigationStepActiveSemantic(semanticLabel)
+        : AppLocalizations.of(
+            context,
+          )!.routingScreenNavigationStepInactiveSemantic(semanticLabel);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.0),
-        color: step == activeStep
-            ? Theme.of(context).colorScheme.tertiary
-            : Theme.of(context).colorScheme.surface,
-      ),
-      child: Column(
-        children: [
-          SizedBox(height: 16),
-          Row(
-            children: [
-              Icon(
-                getRelativeDirectionIconMapping(step.relativeDirection),
-                color: step == activeStep
-                    ? Theme.of(context).textTheme.displayMedium!.color
-                    : SmartRootsColors.maBlue,
-                size: 32,
-              ),
-              SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      getRelativeDirectionTextMapping(
-                        step.relativeDirection,
-                        context,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    !step.bogusName
-                        ? Text(
-                            step.streetName,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 16),
-                          )
-                        : SizedBox.shrink(),
-                    step.relativeDirection != RelativeDirection.DEPART
-                        ? Text(
-                            AppLocalizations.of(
-                              context,
-                            )!.navigationStepDistanceToAction(
-                              TextFormatter.formatDistanceValueText(
-                                step.distance,
-                              ),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          )
-                        : SizedBox.shrink(),
-                  ],
+    return Semantics(
+      excludeSemantics: true,
+      label: _getSemanticLabel(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
+          color: step == activeStep
+              ? Theme.of(context).colorScheme.tertiary
+              : Theme.of(context).colorScheme.surface,
+        ),
+        child: Column(
+          children: [
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Icon(
+                  getRelativeDirectionIconMapping(step.relativeDirection),
+                  color: step == activeStep
+                      ? Theme.of(context).textTheme.displayMedium!.color
+                      : SmartRootsColors.maBlue,
+                  size: 32,
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          step != activeStep
-              ? Divider(color: SmartRootsColors.maBlue, height: 0.0)
-              : SizedBox.shrink(),
-        ],
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        getRelativeDirectionTextMapping(
+                          step.relativeDirection,
+                          context,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      !step.bogusName
+                          ? Text(
+                              step.streetName,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 16),
+                            )
+                          : SizedBox.shrink(),
+                      step.relativeDirection != RelativeDirection.DEPART
+                          ? Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.navigationStepDistanceToAction(
+                                TextFormatter.formatDistanceValueText(
+                                  step.distance,
+                                ),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            step != activeStep
+                ? Divider(color: SmartRootsColors.maBlue, height: 0.0)
+                : SizedBox.shrink(),
+          ],
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/core/theme/icons.dart';
 import 'package:smartroots/core/theme/labels.dart';
+import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/leg.dart' as leg_schema;
 import 'package:smartroots/schemas/routing/mode.dart';
 import 'package:smartroots/view/routing/step_tile.dart';
@@ -79,25 +80,39 @@ class LegTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           !isPrimaryLeg
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        ModeIcons.get(leg.mode),
-                        color: SmartRootsColors.maBlue,
-                      ),
-                      SizedBox(width: 16),
-                      Text(
-                        SmartRootsLabels.getModeString(context, leg.mode),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+              ? Semantics(
+                  excludeSemantics: true,
+                  label: leg == activeLeg
+                      ? AppLocalizations.of(
+                          context,
+                        )!.routingScreenNavigationLegActiveSemantic(
+                          SmartRootsLabels.getModeString(context, leg.mode),
+                        )
+                      : AppLocalizations.of(
+                          context,
+                        )!.routingScreenNavigationLegInactiveSemantic(
+                          SmartRootsLabels.getModeString(context, leg.mode),
+                        ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      children: [
+                        Icon(
+                          ModeIcons.get(leg.mode),
                           color: SmartRootsColors.maBlue,
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 16),
+                        Text(
+                          SmartRootsLabels.getModeString(context, leg.mode),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: SmartRootsColors.maBlue,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : SizedBox.shrink(),

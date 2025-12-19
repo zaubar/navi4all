@@ -410,5 +410,48 @@
     "routingScreenReroutingDialogMessage": "Sie haben die geplante Route verlassen. Möchten Sie eine neue Route finden?",
     "routingScreenReroutingDialogCancelButton": "Abbrechen",
     "routingScreenReroutingDialogConfirmButton": "Neuberechnen",
-    "errorUnableToOpenPrivacyPolicy": "Datenschutzbestimmungen können nicht geöffnet werden."
+    "errorUnableToOpenPrivacyPolicy": "Datenschutzbestimmungen können nicht geöffnet werden.",
+    "routingScreenNavigationLegActiveSemantic": "Folgende Schritte mit Verkehrsmittel: {mode}. Derzeit aktiv.",
+    "@routingScreenNavigationLegActiveSemantic": {
+        "placeholders": {
+            "mode": {
+                "type": "String"
+            }
+        }
+    },
+    "routingScreenNavigationLegInactiveSemantic": "Folgende Schritte mit Verkehrsmittel: {mode}. Derzeit nicht aktiv.",
+    "@routingScreenNavigationLegInactiveSemantic": {
+        "placeholders": {
+            "mode": {
+                "type": "String"
+            }
+        }
+    },
+    "routingScreenNavigationStepActiveSemantic": "{instruction}. Derzeit aktiv.",
+    "@routingScreenNavigationStepActiveSemantic": {
+        "placeholders": {
+            "instruction": {
+                "type": "String"
+            }
+        }
+    },
+    "routingScreenNavigationStepInactiveSemantic": "{instruction}.",
+    "@routingScreenNavigationStepInactiveSemantic": {
+        "placeholders": {
+            "instruction": {
+                "type": "String"
+            }
+        }
+    },
+    "routingScreenNavigationStatsSemantic": "{time}, {distance} zum Zielort.",
+    "@routingScreenNavigationStatsSemantic": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            },
+            "distance": {
+                "type": "String"
+            }
+        }
+    }
 }

@@ -1192,6 +1192,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to open privacy policy.'**
   String get errorUnableToOpenPrivacyPolicy;
+
+  /// No description provided for @routingScreenNavigationLegActiveSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Following steps with mode: {mode}. Currently active.'**
+  String routingScreenNavigationLegActiveSemantic(String mode);
+
+  /// No description provided for @routingScreenNavigationLegInactiveSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Following steps with mode: {mode}. Currently not active.'**
+  String routingScreenNavigationLegInactiveSemantic(String mode);
+
+  /// No description provided for @routingScreenNavigationStepActiveSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'{instruction}. Currently active.'**
+  String routingScreenNavigationStepActiveSemantic(String instruction);
+
+  /// No description provided for @routingScreenNavigationStepInactiveSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'{instruction}.'**
+  String routingScreenNavigationStepInactiveSemantic(String instruction);
+
+  /// No description provided for @routingScreenNavigationStatsSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'{time}, {distance} to destination.'**
+  String routingScreenNavigationStatsSemantic(String time, String distance);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
