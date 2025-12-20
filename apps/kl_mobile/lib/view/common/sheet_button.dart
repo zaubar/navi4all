@@ -38,7 +38,7 @@ class SheetButton extends StatelessWidget {
                 icon != null
                     ? Icon(
                         icon,
-                        color: Theme.of(context).textTheme.displayMedium?.color,
+                        color: Theme.of(context).colorScheme.primary,
                         size: 20,
                       )
                     : const SizedBox.shrink(),
@@ -52,7 +52,10 @@ class SheetButton extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
                       )
                     : const SizedBox.shrink(),

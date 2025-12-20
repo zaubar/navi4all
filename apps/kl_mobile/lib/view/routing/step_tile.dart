@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/core/utils.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
 import 'package:navi4all/schemas/routing/leg.dart' as leg_schema;
@@ -18,7 +17,7 @@ class StepTile extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.0),
         color: step == activeStep
-            ? Theme.of(context).colorScheme.tertiary
+            ? Theme.of(context).colorScheme.secondary
             : Theme.of(context).colorScheme.surface,
       ),
       child: Column(
@@ -29,8 +28,8 @@ class StepTile extends StatelessWidget {
               Icon(
                 getRelativeDirectionIconMapping(step.relativeDirection),
                 color: step == activeStep
-                    ? Theme.of(context).textTheme.displayMedium?.color
-                    : Navi4AllColors.klPink,
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.secondary,
                 size: 32,
               ),
               SizedBox(width: 16),
@@ -45,9 +44,12 @@ class StepTile extends StatelessWidget {
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: step == activeStep
+                            ? Theme.of(context).colorScheme.primary
+                            : null,
                       ),
                     ),
                     !step.bogusName
@@ -55,7 +57,12 @@ class StepTile extends StatelessWidget {
                             step.streetName,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 16),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: step == activeStep
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
                           )
                         : SizedBox.shrink(),
                     step.relativeDirection != RelativeDirection.DEPART
@@ -69,6 +76,11 @@ class StepTile extends StatelessWidget {
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: step == activeStep
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
                           )
                         : SizedBox.shrink(),
                   ],
@@ -78,7 +90,10 @@ class StepTile extends StatelessWidget {
           ),
           SizedBox(height: 16),
           step != activeStep
-              ? Divider(color: Navi4AllColors.klPink, height: 0.0)
+              ? Divider(
+                  color: Theme.of(context).colorScheme.secondary,
+                  height: 0.0,
+                )
               : SizedBox.shrink(),
         ],
       ),

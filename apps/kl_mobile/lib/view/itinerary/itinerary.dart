@@ -176,16 +176,24 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
               dividerHeight: 0.0,
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(32.0),
-                color: Theme.of(context).colorScheme.tertiary,
-                border: Border.all(color: Navi4AllColors.klPink, width: 1.5),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: 2.0,
+                ),
               ),
               tabs: [
                 Tab(
-                  icon: Icon(Icons.directions_walk_rounded),
+                  icon: Icon(
+                    Icons.directions_walk_rounded,
+                    color: Theme.of(context).textTheme.displayMedium?.color,
+                  ),
                   text: AppLocalizations.of(context)!.itineraryModeTabWalking,
                 ),
                 Tab(
-                  icon: Icon(Icons.directions_transit_rounded),
+                  icon: Icon(
+                    Icons.directions_transit_rounded,
+                    color: Theme.of(context).textTheme.displayMedium?.color,
+                  ),
                   text: AppLocalizations.of(
                     context,
                   )!.itineraryModeTabPublicTransport,
@@ -193,7 +201,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
               ],
             ),
           ),
-          Divider(height: 0, color: Navi4AllColors.klPink),
+          Divider(height: 0, color: Theme.of(context).colorScheme.secondary),
         ],
       ),
     );
@@ -252,8 +260,10 @@ class _ItineraryListState extends State<ItineraryList> {
                   );
                 },
               ),
-              separatorBuilder: (_, __) =>
-                  Divider(height: 0, color: Navi4AllColors.klPink),
+              separatorBuilder: (_, __) => Divider(
+                height: 0,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
               itemCount: itineraryController.itineraries.length,
             )
           : ProgressWidget(state: itineraryController.state),
@@ -409,7 +419,7 @@ class _OrigDestPickerState extends State<OrigDestPicker> {
         elevation: 4.0,
         color: !widget.altMode
             ? Theme.of(context).colorScheme.surface
-            : Navi4AllColors.klLightRed,
+            : Theme.of(context).colorScheme.tertiary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.0),
         ),
@@ -501,7 +511,10 @@ class _OrigDestPickerState extends State<OrigDestPicker> {
                       ),
                     ),
                   ),
-                  Divider(height: 0, color: Navi4AllColors.klPink),
+                  Divider(
+                    height: 0,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                   InkWell(
                     onTap: _onDestinationTap,
                     borderRadius: BorderRadius.only(

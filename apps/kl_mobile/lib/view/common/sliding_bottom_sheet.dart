@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:navi4all/core/theme/colors.dart';
 
 class SlidingBottomSheet extends StatelessWidget {
   final Widget stickyHeader;
@@ -74,13 +73,14 @@ class SlidingBottomSheet extends StatelessWidget {
                             itemBuilder: (BuildContext context, int index) =>
                                 listItems![index],
                             separatorBuilder:
-                                (BuildContext context, int index) =>
-                                    const Divider(
-                                      height: 1,
-                                      color: Navi4AllColors.klPink,
-                                      indent: 16,
-                                      endIndent: 16,
-                                    ),
+                                (BuildContext context, int index) => Divider(
+                                  height: 1,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
+                                  indent: 16,
+                                  endIndent: 16,
+                                ),
                           ),
                         )
                       : SizedBox.shrink(),

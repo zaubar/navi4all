@@ -224,7 +224,10 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         onTap: () => _changeAppProfile(context),
                       ),
-                      Divider(color: Navi4AllColors.klPink, height: 0),
+                      Divider(
+                        color: Theme.of(context).colorScheme.secondary,
+                        height: 0,
+                      ),
                       ListTile(
                         leading: Icon(
                           Icons.play_circle_outlined,
@@ -250,7 +253,10 @@ class SettingsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Divider(color: Navi4AllColors.klPink, height: 0),
+                      Divider(
+                        color: Theme.of(context).colorScheme.secondary,
+                        height: 0,
+                      ),
                       ListTile(
                         leading: Icon(
                           Icons.feedback_outlined,
@@ -274,7 +280,10 @@ class SettingsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Divider(color: Navi4AllColors.klPink, height: 0),
+                      Divider(
+                        color: Theme.of(context).colorScheme.secondary,
+                        height: 0,
+                      ),
                       ListTile(
                         leading: Icon(
                           Icons.support_agent_outlined,
@@ -294,7 +303,10 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         onTap: () => _launchSupport(),
                       ),
-                      Divider(color: Navi4AllColors.klPink, height: 0),
+                      Divider(
+                        color: Theme.of(context).colorScheme.secondary,
+                        height: 0,
+                      ),
                       ListTile(
                         leading: Icon(
                           Icons.privacy_tip_outlined,
@@ -320,7 +332,10 @@ class SettingsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Divider(color: Navi4AllColors.klPink, height: 0),
+                      Divider(
+                        color: Theme.of(context).colorScheme.secondary,
+                        height: 0,
+                      ),
                     ],
                   ),
                 ),

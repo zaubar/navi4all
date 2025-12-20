@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:navi4all/core/theme/colors.dart';
 
 class SelectionTile extends StatelessWidget {
   final String title;
@@ -40,7 +39,10 @@ class SelectionTile extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 4.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(32.0),
-              border: Border.all(color: Navi4AllColors.klPink, width: 1.5),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.secondary,
+                width: 1.5,
+              ),
             ),
             child: Row(
               children: [
@@ -50,7 +52,9 @@ class SelectionTile extends StatelessWidget {
                 leadingIcon != null
                     ? Icon(
                         leadingIcon!,
-                        color: Theme.of(context).textTheme.displayMedium?.color,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).textTheme.displayMedium?.color,
                       )
                     : leadingImage != null
                     ? ClipRRect(
@@ -71,7 +75,12 @@ class SelectionTile extends StatelessWidget {
                         title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : null,
+                        ),
                       ),
                       subtitle != null
                           ? SizedBox(height: 4.0)
@@ -81,6 +90,11 @@ class SelectionTile extends StatelessWidget {
                               subtitle!,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : null,
+                              ),
                             )
                           : SizedBox.shrink(),
                     ],

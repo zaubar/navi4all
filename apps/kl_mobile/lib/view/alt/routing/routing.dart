@@ -573,7 +573,9 @@ class RoutingState extends State<RoutingScreen> {
                               _navigationStatus != NavigationStatus.navigating
                                   ? Divider(
                                       height: 0,
-                                      color: Navi4AllColors.klPink,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
                                     )
                                   : SizedBox.shrink(),
                               Semantics(
@@ -793,7 +795,10 @@ class RoutingState extends State<RoutingScreen> {
                           ],
                         ),
                       ),
-                      Divider(height: 0, color: Navi4AllColors.klPink),
+                      Divider(
+                        height: 0,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                     ],
                   ),
                 ),
@@ -809,9 +814,9 @@ class RoutingState extends State<RoutingScreen> {
                     itemBuilder: (BuildContext context, int index) =>
                         _getInstructionTiles[index],
                     separatorBuilder: (BuildContext context, int index) =>
-                        const Divider(
+                        Divider(
                           height: 1,
-                          color: Navi4AllColors.klPink,
+                          color: Theme.of(context).colorScheme.secondary,
                           indent: 16,
                           endIndent: 16,
                         ),
@@ -882,7 +887,7 @@ class ItineraryLegStepTile extends StatelessWidget {
         children: [
           Icon(
             getRelativeDirectionIconMapping(step.relativeDirection),
-            color: Navi4AllColors.klPink,
+            color: Theme.of(context).colorScheme.secondary,
             size: 32,
           ),
           SizedBox(width: 16),
@@ -962,7 +967,11 @@ class ItineraryLegTile extends StatelessWidget {
         : Theme.of(context).colorScheme.surface,
     child: Row(
       children: [
-        Icon(ModeIcons.get(leg.mode), color: Navi4AllColors.klPink, size: 32),
+        Icon(
+          ModeIcons.get(leg.mode),
+          color: Theme.of(context).colorScheme.secondary,
+          size: 32,
+        ),
         SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -1016,14 +1025,17 @@ class NavigationProcessingTile extends StatelessWidget {
               ? Icons.error_outline
               : Icons.directions_outlined,
           size: 48,
-          color: Navi4AllColors.klPink,
+          color: Theme.of(context).colorScheme.secondary,
         ),
         SizedBox(height: 16),
         Text(
           processingStatus == ProcessingStatus.error
               ? AppLocalizations.of(context)!.navigationNoRouteFound
               : AppLocalizations.of(context)!.navigationGettingDirections,
-          style: const TextStyle(fontSize: 18, color: Navi4AllColors.klPink),
+          style: TextStyle(
+            fontSize: 18,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
         ),
       ],
     ),

@@ -7,7 +7,6 @@ import 'package:navi4all/view/common/accessible_button.dart';
 import 'package:provider/provider.dart';
 import 'package:navi4all/controllers/autocomplete_controller.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/schemas/routing/place.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -70,9 +69,9 @@ class _SearchScreenState extends State<SearchScreen> {
                           : const Radius.circular(32),
                     ),
                     border: autocompleteController.searchResults.isNotEmpty
-                        ? const Border(
+                        ? Border(
                             bottom: BorderSide(
-                              color: Navi4AllColors.klPink,
+                              color: Theme.of(context).colorScheme.tertiary,
                               width: 1.5,
                             ),
                           )
@@ -85,9 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: IconButton(
                           icon: Icon(
                             Icons.arrow_back,
-                            color: Theme.of(
-                              context,
-                            ).textTheme.displayMedium?.color,
+                            color: Theme.of(context).colorScheme.primary,
                             semanticLabel: AppLocalizations.of(
                               context,
                             )!.commonBackButtonSemantic,
@@ -119,12 +116,18 @@ class _SearchScreenState extends State<SearchScreen> {
                               hintText: AppLocalizations.of(
                                 context,
                               )!.searchTextFieldHint,
+                              hintStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.symmetric(
                                 vertical: 16,
                               ),
                             ),
-                            style: const TextStyle(fontSize: 16),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                             onChanged: (value) =>
                                 Provider.of<AutocompleteController>(
                                   context,
@@ -178,11 +181,11 @@ class _SearchScreenState extends State<SearchScreen> {
                             );
                           },
                           separatorBuilder: (context, index) {
-                            return const Divider(
+                            return Divider(
                               height: 1,
                               indent: 12,
                               endIndent: 12,
-                              color: Navi4AllColors.klPink,
+                              color: Theme.of(context).colorScheme.secondary,
                             );
                           },
                           itemCount:
@@ -196,7 +199,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             Icon(
                               Icons.search_rounded,
                               size: 96,
-                              color: Navi4AllColors.klPink,
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
                             SizedBox(height: 16),
                             Padding(
@@ -210,7 +213,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Navi4AllColors.klPink,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
                                 ),
                               ),
                             ),
@@ -263,9 +268,9 @@ class _SearchSuggestion extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.location_on_rounded,
-                color: Navi4AllColors.klPink,
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -276,9 +281,10 @@ class _SearchSuggestion extends StatelessWidget {
                       place.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     place.locality != null
@@ -286,7 +292,10 @@ class _SearchSuggestion extends StatelessWidget {
                             place.locality!,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 12),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           )
                         : const SizedBox.shrink(),
                   ],

@@ -28,7 +28,7 @@ class AccessibleButton extends StatelessWidget {
           backgroundColor: style == AccessibleButtonStyle.white
               ? Navi4AllColors.klWhite
               : style == AccessibleButtonStyle.pink
-              ? Navi4AllColors.klPink
+              ? Theme.of(context).colorScheme.secondary
               : Navi4AllColors.klRed,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Navi4AllGeometry.radiusLarge),

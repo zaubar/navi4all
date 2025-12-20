@@ -304,7 +304,7 @@ class _HomeMapState extends State<HomeMap> {
                 children: [
                   FloatingActionButton(
                     shape: CircleBorder(),
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    backgroundColor: Theme.of(context).colorScheme.surface,
                     onPressed: () => _onLayersButtonPressed(),
                     child: Icon(
                       Icons.layers,
@@ -314,7 +314,7 @@ class _HomeMapState extends State<HomeMap> {
                   SizedBox(height: 16),
                   FloatingActionButton(
                     shape: CircleBorder(),
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    backgroundColor: Theme.of(context).colorScheme.surface,
                     onPressed: () => _panToUserLocation(),
                     child: Icon(
                       Icons.my_location,

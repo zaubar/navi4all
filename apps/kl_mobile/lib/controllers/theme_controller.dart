@@ -9,7 +9,15 @@ class ThemeController extends ChangeNotifier {
   BaseMapStyle _baseMapStyle = BaseMapStyle.light;
   ProfileMode _profileMode = ProfileMode.general;
   Color textColorLight = Navi4AllColors.klRed;
-  Color textColorDark = Navi4AllColors.klRed;
+  Color textColorDark = Navi4AllColors.klLightRed;
+  Color surfaceColorLight = Navi4AllColors.klSurfaceLight;
+  Color surfaceColorDark = Navi4AllColors.klSurfaceDark;
+  Color primaryColorLight = Navi4AllColors.klRed;
+  Color primaryColorDark = Navi4AllColors.klLightRed;
+  Color secondaryColorLight = Navi4AllColors.klPink;
+  Color secondaryColorDark = Navi4AllColors.klBlack;
+  Color tertiaryColorLight = Navi4AllColors.klLightRed;
+  Color tertiaryColorDark = Navi4AllColors.klTertiaryDark;
 
   ThemeController(BuildContext context) {
     _initialize(context);
@@ -61,15 +69,39 @@ class ThemeController extends ChangeNotifier {
     switch (mode) {
       case ProfileMode.blind:
         textColorLight = Navi4AllColors.klRed;
-        textColorDark = Navi4AllColors.klRed;
+        textColorDark = Navi4AllColors.klLightRed;
+        surfaceColorLight = Navi4AllColors.klWhite;
+        surfaceColorDark = Navi4AllColors.klBlack;
+        primaryColorLight = Navi4AllColors.klRed;
+        primaryColorDark = Navi4AllColors.klLightRed;
+        secondaryColorLight = Navi4AllColors.klPink;
+        secondaryColorDark = Navi4AllColors.klBlack;
+        tertiaryColorLight = Navi4AllColors.klLightRed;
+        tertiaryColorDark = Navi4AllColors.klTertiaryDark;
         break;
       case ProfileMode.visionImpaired:
-        textColorLight = Navi4AllColors.klDarkRed;
-        textColorDark = Navi4AllColors.klLightRed;
+        textColorLight = Navi4AllColors.klBlack;
+        textColorDark = Navi4AllColors.klYellow;
+        surfaceColorLight = Navi4AllColors.klYellow;
+        surfaceColorDark = Navi4AllColors.klBlack;
+        primaryColorLight = Navi4AllColors.klYellow;
+        primaryColorDark = Navi4AllColors.klBlack;
+        secondaryColorLight = Navi4AllColors.klBlack;
+        secondaryColorDark = Navi4AllColors.klYellow;
+        tertiaryColorLight = Navi4AllColors.klBlack;
+        tertiaryColorDark = Navi4AllColors.klYellow;
         break;
       case ProfileMode.general:
         textColorLight = Navi4AllColors.klRed;
-        textColorDark = Navi4AllColors.klRed;
+        textColorDark = Navi4AllColors.klLightRed;
+        surfaceColorLight = Navi4AllColors.klWhite;
+        surfaceColorDark = Navi4AllColors.klBlack;
+        primaryColorLight = Navi4AllColors.klRed;
+        primaryColorDark = Navi4AllColors.klLightRed;
+        secondaryColorLight = Navi4AllColors.klPink;
+        secondaryColorDark = Navi4AllColors.klPink;
+        tertiaryColorLight = Navi4AllColors.klLightRed;
+        tertiaryColorDark = Navi4AllColors.klTertiaryDark;
         break;
     }
 

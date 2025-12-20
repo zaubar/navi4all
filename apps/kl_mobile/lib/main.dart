@@ -85,9 +85,10 @@ class Navi4AllApp extends StatelessWidget {
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: themeController.textColorLight,
-              surface: Navi4AllColors.maSurfaceLight,
-              secondary: Navi4AllColors.maSecondaryLight,
-              tertiary: Navi4AllColors.maTertiaryLight,
+              surface: themeController.surfaceColorLight,
+              primary: themeController.primaryColorLight,
+              secondary: themeController.secondaryColorLight,
+              tertiary: themeController.tertiaryColorLight,
               brightness: Brightness.light,
             ),
             textTheme: GoogleFonts.robotoTextTheme(
@@ -101,9 +102,10 @@ class Navi4AllApp extends StatelessWidget {
           darkTheme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: themeController.textColorDark,
-              surface: Navi4AllColors.maSurfaceDark,
-              secondary: Navi4AllColors.maSecondaryDark,
-              tertiary: Navi4AllColors.maTertiaryDark,
+              surface: themeController.surfaceColorDark,
+              primary: themeController.primaryColorDark,
+              secondary: themeController.secondaryColorDark,
+              tertiary: themeController.tertiaryColorDark,
               brightness: Brightness.dark,
             ),
             textTheme: GoogleFonts.robotoTextTheme(

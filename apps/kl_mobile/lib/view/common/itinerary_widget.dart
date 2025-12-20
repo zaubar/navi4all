@@ -87,9 +87,7 @@ class ItineraryWidget extends StatelessWidget {
                           children: [
                             Icon(
                               ModeIcons.get(legSummary.mode),
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium?.color,
+                              color: Theme.of(context).colorScheme.primary,
                               size: 16,
                             ),
                             const SizedBox(width: 4),
@@ -100,6 +98,9 @@ class ItineraryWidget extends StatelessWidget {
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
                             ),
                           ],

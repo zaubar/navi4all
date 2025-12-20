@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:navi4all/controllers/itinerary_controller.dart';
 import 'package:navi4all/controllers/profile_controller.dart';
 import 'package:navi4all/core/config.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/core/theme/labels.dart';
 import 'package:navi4all/core/theme/profile_mode.dart';
 import 'package:navi4all/core/utils.dart';
@@ -233,7 +232,10 @@ class _WidgetRoutingProfileOptionsState
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(32.0),
-              border: Border.all(color: Navi4AllColors.klPink, width: 2.0),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.secondary,
+                width: 2.0,
+              ),
             ),
             child: Consumer<ProfileController>(
               builder: (context, profileController, _) =>
@@ -418,7 +420,7 @@ class _WidgetWalkingOptions extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8),
-          Divider(height: 0.0, color: Navi4AllColors.klPink),
+          Divider(height: 0.0, color: Theme.of(context).colorScheme.secondary),
           _SwitchTile(
             title: AppLocalizations.of(
               context,
@@ -649,7 +651,7 @@ class _WidgetBicycleOptionsState extends State<_WidgetBicycleOptions> {
             ),
           ),
           SizedBox(height: 8),
-          Divider(height: 0.0, color: Navi4AllColors.klPink),
+          Divider(height: 0.0, color: Theme.of(context).colorScheme.secondary),
         ],
       ),
     );
@@ -708,12 +710,20 @@ class _SwitchTile extends StatelessWidget {
                     onChanged: onChanged,
                     activeTrackColor: Theme.of(
                       context,
-                    ).textTheme.displayMedium!.color,
+                    ).textTheme.displayMedium?.color,
+                    inactiveTrackColor: Theme.of(context).colorScheme.secondary,
+                    inactiveThumbColor: Theme.of(context).colorScheme.surface,
+                    trackOutlineColor: WidgetStateProperty.fromMap({
+                      WidgetState.selected: Theme.of(
+                        context,
+                      ).textTheme.displayMedium?.color,
+                      WidgetState.any: Theme.of(context).colorScheme.secondary,
+                    }),
                   ),
                 ],
               ),
             ),
-            Divider(height: 0, color: Navi4AllColors.klPink),
+            Divider(height: 0, color: Theme.of(context).colorScheme.secondary),
           ],
         ),
       ),

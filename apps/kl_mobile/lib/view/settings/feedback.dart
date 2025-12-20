@@ -183,7 +183,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           maxLines: 1,
                           decoration: InputDecoration(
                             hintText: '...',
-                            hintStyle: TextStyle(color: Navi4AllColors.klPink),
+                            hintStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(32),
                               borderSide: BorderSide(
@@ -231,7 +233,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           maxLines: 6,
                           decoration: InputDecoration(
                             hintText: '...',
-                            hintStyle: TextStyle(color: Navi4AllColors.klPink),
+                            hintStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(

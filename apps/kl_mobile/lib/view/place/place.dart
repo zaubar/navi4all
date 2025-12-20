@@ -385,8 +385,8 @@ class PlaceSearchBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(32),
                     color: !altMode
-                        ? Theme.of(context).colorScheme.secondary
-                        : Navi4AllColors.klLightRed,
+                        ? Theme.of(context).colorScheme.surface
+                        : Theme.of(context).colorScheme.tertiary,
                   ),
                   child: Row(
                     children: [

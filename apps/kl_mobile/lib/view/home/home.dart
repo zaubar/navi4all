@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(32),
                               color: _pageIndex == 0
-                                  ? Theme.of(context).colorScheme.secondary
+                                  ? Theme.of(context).colorScheme.surface
                                   : Theme.of(context).colorScheme.tertiary,
                             ),
                             child: Row(
@@ -86,9 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(width: 24),
                                 Icon(
                                   Icons.search,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.displayMedium?.color,
+                                  color: _pageIndex == 0
+                                      ? Theme.of(
+                                          context,
+                                        ).textTheme.displayMedium?.color
+                                      : Theme.of(context).colorScheme.primary,
                                 ),
                                 SizedBox(width: 16),
                                 Expanded(
@@ -96,7 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     AppLocalizations.of(
                                       context,
                                     )!.homeSearchButtonHint,
-                                    style: const TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: _pageIndex == 0
+                                          ? null
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                    ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -129,17 +138,26 @@ class _HomeScreenState extends State<HomeScreen> {
                               states,
                             ) {
                               if (states.contains(WidgetState.selected)) {
-                                return const TextStyle(
+                                return TextStyle(
+                                  color: _pageIndex == 0
+                                      ? null
+                                      : Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                 );
                               }
-                              return const TextStyle(
+                              return TextStyle(
+                                color: _pageIndex == 0
+                                    ? null
+                                    : Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               );
                             }),
                         backgroundColor: _pageIndex == 0
-                            ? Theme.of(context).colorScheme.secondary
+                            ? Theme.of(context).colorScheme.surface
                             : Theme.of(context).colorScheme.tertiary,
+                        indicatorColor: _pageIndex == 0
+                            ? Theme.of(context).colorScheme.tertiary
+                            : Theme.of(context).colorScheme.primary,
                         selectedIndex: _pageIndex,
                         onDestinationSelected: (index) => setState(() {
                           _pageIndex = index;
@@ -150,15 +168,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.place_outlined,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium?.color,
+                              color: _pageIndex == 0
+                                  ? Theme.of(context).colorScheme.secondary
+                                  : Theme.of(context).colorScheme.primary,
                             ),
                             selectedIcon: Icon(
                               Icons.place_rounded,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium?.color,
+                              color: _pageIndex == 0
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.secondary,
                             ),
                             label: AppLocalizations.of(
                               context,
@@ -167,15 +185,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.star_border,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium?.color,
+                              color: _pageIndex == 0
+                                  ? Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium?.color
+                                  : Theme.of(context).colorScheme.primary,
                             ),
                             selectedIcon: Icon(
                               Icons.star,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium?.color,
+                              color: _pageIndex == 0
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.secondary,
                             ),
                             label: AppLocalizations.of(
                               context,
@@ -184,15 +204,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           NavigationDestination(
                             icon: Icon(
                               Icons.settings_outlined,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium?.color,
+                              color: _pageIndex == 0
+                                  ? Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium?.color
+                                  : Theme.of(context).colorScheme.primary,
                             ),
                             selectedIcon: Icon(
                               Icons.settings,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium?.color,
+                              color: _pageIndex == 0
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.secondary,
                             ),
                             label: AppLocalizations.of(
                               context,

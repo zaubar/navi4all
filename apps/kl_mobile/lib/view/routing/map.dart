@@ -180,7 +180,8 @@ class _RoutingMapState extends State<RoutingMap> {
     }
 
     final color =
-        (Theme.of(context).textTheme.bodyMedium?.color ?? Navi4AllColors.klPink)
+        (Theme.of(context).textTheme.bodyMedium?.color ??
+                Theme.of(context).colorScheme.secondary)
             .toARGB32()
             .toRadixString(16)
             .substring(2);

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/core/theme/icons.dart';
 import 'package:navi4all/schemas/routing/leg.dart' as leg_schema;
 import 'package:navi4all/schemas/routing/mode.dart';
@@ -32,7 +31,9 @@ class LegTile extends StatelessWidget {
               horizontal: 16.0,
             ),
             decoration: BoxDecoration(
-              border: Border.all(color: Navi4AllColors.klPink),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
               borderRadius: BorderRadius.circular(32.0),
             ),
             child: Text(
@@ -69,9 +70,8 @@ class LegTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
               border: Border.all(
                 color: leg == activeLeg
-                    ? Theme.of(context).textTheme.displayMedium?.color ??
-                          Navi4AllColors.klRed
-                    : Navi4AllColors.klPink,
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.surface,
               ),
             )
           : null,

@@ -29,10 +29,7 @@ class AccessibleIconButton extends StatelessWidget {
           child: IconButton(
             icon: Stack(
               children: [
-                Icon(
-                  icon,
-                  color: Theme.of(context).textTheme.displayMedium?.color,
-                ),
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
               ],
             ),
             onPressed: onTap,

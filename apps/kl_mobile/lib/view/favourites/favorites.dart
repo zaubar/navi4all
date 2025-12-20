@@ -8,7 +8,6 @@ import 'package:navi4all/view/common/accessible_button.dart';
 import 'package:navi4all/view/common/accessible_icon_button.dart';
 import 'package:provider/provider.dart';
 import 'package:navi4all/controllers/favorites_controller.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
 
 class FavoritesScreen extends StatefulWidget {
@@ -110,7 +109,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   Icon(
                                     Icons.star,
                                     size: 72,
-                                    color: Navi4AllColors.klPink,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
                                   ),
                                   SizedBox(height: 16),
                                   Padding(
@@ -123,8 +124,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                       )!.favouritesScreenPrompt,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        color: Navi4AllColors.klPink,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.secondary,
                                       ),
                                     ),
                                   ),
@@ -207,7 +209,7 @@ class _FavoritesListItem extends StatelessWidget {
             ),
           ),
           SizedBox(height: 4),
-          Divider(color: Navi4AllColors.klPink, height: 0),
+          Divider(color: Theme.of(context).colorScheme.secondary, height: 0),
         ],
       ),
     ),

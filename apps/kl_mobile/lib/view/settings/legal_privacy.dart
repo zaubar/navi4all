@@ -82,7 +82,10 @@ class _LegalPrivacyScreenState extends State<LegalPrivacyScreen> {
                         );
                       },
                     ),
-                    Divider(color: Navi4AllColors.klPink, height: 0),
+                    Divider(
+                      color: Theme.of(context).colorScheme.secondary,
+                      height: 0,
+                    ),
                     ListTile(
                       leading: Icon(
                         Icons.security_outlined,
