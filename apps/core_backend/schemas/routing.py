@@ -45,6 +45,7 @@ class RelativeDirection(Enum):
     enter_station = "ENTER_STATION"
     exit_station = "EXIT_STATION"
     follow_signs = "FOLLOW_SIGNS"
+    arrive = "ARRIVE"
 
 class AbsoluteDirection(Enum):
     north = "NORTH"
@@ -55,6 +56,7 @@ class AbsoluteDirection(Enum):
     southwest = "SOUTHWEST"
     west = "WEST"
     northwest = "NORTHWEST"
+    unknown = "UNKNOWN"
 
 
 class Step(BaseModel):
@@ -65,6 +67,8 @@ class Step(BaseModel):
     absolute_direction: AbsoluteDirection
     street_name: str
     bogus_name: bool
+    voice_instruction: str | None = None
+    text_instruction: str | None = None
 
 
 class Route(BaseModel):
@@ -115,6 +119,8 @@ class ItineraryDetailed(ItineraryBase):
 class RoutingEngine(str, Enum):
     open_trip_planner = "otp"
     open_trip_planner_kl = "otp_kl"
+    valhalla = "valhalla"
+    hybrid = "hybrid"
 
 
 class WalkOptions(BaseModel):
@@ -123,6 +129,10 @@ class WalkOptions(BaseModel):
 
 class BicycleOptions(BaseModel):
     speed: float
+
+class GuidanceLanguage(str, Enum):
+    en = "en"
+    de = "de"
 
 
 """Request and response models exposed via the API"""
@@ -139,6 +149,7 @@ class RoutingPlanRequestModel(BaseModel):
     bicycle: BicycleOptions | None = None
     accessible: bool = False
     num_itineraries: int = 3
+    guidance_language: GuidanceLanguage = GuidanceLanguage.en
 
     @field_validator("date", mode="before")
     @classmethod
@@ -159,9 +170,11 @@ class RoutingPlanRequestModel(BaseModel):
             raise ValueError("Time must be in the format 'HH:MM:SS'.")
 
 
-class RoutingPlanResponseModel(BaseModel):
-    # TODO: Include additional info about the plan
+class RoutingPlanSummaryResponseModel(BaseModel):
     itineraries: list[ItinerarySummary]
+    
+class RoutingPlanDetailedResponseModel(BaseModel):
+    itineraries: list[ItineraryDetailed]
     
 class ItineraryResponseModel(ItineraryDetailed):
     pass

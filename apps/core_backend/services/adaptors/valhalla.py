@@ -1,0 +1,207 @@
+from core.config import settings
+from httpx import AsyncClient
+from redis import Redis
+from schemas.routing import (
+    RoutingPlanRequestModel,
+    RoutingPlanSummaryResponseModel,
+    RoutingPlanDetailedResponseModel,
+    ItinerarySummary,
+    LegSummary,
+    LegDetailed,
+    Step,
+    ItineraryResponseModel,
+    ItineraryDetailed,
+    AbsoluteDirection,
+    GuidanceLanguage,
+)
+from services.schemas.valhalla import (
+    ValhallaRouteRequestModel,
+    ValhallaRouteResponseModel,
+    ValhallaLocation,
+    ValhallaCosting,
+    ValhallaCostingOptions,
+    ValhallaPedestrianCostingOptions,
+    ValhallaPedestrianCostingOptionsType,
+    MODE_TO_COSTING,
+    MANEUVER_TYPE_TO_RELATIVE_DIRECTION,
+    TRAVEL_MODE_TO_MODE,
+)
+from uuid import uuid4
+from datetime import datetime, timedelta
+import json
+import polyline
+
+
+class ValhallaAdaptor:
+    def __init__(self, url: str):
+        """Initalize adaptor settings and setup persistent itinerary cache."""
+
+        # Initialise adaptor URL
+        self.url = url
+
+        # Setup Redis client to cache itineraries
+        self.redis_client = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
+
+    async def make_plan_request(
+        self,
+        async_client: AsyncClient,
+        request: RoutingPlanRequestModel,
+        summarized: bool = True,
+    ) -> RoutingPlanSummaryResponseModel:
+        """Make a route request to the Valhalla routing engine."""
+
+        # Reformat request payload
+        request_dict = str(
+            ValhallaRouteRequestModel(
+                locations=[
+                    ValhallaLocation(lat=request.origin.lat, lon=request.origin.lon),
+                    ValhallaLocation(
+                        lat=request.destination.lat, lon=request.destination.lon
+                    ),
+                ],
+                costing=MODE_TO_COSTING.get(request.transport_modes[0])
+                if len(request.transport_modes) == 1
+                else ValhallaCosting.multi_modal,
+                costing_options=ValhallaCostingOptions(
+                    pedestrian=ValhallaPedestrianCostingOptions(
+                        walking_speed=request.walk.speed if request.walk else None,
+                        type=ValhallaPedestrianCostingOptionsType.blind
+                        if request.accessible
+                        else ValhallaPedestrianCostingOptionsType.foot,
+                    )
+                ),
+                language=request.guidance_language.value,
+            ).model_dump(mode="json", exclude_none=True)
+        ).replace("'", '"')
+
+        # Make the request to the routing engine
+        router_response = await async_client.get(
+            f"{self.url}/route?json={request_dict}",
+        )
+        router_response.raise_for_status()
+
+        # Process routing engine response
+        router_response = ValhallaRouteResponseModel.model_validate(
+            router_response.json()
+        )
+
+        # Build response
+        response = (
+            RoutingPlanSummaryResponseModel(itineraries=[])
+            if summarized
+            else RoutingPlanDetailedResponseModel(itineraries=[])
+        )
+
+        # Write itinerary to cache
+        # Produce a unique ID for this itinerary and the journey it represents
+        itinerary_id = str(uuid4())
+
+        # Produce ItineraryDetailed model for full itinerary response
+        legs: list[LegDetailed] = []
+        for leg in router_response.trip.legs:
+            shape_points = polyline.decode(leg.shape, precision=6)
+
+            steps: list[Step] = []
+            for maneuver in leg.maneuvers:
+                step_shape = shape_points[
+                    maneuver.begin_shape_index : maneuver.end_shape_index + 1
+                ]
+                steps.append(
+                    Step(
+                        distance=round(maneuver.length * 1000),  # convert km to m
+                        lat=step_shape[0][0],
+                        lon=step_shape[0][1],
+                        relative_direction=MANEUVER_TYPE_TO_RELATIVE_DIRECTION.get(
+                            maneuver.type,
+                        ),
+                        absolute_direction=AbsoluteDirection.unknown,
+                        street_name=maneuver.instruction,
+                        bogus_name=True,
+                        text_instruction=maneuver.instruction,
+                        voice_instruction=maneuver.verbal_pre_transition_instruction,
+                    )
+                )
+
+            legs.append(
+                LegDetailed(
+                    mode=TRAVEL_MODE_TO_MODE[leg.maneuvers[0].travel_mode],
+                    duration=round(leg.summary.time),
+                    distance=round(leg.summary.length * 1000),  # convert km to m
+                    geometry=polyline.encode(polyline.decode(leg.shape, precision=6)),
+                    steps=steps,
+                )
+            )
+
+        itinerary_detailed = ItineraryDetailed(
+            itinerary_id=itinerary_id,
+            duration=round(router_response.trip.summary.time),
+            start_time=datetime.now(),
+            end_time=datetime.now()
+            + timedelta(seconds=router_response.trip.summary.time),
+            origin=request.origin,
+            destination=request.destination,
+            legs=legs,
+        )
+
+        if summarized:
+            # Write the full journey to cache
+            serialized_mapping = {
+                k: json.dumps(v) if isinstance(v, (list, dict)) else v
+                for k, v in itinerary_detailed.model_dump(
+                    mode="json", exclude_none=True
+                ).items()
+            }
+            self.redis_client.hset(name=itinerary_id, mapping=serialized_mapping)
+
+            # Consider the itinerary to be invalid past its start time
+            current_time = datetime.now()
+            if current_time < itinerary_detailed.end_time:
+                self.redis_client.expire(
+                    itinerary_id, (itinerary_detailed.end_time - current_time).seconds
+                )
+            else:
+                # TODO: Throw an exception & return an appropriate error response
+                print("Invalid itinerary start time.")
+
+            # Write an itinerary summary to the response
+            response.itineraries.append(
+                ItinerarySummary(
+                    itinerary_id=itinerary_detailed.itinerary_id,
+                    duration=itinerary_detailed.duration,
+                    start_time=itinerary_detailed.start_time,
+                    end_time=itinerary_detailed.end_time,
+                    origin=itinerary_detailed.origin,
+                    destination=itinerary_detailed.destination,
+                    legs=[
+                        LegSummary(
+                            mode=leg.mode,
+                            duration=int(leg.duration),
+                            distance=leg.distance,
+                            geometry=leg.geometry,
+                        )
+                        for leg in itinerary_detailed.legs
+                    ],
+                )
+            )
+        else:
+            response.itineraries.append(itinerary_detailed)
+
+        return response
+
+    async def get_itinerary(self, itinerary_id: str) -> ItineraryResponseModel:
+        """Retrieve a full itinerary from the cache by its journey ID."""
+
+        # Fetch itinerary from cache
+        data = self.redis_client.hgetall(itinerary_id)
+
+        # Decode
+        decoded_data = {k.decode(): v.decode() for k, v in data.items()}
+
+        # Deserialize
+        deserialized_data = {
+            k: json.loads(v) if v.startswith("[") or v.startswith("{") else v
+            for k, v in decoded_data.items()
+        }
+
+        # Validate and return the full itinerary
+        return ItineraryResponseModel.model_validate(deserialized_data)

@@ -6,7 +6,8 @@ from core.utils import to_camel_case
 from redis import Redis
 from schemas.routing import (
     RoutingPlanRequestModel,
-    RoutingPlanResponseModel,
+    RoutingPlanSummaryResponseModel,
+    RoutingPlanDetailedResponseModel,
     ItinerarySummary,
     LegSummary,
     LegDetailed,
@@ -46,8 +47,11 @@ class OpenTripPlannerAdaptor:
         return path.read_text()
 
     async def make_plan_request(
-        self, async_client: AsyncClient, request: RoutingPlanRequestModel
-    ) -> RoutingPlanResponseModel:
+        self,
+        async_client: AsyncClient,
+        request: RoutingPlanRequestModel,
+        summarized: bool = True,
+    ) -> RoutingPlanSummaryResponseModel | RoutingPlanDetailedResponseModel:
         """Make a plan request to the OpenTripPlanner routing engine."""
 
         # Load GraphQL query template from file
@@ -95,7 +99,11 @@ class OpenTripPlannerAdaptor:
         )
 
         # Build response
-        response = RoutingPlanResponseModel(itineraries=[])
+        response = (
+            RoutingPlanSummaryResponseModel(itineraries=[])
+            if summarized
+            else RoutingPlanDetailedResponseModel(itineraries=[])
+        )
 
         # Write itineraries to cache
         for itinerary in router_response.itineraries:
@@ -144,45 +152,48 @@ class OpenTripPlannerAdaptor:
                 ],
             )
 
-            # Write the full journey to cache
-            serialized_mapping = {
-                k: json.dumps(v) if isinstance(v, (list, dict)) else v
-                for k, v in itinerary_detailed.model_dump(
-                    mode="json", exclude_none=True
-                ).items()
-            }
-            self.redis_client.hset(name=itinerary_id, mapping=serialized_mapping)
+            if summarized:
+                # Write the full journey to cache
+                serialized_mapping = {
+                    k: json.dumps(v) if isinstance(v, (list, dict)) else v
+                    for k, v in itinerary_detailed.model_dump(
+                        mode="json", exclude_none=True
+                    ).items()
+                }
+                self.redis_client.hset(name=itinerary_id, mapping=serialized_mapping)
 
-            # Consider the itinerary to be invalid past its start time
-            current_time = datetime.now()
-            if current_time < itinerary.end_time:
-                self.redis_client.expire(
-                    itinerary_id, (itinerary.end_time - current_time).seconds
+                # Consider the itinerary to be invalid past its start time
+                current_time = datetime.now()
+                if current_time < itinerary.end_time:
+                    self.redis_client.expire(
+                        itinerary_id, (itinerary.end_time - current_time).seconds
+                    )
+                else:
+                    # TODO: Throw an exception & return an appropriate error response
+                    print("Invalid itinerary start time.")
+
+                # Write an itinerary summary to the response
+                response.itineraries.append(
+                    ItinerarySummary(
+                        itinerary_id=itinerary_detailed.itinerary_id,
+                        duration=itinerary_detailed.duration,
+                        start_time=itinerary_detailed.start_time,
+                        end_time=itinerary_detailed.end_time,
+                        origin=itinerary_detailed.origin,
+                        destination=itinerary_detailed.destination,
+                        legs=[
+                            LegSummary(
+                                mode=leg.mode,
+                                duration=int(leg.duration),
+                                distance=leg.distance,
+                                geometry=leg.geometry,
+                            )
+                            for leg in itinerary_detailed.legs
+                        ],
+                    )
                 )
             else:
-                # TODO: Throw an exception & return an appropriate error response
-                print("Invalid itinerary start time.")
-
-            # Write an itinerary summary to the response
-            response.itineraries.append(
-                ItinerarySummary(
-                    itinerary_id=itinerary_detailed.itinerary_id,
-                    duration=itinerary_detailed.duration,
-                    start_time=itinerary_detailed.start_time,
-                    end_time=itinerary_detailed.end_time,
-                    origin=itinerary_detailed.origin,
-                    destination=itinerary_detailed.destination,
-                    legs=[
-                        LegSummary(
-                            mode=leg.mode,
-                            duration=int(leg.duration),
-                            distance=leg.distance,
-                            geometry=leg.geometry,
-                        )
-                        for leg in itinerary_detailed.legs
-                    ],
-                )
-            )
+                response.itineraries.append(itinerary_detailed)
 
         return response
 
