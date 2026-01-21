@@ -803,6 +803,24 @@ abstract class AppLocalizations {
   /// **'Arrive'**
   String get navigationRelativeDirectionArrive;
 
+  /// No description provided for @navigationRelativeDirectionTransitBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Board'**
+  String get navigationRelativeDirectionTransitBoard;
+
+  /// No description provided for @navigationRelativeDirectionTransitRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride the {mode}'**
+  String navigationRelativeDirectionTransitRide(String mode);
+
+  /// No description provided for @navigationRelativeDirectionTransitAlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Alight'**
+  String get navigationRelativeDirectionTransitAlight;
+
   /// No description provided for @itineraryDepartureTime.
   ///
   /// In en, this message translates to:
@@ -1258,6 +1276,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reroute'**
   String get routingScreenReroutingDialogConfirmButton;
+
+  /// No description provided for @routingScreenLegTransitDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'towards\n{direction}'**
+  String routingScreenLegTransitDirection(String direction);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

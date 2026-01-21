@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:navi4all/schemas/routing/itinerary.dart';
 
 class TextFormatter {
@@ -71,4 +72,7 @@ class TextFormatter {
     }
     return '';
   }
+
+  static String formatTimeOfDay(DateTime dateTime) =>
+      DateFormat.Hm().format(dateTime);
 }

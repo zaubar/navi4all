@@ -7,7 +7,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as maps_toolkit;
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/core/theme/profile_mode.dart';
 import 'package:navi4all/core/theme/values.dart';
 import 'package:provider/provider.dart';
@@ -59,34 +58,55 @@ class _RoutingMapState extends State<RoutingMap> {
 
   Future<void> _onStyleLoaded() async {
     // Load custom marker icons
-    String assetMarkerPlace =
-        Provider.of<ThemeController>(context, listen: false).profileMode ==
-            ProfileMode.visionImpaired
-        ? Navi4AllValues.assetMarkerPlaceVisImp
-        : Navi4AllValues.assetMarkerPlaceGeneral;
-    final bytes3 = await rootBundle.load(assetMarkerPlace);
-    final list3 = bytes3.buffer.asUint8List();
-    _mapController.addImage("place.png", list3);
+    String assetMarkerUserPosition =
+        Navi4AllValues.assetMarkerUserPositionGeneral;
+    String assetMarkerWalking = Navi4AllValues.assetMarkerWalkingGeneral;
+    String assetMarkerBus = Navi4AllValues.assetMarkerBusGeneral;
+    String assetMarkerTrain = Navi4AllValues.assetMarkerTrainGeneral;
+    String assetMarkerPlace = Navi4AllValues.assetMarkerPlaceGeneral;
+    String assetLineWalking = Navi4AllValues.assetLineWalkingGeneral;
 
-    final bytes4 = await rootBundle.load('assets/user_position.png');
-    final list4 = bytes4.buffer.asUint8List();
-    _mapController.addImage("user_position.png", list4);
+    // Update assets for vision impaired profile
+    if (Provider.of<ThemeController>(context, listen: false).profileMode ==
+        ProfileMode.visionImpaired) {
+      assetMarkerUserPosition =
+          Navi4AllValues.assetMarkerUserPositionVisionImpaired;
+      assetMarkerWalking = Navi4AllValues.assetMarkerWalkingVisionImpaired;
+      assetMarkerBus = Navi4AllValues.assetMarkerBusVisionImpaired;
+      assetMarkerTrain = Navi4AllValues.assetMarkerTrainVisionImpaired;
+      assetMarkerPlace = Navi4AllValues.assetMarkerPlaceVisionImpaired;
+      assetLineWalking = Navi4AllValues.assetLineWalkingVisionImpaired;
+    }
 
-    final bytes5 = await rootBundle.load('assets/marker_walking.png');
-    final list5 = bytes5.buffer.asUint8List();
-    _mapController.addImage("marker_walking.png", list5);
+    _mapController.addImage(
+      'assetMarkerUserPosition',
+      (await rootBundle.load(assetMarkerUserPosition)).buffer.asUint8List(),
+    );
 
-    final bytes6 = await rootBundle.load('assets/marker_bus.png');
-    final list6 = bytes6.buffer.asUint8List();
-    _mapController.addImage("marker_bus.png", list6);
+    _mapController.addImage(
+      'assetMarkerWalking',
+      (await rootBundle.load(assetMarkerWalking)).buffer.asUint8List(),
+    );
 
-    final bytes7 = await rootBundle.load('assets/marker_train.png');
-    final list7 = bytes7.buffer.asUint8List();
-    _mapController.addImage("marker_train.png", list7);
+    _mapController.addImage(
+      'assetMarkerBus',
+      (await rootBundle.load(assetMarkerBus)).buffer.asUint8List(),
+    );
 
-    final bytes8 = await rootBundle.load('assets/line_dotted.png');
-    final list8 = bytes8.buffer.asUint8List();
-    _mapController.addImage("line_dotted.png", list8);
+    _mapController.addImage(
+      'assetMarkerTrain',
+      (await rootBundle.load(assetMarkerTrain)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetMarkerPlace',
+      (await rootBundle.load(assetMarkerPlace)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetLineWalking',
+      (await rootBundle.load(assetLineWalking)).buffer.asUint8List(),
+    );
 
     await Future.delayed(const Duration(milliseconds: 250));
     setState(() => _canInteractWithMap = true);
@@ -151,8 +171,6 @@ class _RoutingMapState extends State<RoutingMap> {
       await _mapController.removeSymbol(_destinationSymbol!);
     }
 
-    String iconName = 'place.png';
-
     // Draw new destination marker
     _destinationSymbol = await _mapController.addSymbol(
       SymbolOptions(
@@ -160,8 +178,8 @@ class _RoutingMapState extends State<RoutingMap> {
           widget.destination.coordinates.lat,
           widget.destination.coordinates.lon,
         ),
-        iconImage: iconName,
-        iconSize: 0.85,
+        iconImage: 'assetMarkerPlace',
+        iconSize: 1.0,
       ),
     );
   }
@@ -202,7 +220,7 @@ class _RoutingMapState extends State<RoutingMap> {
           lineOpacity: 0.8,
           lineJoin: "round",
           linePattern: legModeCoordinates.key == Mode.WALK
-              ? 'line_dotted.png'
+              ? 'assetLineWalking'
               : null,
         ),
       );
@@ -238,19 +256,19 @@ class _RoutingMapState extends State<RoutingMap> {
       String? legActionSymbol;
       switch (leg.mode) {
         case Mode.WALK:
-          legActionSymbol = "marker_walking.png";
+          legActionSymbol = "assetMarkerWalking";
           break;
         case Mode.BICYCLE:
         case Mode.CAR:
           legActionSymbol = null;
           break;
         case Mode.BUS:
-          legActionSymbol = "marker_bus.png";
+          legActionSymbol = "assetMarkerBus";
           break;
         case Mode.TRAM:
         case Mode.SUBWAY:
         case Mode.RAIL:
-          legActionSymbol = "marker_train.png";
+          legActionSymbol = 'assetMarkerTrain';
           break;
         default:
           break;
@@ -314,7 +332,7 @@ class _RoutingMapState extends State<RoutingMap> {
       // Build user position marker
       SymbolOptions symbolOptions = SymbolOptions(
         geometry: LatLng(currentPosition.latitude, currentPosition.longitude),
-        iconImage: "user_position.png",
+        iconImage: 'assetMarkerUserPosition',
         iconSize: 0.7,
       );
 
@@ -375,9 +393,9 @@ class _RoutingMapState extends State<RoutingMap> {
             northeast: LatLng(maxLat, maxLng),
           ),
           left: 48,
-          top: 240,
+          top: 224,
           right: 48,
-          bottom: 336,
+          bottom: 352,
         ),
         duration: const Duration(seconds: 2),
       );
@@ -394,7 +412,10 @@ class _RoutingMapState extends State<RoutingMap> {
       _mapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
-            target: LatLng(currentPosition.latitude, currentPosition.longitude),
+            target: LatLng(
+              currentPosition.latitude - 0.0004,
+              currentPosition.longitude,
+            ),
             zoom: 17.0,
             bearing: currentPosition.heading,
           ),

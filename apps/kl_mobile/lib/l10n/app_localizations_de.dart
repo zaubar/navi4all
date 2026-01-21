@@ -387,6 +387,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navigationRelativeDirectionArrive => 'Ankommen';
 
   @override
+  String get navigationRelativeDirectionTransitBoard => 'Einsteigen';
+
+  @override
+  String navigationRelativeDirectionTransitRide(String mode) {
+    return '$mode fahren';
+  }
+
+  @override
+  String get navigationRelativeDirectionTransitAlight => 'Aussteigen';
+
+  @override
   String itineraryDepartureTime(String time) {
     return 'Los um $time';
   }
@@ -631,4 +642,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get routingScreenReroutingDialogConfirmButton => 'Neuberechnen';
+
+  @override
+  String routingScreenLegTransitDirection(String direction) {
+    return 'in Richtung\n$direction';
+  }
 }

@@ -229,6 +229,16 @@
     "navigationRelativeDirectionExitStation": "Bahnhof verlassen",
     "navigationRelativeDirectionFollowSigns": "Folgen Sie den Schildern",
     "navigationRelativeDirectionArrive": "Ankommen",
+    "navigationRelativeDirectionTransitBoard": "Einsteigen",
+    "navigationRelativeDirectionTransitRide": "{mode} fahren",
+    "@navigationRelativeDirectionTransitRide": {
+        "placeholders": {
+            "mode": {
+                "type": "String"
+            }
+        }
+    },
+    "navigationRelativeDirectionTransitAlight": "Aussteigen",
     "itineraryDepartureTime": "Los um {time}",
     "@itineraryDepartureTime": {
         "placeholders": {
@@ -370,5 +380,13 @@
     "routingScreenReroutingDialogTitle": "Neuberechnung der Route",
     "routingScreenReroutingDialogMessage": "Sie haben die geplante Route verlassen. Möchten Sie eine neue Route finden?",
     "routingScreenReroutingDialogCancelButton": "Abbrechen",
-    "routingScreenReroutingDialogConfirmButton": "Neuberechnen"
+    "routingScreenReroutingDialogConfirmButton": "Neuberechnen",
+    "routingScreenLegTransitDirection": "in Richtung\n{direction}",
+    "@routingScreenLegTransitDirection": {
+        "placeholders": {
+            "direction": {
+                "type": "String"
+            }
+        }
+    }
 }

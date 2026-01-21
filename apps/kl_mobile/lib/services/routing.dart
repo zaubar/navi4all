@@ -18,6 +18,7 @@ class RoutingService extends APIService {
     double? bicycleSpeed,
     bool? accessible,
     int numItineraries = 3,
+    required String guidanceLanguage,
   }) async {
     // Build request body
     Map<String, dynamic> data = {
@@ -28,6 +29,7 @@ class RoutingService extends APIService {
       'time_is_arrival': timeIsArrival,
       'transport_modes': transportModes,
       'num_itineraries': numItineraries,
+      'guidance_language': guidanceLanguage,
     };
     if (walkingSpeed != null && walkingAvoid != null) {
       data['walk'] = {'speed': walkingSpeed, 'avoid': walkingAvoid};

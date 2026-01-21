@@ -5,10 +5,31 @@ import 'package:navi4all/schemas/routing/leg.dart' as leg_schema;
 import 'package:navi4all/schemas/routing/mode.dart';
 
 class StepTile extends StatelessWidget {
+  final Mode mode;
   final leg_schema.Step step;
   final leg_schema.Step? activeStep;
 
-  const StepTile({super.key, required this.step, this.activeStep});
+  const StepTile({
+    super.key,
+    required this.step,
+    this.activeStep,
+    required this.mode,
+  });
+
+  IconData? get _actionIcon =>
+      getRelativeDirectionIconMapping(step.relativeDirection);
+
+  String _getStepTextInstruction(BuildContext context) {
+    if (step.textInstruction != null && step.textInstruction!.isNotEmpty) {
+      return step.textInstruction!;
+    } else {
+      return getRelativeDirectionTextMapping(
+        step.relativeDirection,
+        context,
+        mode: mode,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,24 +46,23 @@ class StepTile extends StatelessWidget {
           SizedBox(height: 16),
           Row(
             children: [
-              Icon(
-                getRelativeDirectionIconMapping(step.relativeDirection),
-                color: step == activeStep
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
-                size: 32,
-              ),
+              _actionIcon != null
+                  ? Icon(
+                      _actionIcon,
+                      color: step == activeStep
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.secondary,
+                      size: 32,
+                    )
+                  : SizedBox.shrink(),
               SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      getRelativeDirectionTextMapping(
-                        step.relativeDirection,
-                        context,
-                      ),
-                      maxLines: 1,
+                      _getStepTextInstruction(context),
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 18,
@@ -65,7 +85,8 @@ class StepTile extends StatelessWidget {
                             ),
                           )
                         : SizedBox.shrink(),
-                    step.relativeDirection != RelativeDirection.DEPART
+                    step.relativeDirection != RelativeDirection.DEPART &&
+                            step.distance > 0
                         ? Text(
                             AppLocalizations.of(
                               context,
@@ -74,6 +95,18 @@ class StepTile extends StatelessWidget {
                                 step.distance,
                               ),
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: step == activeStep
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                    step.timeOfStep != null
+                        ? Text(
+                            TextFormatter.formatTimeOfDay(step.timeOfStep!),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(

@@ -229,6 +229,16 @@
     "navigationRelativeDirectionExitStation": "Exit station",
     "navigationRelativeDirectionFollowSigns": "Follow signs",
     "navigationRelativeDirectionArrive": "Arrive",
+    "navigationRelativeDirectionTransitBoard": "Board",
+    "navigationRelativeDirectionTransitRide": "Ride the {mode}",
+    "@navigationRelativeDirectionTransitRide": {
+        "placeholders": {
+            "mode": {
+                "type": "String"
+            }
+        }
+    },
+    "navigationRelativeDirectionTransitAlight": "Alight",
     "itineraryDepartureTime": "Depart {time}",
     "@itineraryDepartureTime": {
         "placeholders": {
@@ -370,5 +380,13 @@
     "routingScreenReroutingDialogTitle": "Rerouting",
     "routingScreenReroutingDialogMessage": "You have deviated from the planned route. Would you like to find a new route?",
     "routingScreenReroutingDialogCancelButton": "Cancel",
-    "routingScreenReroutingDialogConfirmButton": "Reroute"
+    "routingScreenReroutingDialogConfirmButton": "Reroute",
+    "routingScreenLegTransitDirection": "towards\n{direction}",
+    "@routingScreenLegTransitDirection": {
+        "placeholders": {
+            "direction": {
+                "type": "String"
+            }
+        }
+    }
 }

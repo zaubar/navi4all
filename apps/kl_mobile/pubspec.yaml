@@ -44,10 +44,15 @@ flutter:
     - assets/base_map_light_thumbnail.png
     - assets/base_map_dark_thumbnail.png
     - assets/base_map_satellite_thumbnail.png
-    - assets/user_position.png
-    - assets/marker_walking.png
-    - assets/marker_bus.png
-    - assets/marker_train.png
-    - assets/place_general.png
-    - assets/place_vis_imp.png
-    - assets/line_dotted.png
+    - assets/general/marker_user_position_general.png
+    - assets/general/marker_walking_general.png
+    - assets/general/marker_bus_general.png
+    - assets/general/marker_train_general.png
+    - assets/general/marker_place_general.png
+    - assets/general/line_walking_general.png
+    - assets/vision_impaired/marker_user_position_vision_impaired.png
+    - assets/vision_impaired/marker_walking_vision_impaired.png
+    - assets/vision_impaired/marker_bus_vision_impaired.png
+    - assets/vision_impaired/marker_train_vision_impaired.png
+    - assets/vision_impaired/marker_place_vision_impaired.png
+    - assets/vision_impaired/line_walking_vision_impaired.png

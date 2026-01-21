@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:navi4all/controllers/itinerary_controller.dart';
+import 'package:navi4all/core/theme/icons.dart';
 import 'package:navi4all/view/routing/rerouting_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:navi4all/controllers/routing_controller.dart';
@@ -164,13 +165,6 @@ class RoutingState extends State<RoutingScreen> {
       setState(() {
         _processingStatus = ProcessingStatus.error;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.errorUnableToFetchItineraries,
-          ),
-        ),
-      );
     }
   }
 
@@ -470,7 +464,15 @@ class RoutingState extends State<RoutingScreen> {
                                   ) => Row(
                                     children: [
                                       Icon(
-                                        Icons.directions_car_outlined,
+                                        widget.itinerarySummary.legs.length > 1
+                                            ? Icons.directions_transit
+                                            : ModeIcons.get(
+                                                widget
+                                                    .itinerarySummary
+                                                    .legs
+                                                    .first
+                                                    .mode,
+                                              ),
                                         color: Theme.of(
                                           context,
                                         ).textTheme.displayMedium?.color,
@@ -617,7 +619,7 @@ class RoutingState extends State<RoutingScreen> {
             child: Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.only(top: 32, left: 16, right: 16),
+                padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
                 child: Consumer<RoutingController>(
                   builder: (context, routingController, _) => Column(
                     mainAxisSize: MainAxisSize.min,

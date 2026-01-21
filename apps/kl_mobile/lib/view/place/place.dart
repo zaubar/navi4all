@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:navi4all/controllers/canvas_controller.dart';
 import 'package:navi4all/controllers/itinerary_controller.dart';
 import 'package:navi4all/controllers/place_controller.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/core/theme/values.dart';
 import 'package:navi4all/core/utils.dart';
 import 'package:navi4all/schemas/routing/coordinates.dart';

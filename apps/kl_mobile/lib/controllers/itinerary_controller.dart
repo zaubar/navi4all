@@ -146,6 +146,7 @@ class ItineraryController extends ChangeNotifier {
         walkingAvoid: _routingRequestConfig!.walkingAvoid,
         bicycleSpeed: _routingRequestConfig!.bicycleSpeed,
         accessible: _routingRequestConfig!.accessible,
+        guidanceLanguage: Localizations.localeOf(context).toLanguageTag(),
       );
 
       // Update results

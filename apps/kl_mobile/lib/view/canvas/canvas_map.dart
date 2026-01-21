@@ -11,7 +11,9 @@ import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/core/theme/profile_mode.dart';
 import 'package:navi4all/core/theme/values.dart';
 import 'package:navi4all/schemas/routing/itinerary.dart';
+import 'package:navi4all/schemas/routing/mode.dart';
 import 'package:navi4all/schemas/routing/place.dart';
+import 'package:navi4all/view/routing/routing.dart';
 import 'package:provider/provider.dart';
 import 'package:navi4all/controllers/theme_controller.dart';
 import 'package:navi4all/core/config.dart';
@@ -27,17 +29,59 @@ class CanvasMap extends StatefulWidget {
 class _CanvasMapState extends State<CanvasMap> {
   late MapLibreMapController _mapController;
   bool _canInteractWithMap = false;
+  final Map<String, ItinerarySummary> _lineIdToItinerary = {};
 
   Future<void> _onStyleLoaded() async {
     // Load custom marker icons
-    String assetMarkerPlace =
-        Provider.of<ThemeController>(context, listen: false).profileMode ==
-            ProfileMode.visionImpaired
-        ? Navi4AllValues.assetMarkerPlaceVisImp
-        : Navi4AllValues.assetMarkerPlaceGeneral;
-    final bytes4 = await rootBundle.load(assetMarkerPlace);
-    final list4 = bytes4.buffer.asUint8List();
-    _mapController.addImage("place.png", list4);
+    String assetMarkerUserPosition =
+        Navi4AllValues.assetMarkerUserPositionGeneral;
+    String assetMarkerWalking = Navi4AllValues.assetMarkerWalkingGeneral;
+    String assetMarkerBus = Navi4AllValues.assetMarkerBusGeneral;
+    String assetMarkerTrain = Navi4AllValues.assetMarkerTrainGeneral;
+    String assetMarkerPlace = Navi4AllValues.assetMarkerPlaceGeneral;
+    String assetLineWalking = Navi4AllValues.assetLineWalkingGeneral;
+
+    // Update assets for vision impaired profile
+    if (Provider.of<ThemeController>(context, listen: false).profileMode ==
+        ProfileMode.visionImpaired) {
+      assetMarkerUserPosition =
+          Navi4AllValues.assetMarkerUserPositionVisionImpaired;
+      assetMarkerWalking = Navi4AllValues.assetMarkerWalkingVisionImpaired;
+      assetMarkerBus = Navi4AllValues.assetMarkerBusVisionImpaired;
+      assetMarkerTrain = Navi4AllValues.assetMarkerTrainVisionImpaired;
+      assetMarkerPlace = Navi4AllValues.assetMarkerPlaceVisionImpaired;
+      assetLineWalking = Navi4AllValues.assetLineWalkingVisionImpaired;
+    }
+
+    _mapController.addImage(
+      'assetMarkerUserPosition',
+      (await rootBundle.load(assetMarkerUserPosition)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetMarkerWalking',
+      (await rootBundle.load(assetMarkerWalking)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetMarkerBus',
+      (await rootBundle.load(assetMarkerBus)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetMarkerTrain',
+      (await rootBundle.load(assetMarkerTrain)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetMarkerPlace',
+      (await rootBundle.load(assetMarkerPlace)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetLineWalking',
+      (await rootBundle.load(assetLineWalking)).buffer.asUint8List(),
+    );
 
     // Enable user interaction
     await Future.delayed(const Duration(milliseconds: 250));
@@ -45,6 +89,10 @@ class _CanvasMapState extends State<CanvasMap> {
 
     // Draw map layers
     _drawLayers();
+
+    // Register tap listeners
+    _mapController.onLineTapped.clear();
+    _mapController.onLineTapped.add(_onLineTapped);
 
     // Redraw layers when canvas state changes
     Provider.of<CanvasController>(
@@ -62,6 +110,7 @@ class _CanvasMapState extends State<CanvasMap> {
     await _mapController.clearLines();
     await _mapController.clearCircles();
     await _mapController.clearSymbols();
+    _lineIdToItinerary.clear();
 
     switch (Provider.of<CanvasController>(context, listen: false).state) {
       case CanvasControllerState.place:
@@ -118,8 +167,8 @@ class _CanvasMapState extends State<CanvasMap> {
     await _mapController.addSymbol(
       SymbolOptions(
         geometry: LatLng(place.coordinates.lat, place.coordinates.lon),
-        iconImage: "place.png",
-        iconSize: 0.9,
+        iconImage: 'assetMarkerPlace',
+        iconSize: 1.0,
       ),
     );
   }
@@ -130,8 +179,8 @@ class _CanvasMapState extends State<CanvasMap> {
     await _mapController.addSymbol(
       SymbolOptions(
         geometry: LatLng(place.coordinates.lat, place.coordinates.lon),
-        iconImage: "place.png",
-        iconSize: 0.9,
+        iconImage: 'assetMarkerPlace',
+        iconSize: 1.0,
       ),
     );
 
@@ -154,33 +203,47 @@ class _CanvasMapState extends State<CanvasMap> {
 
     // Collect all polyline points to compute bounding box later
     List<maps_toolkit.LatLng> polylinePoints = [];
+    List<LineOptions> legLineOptions = [];
+    List<ItinerarySummary> legLineItineraryRefs = [];
 
     for (var itinerary in itineraries.reversed) {
+      final String itineraryColorHex =
+          (itineraries.first == itinerary
+                  ? Theme.of(context).textTheme.bodyMedium?.color ??
+                        Navi4AllColors.klPink
+                  : Theme.of(context).colorScheme.secondary)
+              .toARGB32()
+              .toRadixString(16)
+              .substring(2);
+
       for (var leg in itinerary.legs) {
         List<maps_toolkit.LatLng> decodedPoints =
             maps_toolkit.PolygonUtil.decode(leg.geometry);
+        if (decodedPoints.isEmpty) {
+          continue;
+        }
         polylinePoints.addAll(decodedPoints);
 
-        // Draw line for each itinerary option with the first highlighted
-        final color =
-            (itineraries.first == itinerary
-                    ? Theme.of(context).textTheme.bodyMedium?.color ??
-                          Navi4AllColors.klPink
-                    : Theme.of(context).colorScheme.secondary)
-                .toARGB32()
-                .toRadixString(16)
-                .substring(2);
-        _mapController.addLine(
+        legLineOptions.add(
           LineOptions(
             geometry: decodedPoints
                 .map((p) => LatLng(p.latitude, p.longitude))
                 .toList(),
-            lineColor: '#$color',
+            lineColor: '#$itineraryColorHex',
             lineWidth: 5.0,
             lineOpacity: 0.8,
             lineJoin: "round",
+            linePattern: leg.mode == Mode.WALK ? 'assetLineWalking' : null,
           ),
         );
+        legLineItineraryRefs.add(itinerary);
+      }
+    }
+
+    if (legLineOptions.isNotEmpty) {
+      final createdLines = await _mapController.addLines(legLineOptions);
+      for (int i = 0; i < createdLines.length; i++) {
+        _lineIdToItinerary[createdLines[i].id] = legLineItineraryRefs[i];
       }
     }
 
@@ -206,12 +269,38 @@ class _CanvasMapState extends State<CanvasMap> {
           southwest: LatLng(minLat, minLng),
           northeast: LatLng(maxLat, maxLng),
         ),
-        left: 32,
-        top: 208,
-        right: 32,
-        bottom: 336,
+        left: 48,
+        top: 224,
+        right: 48,
+        bottom: 384,
       ),
       duration: const Duration(seconds: 2),
+    );
+  }
+
+  void _onLineTapped(Line line) {
+    final itinerary = _lineIdToItinerary[line.id];
+    if (itinerary == null) {
+      return;
+    }
+
+    final itineraryController = Provider.of<ItineraryController>(
+      context,
+      listen: false,
+    );
+    if (itineraryController.originPlace == null ||
+        itineraryController.destinationPlace == null) {
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => RoutingScreen(
+          originPlace: itineraryController.originPlace!,
+          destinationPlace: itineraryController.destinationPlace!,
+          itinerarySummary: itinerary,
+        ),
+      ),
     );
   }
 

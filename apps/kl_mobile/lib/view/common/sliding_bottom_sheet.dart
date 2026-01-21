@@ -65,22 +65,13 @@ class SlidingBottomSheet extends StatelessWidget {
                   ),
                   listItems != null
                       ? Expanded(
-                          child: ListView.separated(
+                          child: ListView.builder(
                             padding: EdgeInsets.zero,
                             controller: controller,
                             shrinkWrap: true,
                             itemCount: listItems!.length,
                             itemBuilder: (BuildContext context, int index) =>
                                 listItems![index],
-                            separatorBuilder:
-                                (BuildContext context, int index) => Divider(
-                                  height: 1,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary,
-                                  indent: 16,
-                                  endIndent: 16,
-                                ),
                           ),
                         )
                       : SizedBox.shrink(),

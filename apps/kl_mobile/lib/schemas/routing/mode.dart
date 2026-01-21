@@ -72,9 +72,12 @@ enum RelativeDirection {
   EXIT_STATION,
   FOLLOW_SIGNS,
   ARRIVE,
+  TRANSIT_BOARD,
+  TRANSIT_RIDE,
+  TRANSIT_ALIGHT,
 }
 
-IconData getRelativeDirectionIconMapping(RelativeDirection relativeDirection) {
+IconData? getRelativeDirectionIconMapping(RelativeDirection relativeDirection) {
   switch (relativeDirection) {
     case RelativeDirection.CONTINUE:
       return Icons.straight;
@@ -110,13 +113,20 @@ IconData getRelativeDirectionIconMapping(RelativeDirection relativeDirection) {
       return Icons.rotate_left;
     case RelativeDirection.ARRIVE:
       return Icons.place_rounded;
+    case RelativeDirection.TRANSIT_BOARD:
+      return Icons.arrow_circle_right_outlined;
+    case RelativeDirection.TRANSIT_RIDE:
+      return Icons.more_vert;
+    case RelativeDirection.TRANSIT_ALIGHT:
+      return Icons.arrow_circle_left_outlined;
   }
 }
 
 String getRelativeDirectionTextMapping(
   RelativeDirection relativeDirection,
-  BuildContext context,
-) {
+  BuildContext context, {
+  Mode mode = Mode.TRANSIT,
+}) {
   switch (relativeDirection) {
     case RelativeDirection.DEPART:
       return AppLocalizations.of(context)!.navigationRelativeDirectionDepart;
@@ -168,6 +178,20 @@ String getRelativeDirectionTextMapping(
       )!.navigationRelativeDirectionFollowSigns;
     case RelativeDirection.ARRIVE:
       return AppLocalizations.of(context)!.navigationRelativeDirectionArrive;
+    case RelativeDirection.TRANSIT_BOARD:
+      return AppLocalizations.of(
+        context,
+      )!.navigationRelativeDirectionTransitBoard;
+    case RelativeDirection.TRANSIT_RIDE:
+      return AppLocalizations.of(
+        context,
+      )!.navigationRelativeDirectionTransitRide(
+        getModeTextMapping(mode, context),
+      );
+    case RelativeDirection.TRANSIT_ALIGHT:
+      return AppLocalizations.of(
+        context,
+      )!.navigationRelativeDirectionTransitAlight;
   }
 }
 

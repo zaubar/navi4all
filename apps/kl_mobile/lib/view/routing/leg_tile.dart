@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:navi4all/core/theme/icons.dart';
+import 'package:navi4all/l10n/app_localizations.dart';
 import 'package:navi4all/schemas/routing/leg.dart' as leg_schema;
 import 'package:navi4all/schemas/routing/mode.dart';
 import 'package:navi4all/view/routing/step_tile.dart';
@@ -26,21 +27,46 @@ class LegTile extends StatelessWidget {
             leg.mode != Mode.CAR)
         ? Container(
             margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 16.0,
-            ),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              borderRadius: BorderRadius.circular(32.0),
-            ),
-            child: Text(
-              leg.route!.shortName!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 12.0,
+                      ),
+                      child: Text(
+                        leg.route!.shortName!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.routingScreenLegTransitDirection(leg.headsign!),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           )
         : SizedBox.shrink();
@@ -52,7 +78,9 @@ class LegTile extends StatelessWidget {
   ) {
     List<StepTile> stepTiles = [];
     for (leg_schema.Step step in steps) {
-      stepTiles.add(StepTile(step: step, activeStep: activeStep));
+      stepTiles.add(
+        StepTile(step: step, activeStep: activeStep, mode: leg.mode),
+      );
     }
     return stepTiles;
   }
@@ -61,20 +89,6 @@ class LegTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(8.0),
-      padding: EdgeInsets.symmetric(
-        horizontal: !isPrimaryLeg ? 8 : 0,
-        vertical: !isPrimaryLeg ? 16 : 0,
-      ),
-      decoration: !isPrimaryLeg
-          ? BoxDecoration(
-              borderRadius: BorderRadius.circular(16.0),
-              border: Border.all(
-                color: leg == activeLeg
-                    ? Theme.of(context).colorScheme.secondary
-                    : Theme.of(context).colorScheme.surface,
-              ),
-            )
-          : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -83,11 +97,21 @@ class LegTile extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Row(
                     children: [
-                      Icon(
-                        ModeIcons.get(leg.mode),
-                        color: Theme.of(context).textTheme.displayMedium?.color,
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(
+                            context,
+                          ).textTheme.displayMedium?.color,
+                        ),
+                        padding: const EdgeInsets.all(4.0),
+                        child: Icon(
+                          ModeIcons.get(leg.mode),
+                          color: Theme.of(context).colorScheme.surface,
+                          size: 20.0,
+                        ),
                       ),
-                      SizedBox(width: 16),
+                      SizedBox(width: 12),
                       Text(
                         getModeTextMapping(leg.mode, context),
                         maxLines: 1,
@@ -98,16 +122,98 @@ class LegTile extends StatelessWidget {
                   ),
                 )
               : SizedBox.shrink(),
-          !isPrimaryLeg ? SizedBox(height: 8) : SizedBox.shrink(),
-          _buildTransitWidget(context),
-          ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            physics: NeverScrollableScrollPhysics(),
-            children: _buildStepTiles(steps, activeStep),
+          !isPrimaryLeg ? SizedBox(height: 16) : SizedBox.shrink(),
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                !isPrimaryLeg ? SizedBox(width: 20) : SizedBox.shrink(),
+                !isPrimaryLeg
+                    ? _VerticalRouteLine(
+                        color:
+                            Theme.of(context).textTheme.displayMedium?.color ??
+                            Theme.of(context).colorScheme.primary,
+                        dashed: leg.mode == Mode.WALK,
+                      )
+                    : SizedBox.shrink(),
+                !isPrimaryLeg ? SizedBox(width: 12) : SizedBox.shrink(),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTransitWidget(context),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _buildStepTiles(steps, activeStep),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
+  }
+}
+
+class _VerticalRouteLine extends StatelessWidget {
+  final Color color;
+  final bool dashed;
+
+  const _VerticalRouteLine({required this.color, required this.dashed});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 4,
+      child: CustomPaint(
+        painter: _VerticalRouteLinePainter(color: color, dashed: dashed),
+      ),
+    );
+  }
+}
+
+class _VerticalRouteLinePainter extends CustomPainter {
+  final Color color;
+  final bool dashed;
+
+  _VerticalRouteLinePainter({required this.color, required this.dashed});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = color
+      ..strokeWidth = size.width
+      ..strokeCap = StrokeCap.round;
+
+    if (!dashed) {
+      canvas.drawLine(
+        Offset(size.width / 2, 0),
+        Offset(size.width / 2, size.height),
+        paint,
+      );
+      return;
+    }
+
+    const double dashLength = 1.0;
+    const double gapLength = 16.0;
+    double startY = 0;
+
+    while (startY < size.height) {
+      final double endY = (startY + dashLength).clamp(0, size.height);
+      canvas.drawLine(
+        Offset(size.width / 2, startY),
+        Offset(size.width / 2, endY),
+        paint,
+      );
+      startY += dashLength + gapLength;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _VerticalRouteLinePainter oldDelegate) {
+    return oldDelegate.color != color || oldDelegate.dashed != dashed;
   }
 }

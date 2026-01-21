@@ -851,6 +851,9 @@ class ItineraryLegStepTile extends StatelessWidget {
     super.key,
   });
 
+  IconData? get _actionIcon =>
+      getRelativeDirectionIconMapping(step.relativeDirection);
+
   String? get _streetName {
     return step.bogusName ? null : step.streetName;
   }
@@ -885,11 +888,13 @@ class ItineraryLegStepTile extends StatelessWidget {
           '${_distance(context) != null ? '${_distance(context)!}, ' : ''}${_streetName != null ? '${_streetName!}, ' : ''}${getRelativeDirectionTextMapping(step.relativeDirection, context)}',
       child: Row(
         children: [
-          Icon(
-            getRelativeDirectionIconMapping(step.relativeDirection),
-            color: Theme.of(context).colorScheme.secondary,
-            size: 32,
-          ),
+          _actionIcon != null
+              ? Icon(
+                  _actionIcon,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 32,
+                )
+              : SizedBox.shrink(),
           SizedBox(width: 16),
           Expanded(
             child: Column(

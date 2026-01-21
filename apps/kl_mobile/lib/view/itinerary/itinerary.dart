@@ -167,20 +167,11 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                 context,
               ).textTheme.displayMedium?.color,
               labelColor: Theme.of(context).textTheme.displayMedium?.color,
-              indicatorPadding: EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 6.0,
-              ),
-              splashBorderRadius: BorderRadius.circular(32.0),
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              indicatorPadding: EdgeInsets.symmetric(vertical: 8.0),
+              indicatorColor: Theme.of(context).textTheme.displayMedium?.color,
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              splashBorderRadius: BorderRadius.all(Radius.circular(16.0)),
               dividerHeight: 0.0,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(32.0),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 2.0,
-                ),
-              ),
               tabs: [
                 Tab(
                   icon: Icon(

@@ -168,9 +168,10 @@ class RoutingController extends ChangeNotifier {
         );
 
         // Validate indices
-        if (stepStartIndex == -1 ||
-            stepEndIndex == -1 ||
-            stepEndIndex < stepStartIndex) {
+        if (step.relativeDirection != RelativeDirection.ARRIVE &&
+            (stepStartIndex == -1 ||
+                stepEndIndex == -1 ||
+                stepEndIndex < stepStartIndex)) {
           if (leg.mode != Mode.WALK &&
               leg.mode != Mode.BICYCLE &&
               leg.mode != Mode.CAR) {
@@ -182,29 +183,20 @@ class RoutingController extends ChangeNotifier {
           return;
         }
 
+        if (step.relativeDirection == RelativeDirection.ARRIVE) {
+          // For ARRIVE steps, set geometry to last point of leg
+          stepMap[step] = [
+            maps_toolkit.LatLng(
+              legCoordinates.last.latitude,
+              legCoordinates.last.longitude,
+            ),
+          ];
+          continue;
+        }
         stepMap[step] = legCoordinates.sublist(
           stepStartIndex,
           stepEndIndex + 1,
         );
-      }
-
-      // Append arrival step to last leg
-      if (leg == _itineraryDetails!.legs.last) {
-        leg_schema.Step arrivalStep = leg_schema.Step(
-          distance: 0.0,
-          lat: legCoordinates.last.latitude,
-          lon: legCoordinates.last.longitude,
-          relativeDirection: RelativeDirection.ARRIVE,
-          absoluteDirection: AbsoluteDirection.UNKNOWN,
-          streetName: '',
-          bogusName: true,
-        );
-        stepMap[arrivalStep] = [
-          maps_toolkit.LatLng(
-            legCoordinates.last.latitude,
-            legCoordinates.last.longitude,
-          ),
-        ];
       }
 
       _actionTrail[leg] = stepMap;
