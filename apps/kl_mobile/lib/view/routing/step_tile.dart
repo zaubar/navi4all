@@ -54,7 +54,7 @@ class StepTile extends StatelessWidget {
                           : Theme.of(context).colorScheme.secondary,
                       size: 32,
                     )
-                  : SizedBox.shrink(),
+                  : SizedBox(width: 32),
               SizedBox(width: 16),
               Expanded(
                 child: Column(

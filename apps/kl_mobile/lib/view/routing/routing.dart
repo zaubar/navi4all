@@ -23,6 +23,7 @@ import 'package:navi4all/schemas/routing/mode.dart';
 import 'package:navi4all/schemas/routing/place.dart';
 import 'package:navi4all/core/utils.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:navi4all/schemas/routing/leg.dart' as leg_schema;
 
 class RoutingScreen extends StatefulWidget {
   final Place originPlace;
@@ -370,6 +371,17 @@ class RoutingState extends State<RoutingScreen> {
     });
   }
 
+  String _getStepVoiceInstruction(leg_schema.Step step) {
+    if (step.voiceInstruction != null && step.voiceInstruction!.isNotEmpty) {
+      return step.voiceInstruction!;
+    } else if (step.textInstruction != null &&
+        step.textInstruction!.isNotEmpty) {
+      return step.textInstruction!;
+    } else {
+      return getRelativeDirectionTextMapping(step.relativeDirection, context);
+    }
+  }
+
   Future<void> _triggerNavigationAudio() async {
     if (_navigationAudioController.audioStatus == AudioStatus.muted ||
         _navigationAudioController.instructionStep == null) {
@@ -390,9 +402,8 @@ class RoutingState extends State<RoutingScreen> {
             '${AppLocalizations.of(context)!.navigationStepDistanceToActionMetres(TextFormatter.formatMetersDistanceFromMeters(_navigationAudioController.instructionStep!.distance).toString())}. ';
       }
     }
-    stepAnnouncement += getRelativeDirectionTextMapping(
-      _navigationAudioController.instructionStep!.relativeDirection,
-      context,
+    stepAnnouncement += _getStepVoiceInstruction(
+      _navigationAudioController.instructionStep!,
     );
 
     flutterTts.speak(stepAnnouncement);

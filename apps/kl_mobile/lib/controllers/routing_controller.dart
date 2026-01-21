@@ -15,7 +15,10 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 class RoutingController extends ChangeNotifier {
   // Constants
   static const double densificationThreshold = 1.0;
+  static const double clippingThreshold = 2.0;
+  static const double clippingThresholdTransit = 25.0;
   static const double snappingThreshold = 10.0;
+  static const double snappingThresholdTransit = 50.0;
   static const Map<Mode, double> digressionThresholds = {
     Mode.BICYCLE: 50.0,
     Mode.BUS: 100.0,
@@ -49,12 +52,12 @@ class RoutingController extends ChangeNotifier {
   // Navigation tracking
   final LinkedHashMap<
     leg_schema.LegDetailed,
-    LinkedHashMap<leg_schema.Step, List<maps_toolkit.LatLng>?>
+    LinkedHashMap<leg_schema.Step, List<maps_toolkit.LatLng>>
   >
   _actionTrail = LinkedHashMap();
   LinkedHashMap<
     leg_schema.LegDetailed,
-    LinkedHashMap<leg_schema.Step, List<maps_toolkit.LatLng>?>
+    LinkedHashMap<leg_schema.Step, List<maps_toolkit.LatLng>>
   >
   get actionTrail => _actionTrail;
   StreamSubscription<Position>? _positionSubscription;
@@ -141,18 +144,32 @@ class RoutingController extends ChangeNotifier {
       legCoordinates = densifiedLegCoordinates;
 
       // Build step map for this leg
-      final LinkedHashMap<leg_schema.Step, List<maps_toolkit.LatLng>?> stepMap =
+      final LinkedHashMap<leg_schema.Step, List<maps_toolkit.LatLng>> stepMap =
           LinkedHashMap();
       for (int i = 0; i < leg.steps.length; i++) {
         leg_schema.Step step = leg.steps[i];
 
+        // Differentiate between linear and positional steps
+        if (step.relativeDirection == RelativeDirection.TRANSIT_BOARD ||
+            step.relativeDirection == RelativeDirection.TRANSIT_ALIGHT ||
+            step.relativeDirection == RelativeDirection.ARRIVE) {
+          // This is a positional step
+          // Use step coordinates for action trail
+          stepMap[step] = [maps_toolkit.LatLng(step.lat, step.lon)];
+
+          continue;
+        }
+
+        // This is a linear step
         // Clip densified leg coordinates to this step
         maps_toolkit.LatLng stepStart = maps_toolkit.LatLng(step.lat, step.lon);
         int stepStartIndex = maps_toolkit.PolygonUtil.locationIndexOnPath(
           stepStart,
           legCoordinates,
           true,
-          tolerance: 2.0,
+          tolerance: step.relativeDirection != RelativeDirection.TRANSIT_RIDE
+              ? clippingThreshold
+              : clippingThresholdTransit,
         );
         maps_toolkit.LatLng stepEnd = (i < leg.steps.length - 1)
             ? maps_toolkit.LatLng(leg.steps[i + 1].lat, leg.steps[i + 1].lon)
@@ -164,35 +181,19 @@ class RoutingController extends ChangeNotifier {
           stepEnd,
           legCoordinates,
           true,
-          tolerance: 2.0,
+          tolerance: step.relativeDirection != RelativeDirection.TRANSIT_RIDE
+              ? clippingThreshold
+              : clippingThresholdTransit,
         );
 
         // Validate indices
-        if (step.relativeDirection != RelativeDirection.ARRIVE &&
-            (stepStartIndex == -1 ||
-                stepEndIndex == -1 ||
-                stepEndIndex < stepStartIndex)) {
-          if (leg.mode != Mode.WALK &&
-              leg.mode != Mode.BICYCLE &&
-              leg.mode != Mode.CAR) {
-            // For transit legs, allow missing geometry
-            stepMap[step] = null;
-            continue;
-          }
+        if ((stepStartIndex == -1 ||
+            stepEndIndex == -1 ||
+            stepEndIndex < stepStartIndex)) {
           _flagError();
           return;
         }
 
-        if (step.relativeDirection == RelativeDirection.ARRIVE) {
-          // For ARRIVE steps, set geometry to last point of leg
-          stepMap[step] = [
-            maps_toolkit.LatLng(
-              legCoordinates.last.latitude,
-              legCoordinates.last.longitude,
-            ),
-          ];
-          continue;
-        }
         stepMap[step] = legCoordinates.sublist(
           stepStartIndex,
           stepEndIndex + 1,
@@ -246,19 +247,9 @@ class RoutingController extends ChangeNotifier {
   void _onLocationChanged(Position position) {
     _currentPosition = position;
 
-    // TODO: Handle transit legs
-
-    // Update active leg and step
+    // Perform leg and step tracking
     for (leg_schema.LegDetailed leg in _actionTrail.keys) {
-      if (leg.mode != Mode.WALK &&
-          leg.mode != Mode.BICYCLE &&
-          leg.mode != Mode.CAR) {
-        // TODO: Handle transit legs differently
-        // Especially since their geometry is not linked to a step
-        continue;
-      }
-
-      // Ensure leg is post active leg
+      // Ensure leg is after or equal to active leg
       if (_activeLeg != null &&
           leg != _activeLeg &&
           _actionTrail.keys.toList().indexOf(leg) <
@@ -267,7 +258,7 @@ class RoutingController extends ChangeNotifier {
       }
 
       for (leg_schema.Step step in _actionTrail[leg]!.keys) {
-        // Ensure step is post active step
+        // Ensure step is after or equal to active step
         if (_activeStep != null &&
             step != _activeStep &&
             _actionTrail[leg]!.keys.toList().indexOf(step) <
@@ -275,13 +266,31 @@ class RoutingController extends ChangeNotifier {
           continue;
         }
 
-        List<maps_toolkit.LatLng>? stepCoordinates = _actionTrail[leg]![step];
-        if (stepCoordinates == null) {
-          // TODO: Handle better
-          _flagError();
-          return;
+        List<maps_toolkit.LatLng> stepCoordinates = _actionTrail[leg]![step]!;
+
+        // Differentiate between linear and positional steps
+        if (step.relativeDirection == RelativeDirection.TRANSIT_BOARD ||
+            step.relativeDirection == RelativeDirection.TRANSIT_ALIGHT ||
+            step.relativeDirection == RelativeDirection.ARRIVE) {
+          // This is a positional step
+          num distance = maps_toolkit.SphericalUtil.computeDistanceBetween(
+            maps_toolkit.LatLng(position.latitude, position.longitude),
+            maps_toolkit.LatLng(step.lat, step.lon),
+          );
+          if (distance <=
+              (step.relativeDirection != RelativeDirection.TRANSIT_BOARD ||
+                      step.relativeDirection != RelativeDirection.TRANSIT_ALIGHT
+                  ? snappingThreshold
+                  : snappingThresholdTransit)) {
+            _activeLeg = leg;
+            _activeStep = step;
+            break;
+          }
+
+          continue;
         }
 
+        // This is a linear step
         int indexOnPath = maps_toolkit.PolygonUtil.locationIndexOnPath(
           maps_toolkit.LatLng(position.latitude, position.longitude),
           stepCoordinates,
@@ -296,17 +305,12 @@ class RoutingController extends ChangeNotifier {
       }
     }
 
-    // Perform snapping to step for non-transit legs
+    // Perform snapping to step for non-positional legs
     _isCurrentPositionSnapped = false;
-    if (_activeLeg != null &&
-        (_activeLeg!.mode == Mode.WALK ||
-            _activeLeg!.mode == Mode.BICYCLE ||
-            _activeLeg!.mode == Mode.CAR)) {
-      Position? snappedPosition = _attemptSnapToStep(position);
-      if (snappedPosition != null) {
-        _isCurrentPositionSnapped = true;
-        _currentPosition = snappedPosition;
-      }
+    Position? snappedPosition = _attemptSnapToStep(position);
+    if (snappedPosition != null) {
+      _isCurrentPositionSnapped = true;
+      _currentPosition = snappedPosition;
     }
 
     // Check if user is digressing
@@ -327,6 +331,18 @@ class RoutingController extends ChangeNotifier {
   }
 
   Position? _attemptSnapToStep(Position position) {
+    // Ensure an active leg exists
+    if (_activeLeg == null || _activeStep == null) {
+      return null;
+    }
+
+    // Only linear steps can be snapped
+    if (_activeStep!.relativeDirection == RelativeDirection.TRANSIT_BOARD ||
+        _activeStep!.relativeDirection == RelativeDirection.TRANSIT_ALIGHT ||
+        _activeStep!.relativeDirection == RelativeDirection.ARRIVE) {
+      return null;
+    }
+
     List<maps_toolkit.LatLng> stepPoints =
         _actionTrail[_activeLeg!]![_activeStep!]!;
 
@@ -366,10 +382,13 @@ class RoutingController extends ChangeNotifier {
   }
 
   bool _checkDigressing() {
-    // User may digress only if current position is not snapped and active leg exists
+    // User may digress only if current position is not snapped,
+    // an active leg exists, and any active step is not a linear transit step
     if (_currentPosition == null ||
         _isCurrentPositionSnapped ||
-        _activeLeg == null) {
+        _activeLeg == null ||
+        (_activeStep != null &&
+            _activeStep!.relativeDirection == RelativeDirection.TRANSIT_RIDE)) {
       return false;
     }
 
@@ -394,7 +413,7 @@ class RoutingController extends ChangeNotifier {
   }
 
   bool _checkArrived() {
-    // Only non-transit legs with step tracking can be used for arrival checks
+    // Arrival checking can only be performed if leg and step tracking is active
     if (_actionTrail.isEmpty || _activeLeg == null || _activeStep == null) {
       return false;
     }

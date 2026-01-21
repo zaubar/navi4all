@@ -412,10 +412,7 @@ class _RoutingMapState extends State<RoutingMap> {
       _mapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
-            target: LatLng(
-              currentPosition.latitude - 0.0004,
-              currentPosition.longitude,
-            ),
+            target: LatLng(currentPosition.latitude, currentPosition.longitude),
             zoom: 17.0,
             bearing: currentPosition.heading,
           ),

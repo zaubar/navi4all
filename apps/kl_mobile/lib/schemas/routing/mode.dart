@@ -116,7 +116,7 @@ IconData? getRelativeDirectionIconMapping(RelativeDirection relativeDirection) {
     case RelativeDirection.TRANSIT_BOARD:
       return Icons.arrow_circle_right_outlined;
     case RelativeDirection.TRANSIT_RIDE:
-      return Icons.more_vert;
+      return null;
     case RelativeDirection.TRANSIT_ALIGHT:
       return Icons.arrow_circle_left_outlined;
   }
