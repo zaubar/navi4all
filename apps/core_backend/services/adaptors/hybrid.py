@@ -12,7 +12,9 @@ from schemas.routing import (
     ItinerarySummary,
     LegSummary,
     ItineraryResponseModel,
-    GuidanceLanguage,
+    Step,
+    AbsoluteDirection,
+    RelativeDirection,
 )
 import polyline
 import json
@@ -74,7 +76,7 @@ class HybridAdaptor:
                     )
                     valhalla_response = await self.valhalla_adaptor.make_plan_request(
                         async_client,
-                        valhalla_request, 
+                        valhalla_request,
                         summarized=False,
                     )
 
@@ -90,6 +92,54 @@ class HybridAdaptor:
                     otp_response.itineraries[
                         otp_response.itineraries.index(itinerary_detailed)
                     ].legs[itinerary_detailed.legs.index(leg)] = newLeg
+                else:
+                    # Transit leg, add custom steps
+                    steps = []
+
+                    # Step to board transit
+                    steps.append(
+                        Step(
+                            distance=0,
+                            lat=leg.start_place.coordinates.lat,
+                            lon=leg.start_place.coordinates.lon,
+                            relative_direction=RelativeDirection.transit_board,
+                            absolute_direction=AbsoluteDirection.unknown,
+                            street_name=leg.start_place.name,
+                            bogus_name=False,
+                            time_of_step=leg.start_time,
+                        )
+                    )
+
+                    # Step to ride transit
+                    # stops_text: str = "Haltestellen" if request.guidance_language == GuidanceLanguage.de else "stops"
+                    # steps.append(
+                    #     Step(
+                    #         distance=0,
+                    #         lat=leg.start_place.coordinates.lat,
+                    #         lon=leg.start_place.coordinates.lon,
+                    #         relative_direction=RelativeDirection.transit_ride,
+                    #         absolute_direction=AbsoluteDirection.unknown,
+                    #         street_name=f"{len(leg.intermediate_stops)} {stops_text}" if leg.intermediate_stops else "",
+                    #         bogus_name=False if leg.intermediate_stops else True,
+                    #         time_of_step=None,
+                    #     )
+                    # )
+
+                    # Step to alight transit
+                    steps.append(
+                        Step(
+                            distance=0,
+                            lat=leg.end_place.coordinates.lat,
+                            lon=leg.end_place.coordinates.lon,
+                            relative_direction=RelativeDirection.transit_alight,
+                            absolute_direction=AbsoluteDirection.unknown,
+                            street_name=leg.end_place.name,
+                            bogus_name=False,
+                            time_of_step=leg.end_time,
+                        )
+                    )
+
+                    leg.steps = steps
 
             # Recompute itinerary stats
             total_duration = sum(leg.duration for leg in itinerary_detailed.legs)

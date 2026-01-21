@@ -130,6 +130,7 @@ class OTPTrip(BaseModel):
     route: OTPRoute
     trip_short_name: str | None = None
     trip_headsign: str | None = None
+    stops: list[OTPStop]
 
 
 class OTPStep(BaseModel):
@@ -159,13 +160,9 @@ class OTPPickupDropoffType(Enum):
 class OTPLeg(BaseModel):
     start_time: datetime
     end_time: datetime
-    departure_delay: int
-    arrival_delay: int
     mode: OTPMode
     duration: float
     leg_geometry: OTPGeometry
-    real_time: bool
-    realtime_state: OTPRealtimeState | None
     distance: float
     transit_leg: bool
     from_: OTPPlace
@@ -175,9 +172,6 @@ class OTPLeg(BaseModel):
     trip: OTPTrip | None = None
     intermediate_stops: list[OTPStop] | None = None
     headsign: str | None = None
-    pickup_type: OTPPickupDropoffType | None = None
-    dropoff_type: OTPPickupDropoffType | None = None
-    accessibility_score: float | None
 
     @model_validator(mode="before")
     @classmethod

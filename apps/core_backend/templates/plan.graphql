@@ -40,16 +40,12 @@ query RoutingPlan(
             legs {
                 startTime
                 endTime
-                departureDelay
-                arrivalDelay
                 mode
                 duration
                 legGeometry {
                     length
                     points
                 }
-                realTime
-                realtimeState
                 distance
                 transitLeg
                 from {
@@ -94,6 +90,12 @@ query RoutingPlan(
                     }
                     tripShortName
                     tripHeadsign
+                    stops {
+                        id
+                        name
+                        lat
+                        lon
+                    }
                 }
                 intermediateStops {
                     id
@@ -102,9 +104,6 @@ query RoutingPlan(
                     lon
                 }
                 headsign
-                pickupType
-                dropoffType
-                accessibilityScore
                 steps {
                     distance
                     lon

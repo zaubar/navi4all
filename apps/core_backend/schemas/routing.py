@@ -46,6 +46,10 @@ class RelativeDirection(Enum):
     exit_station = "EXIT_STATION"
     follow_signs = "FOLLOW_SIGNS"
     arrive = "ARRIVE"
+    transit_board = "TRANSIT_BOARD"
+    transit_ride = "TRANSIT_RIDE"
+    transit_alight = "TRANSIT_ALIGHT"
+
 
 class AbsoluteDirection(Enum):
     north = "NORTH"
@@ -69,12 +73,26 @@ class Step(BaseModel):
     bogus_name: bool
     voice_instruction: str | None = None
     text_instruction: str | None = None
+    time_of_step: datetime | None = None
 
 
 class Route(BaseModel):
     id: str
     short_name: str | None = None
     mode: Mode | None = None
+
+
+class PlaceType(str, Enum):
+    address = "address"
+    stop = "stop"
+
+
+class Place(BaseModel):
+    id: str
+    name: str
+    type: PlaceType
+    coordinates: Coordinates
+    address: str | None = None
 
 
 class LegSummary(BaseModel):
@@ -86,8 +104,20 @@ class LegSummary(BaseModel):
 
 
 class LegDetailed(LegSummary):
+    start_time: datetime
+    end_time: datetime
+    start_place: Place
+    end_place: Place
     steps: list[Step]
     route: Route | None = None
+    headsign: str | None = None
+    intermediate_stops: list[Place] | None = None
+
+    @model_validator(mode="before")
+    def validate_headsign(cls, leg: dict[str, any]) -> dict[str, any]:
+        if leg.get("route") is not None and leg.get("headsign") is None:
+            raise ValueError("Leg with a route must have a headsign.")
+        return leg
 
 
 class ItineraryBase(BaseModel):
@@ -101,7 +131,7 @@ class ItineraryBase(BaseModel):
 
 class ItinerarySummary(ItineraryBase):
     legs: list[LegSummary]
-    
+
     @model_validator(mode="before")
     def compute_leg_ratios(cls, itinerary: dict[str, any]) -> dict[str, any]:
         total_duration = itinerary["duration"]
@@ -127,8 +157,10 @@ class WalkOptions(BaseModel):
     speed: float
     avoid: bool
 
+
 class BicycleOptions(BaseModel):
     speed: float
+
 
 class GuidanceLanguage(str, Enum):
     en = "en"
@@ -172,9 +204,11 @@ class RoutingPlanRequestModel(BaseModel):
 
 class RoutingPlanSummaryResponseModel(BaseModel):
     itineraries: list[ItinerarySummary]
-    
+
+
 class RoutingPlanDetailedResponseModel(BaseModel):
     itineraries: list[ItineraryDetailed]
-    
+
+
 class ItineraryResponseModel(ItineraryDetailed):
     pass

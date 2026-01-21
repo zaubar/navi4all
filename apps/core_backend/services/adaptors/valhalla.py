@@ -12,7 +12,8 @@ from schemas.routing import (
     ItineraryResponseModel,
     ItineraryDetailed,
     AbsoluteDirection,
-    GuidanceLanguage,
+    Place,
+    PlaceType,
 )
 from services.schemas.valhalla import (
     ValhallaRouteRequestModel,
@@ -124,6 +125,21 @@ class ValhallaAdaptor:
 
             legs.append(
                 LegDetailed(
+                    start_time=datetime.now(),
+                    end_time=datetime.now()
+                    + timedelta(seconds=round(leg.summary.time)),
+                    start_place=Place(
+                        id="",
+                        name="",
+                        type=PlaceType.address,
+                        coordinates=request.origin,
+                    ),
+                    end_place=Place(
+                        id="",
+                        name="",
+                        type=PlaceType.address,
+                        coordinates=request.destination,
+                    ),
                     mode=TRAVEL_MODE_TO_MODE[leg.maneuvers[0].travel_mode],
                     duration=round(leg.summary.time),
                     distance=round(leg.summary.length * 1000),  # convert km to m

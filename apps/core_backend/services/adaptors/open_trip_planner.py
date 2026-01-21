@@ -16,12 +16,15 @@ from schemas.routing import (
     Coordinates,
     ItineraryResponseModel,
     ItineraryDetailed,
+    Place,
+    PlaceType,
 )
 from services.schemas.open_trip_planner import (
     OTPInputCoordinates,
     OTPPlanRequestModel,
     OTPPlanResponseModel,
     OTPTransportMode,
+    OTPLeg,
 )
 from uuid import uuid4
 from datetime import datetime, timedelta
@@ -45,6 +48,19 @@ class OpenTripPlannerAdaptor:
         if not path.exists():
             raise FileNotFoundError(f"GraphQL query template not found at {path}")
         return path.read_text()
+
+    def _get_leg_headsign(self, otp_leg: OTPLeg) -> str | None:
+        """Produce a headsign for a given leg based on OTP route and trip data."""
+
+        if otp_leg.headsign:
+            return otp_leg.headsign
+        if otp_leg.trip:
+            if otp_leg.trip.trip_headsign:
+                return otp_leg.trip.trip_headsign
+            if len(otp_leg.trip.stops) > 0:
+                return otp_leg.trip.stops[-1].name
+
+        return ""
 
     async def make_plan_request(
         self,
@@ -126,6 +142,22 @@ class OpenTripPlannerAdaptor:
                     LegDetailed(
                         mode=leg.mode,
                         duration=int(leg.duration),
+                        start_time=leg.start_time,
+                        end_time=leg.end_time,
+                        start_place=Place(
+                            id=leg.from_.name,
+                            name=leg.from_.name,
+                            type=PlaceType.stop,
+                            coordinates=Coordinates(
+                                lat=leg.from_.lat, lon=leg.from_.lon
+                            ),
+                        ),
+                        end_place=Place(
+                            id=leg.to.name,
+                            name=leg.to.name,
+                            type=PlaceType.stop,
+                            coordinates=Coordinates(lat=leg.to.lat, lon=leg.to.lon),
+                        ),
                         distance=round(leg.distance),
                         geometry=leg.leg_geometry.points,
                         steps=[
@@ -146,6 +178,18 @@ class OpenTripPlannerAdaptor:
                             mode=leg.mode,
                         )
                         if leg.route
+                        else None,
+                        headsign=self._get_leg_headsign(leg) if leg.route else None,
+                        intermediate_stops=[
+                            Place(
+                                id=stop.id,
+                                name=stop.name,
+                                type=PlaceType.stop,
+                                coordinates=Coordinates(lat=stop.lat, lon=stop.lon),
+                            )
+                            for stop in leg.intermediate_stops
+                        ]
+                        if leg.intermediate_stops
                         else None,
                     )
                     for leg in itinerary.legs
