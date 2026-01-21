@@ -15,6 +15,7 @@ from schemas.routing import (
     Step,
     AbsoluteDirection,
     RelativeDirection,
+    GuidanceLanguage,
 )
 import polyline
 import json
@@ -111,19 +112,25 @@ class HybridAdaptor:
                     )
 
                     # Step to ride transit
-                    # stops_text: str = "Haltestellen" if request.guidance_language == GuidanceLanguage.de else "stops"
-                    # steps.append(
-                    #     Step(
-                    #         distance=0,
-                    #         lat=leg.start_place.coordinates.lat,
-                    #         lon=leg.start_place.coordinates.lon,
-                    #         relative_direction=RelativeDirection.transit_ride,
-                    #         absolute_direction=AbsoluteDirection.unknown,
-                    #         street_name=f"{len(leg.intermediate_stops)} {stops_text}" if leg.intermediate_stops else "",
-                    #         bogus_name=False if leg.intermediate_stops else True,
-                    #         time_of_step=None,
-                    #     )
-                    # )
+                    stops_text: str = (
+                        "Haltestellen"
+                        if request.guidance_language == GuidanceLanguage.de
+                        else "stops"
+                    )
+                    steps.append(
+                        Step(
+                            distance=0,
+                            lat=leg.start_place.coordinates.lat,
+                            lon=leg.start_place.coordinates.lon,
+                            relative_direction=RelativeDirection.transit_ride,
+                            absolute_direction=AbsoluteDirection.unknown,
+                            street_name=f"{len(leg.intermediate_stops)} {stops_text}"
+                            if leg.intermediate_stops
+                            else "",
+                            bogus_name=False if leg.intermediate_stops else True,
+                            time_of_step=None,
+                        )
+                    )
 
                     # Step to alight transit
                     steps.append(
