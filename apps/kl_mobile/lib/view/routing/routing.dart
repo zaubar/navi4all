@@ -438,7 +438,7 @@ class RoutingState extends State<RoutingScreen> {
                   ? NavigationProcessingTile(
                       processingStatus: _processingStatus,
                     )
-                  : SizedBox(height: 140.0),
+                  : SizedBox(height: 128.0),
               initSize: 0.35,
               maxSize: 0.7,
             ),

@@ -89,7 +89,7 @@ class LegTile extends StatelessWidget {
         children: [
           !isPrimaryLeg
               ? Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: Row(
                     children: [
                       Container(
@@ -122,7 +122,7 @@ class LegTile extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                !isPrimaryLeg ? SizedBox(width: 20) : SizedBox.shrink(),
+                !isPrimaryLeg ? SizedBox(width: 16) : SizedBox.shrink(),
                 !isPrimaryLeg
                     ? _VerticalRouteLine(
                         color:

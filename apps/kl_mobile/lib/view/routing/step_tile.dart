@@ -34,7 +34,7 @@ class StepTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.0),
         color: step == activeStep
@@ -43,7 +43,7 @@ class StepTile extends StatelessWidget {
       ),
       child: Column(
         children: [
-          SizedBox(height: 16),
+          SizedBox(height: 12),
           Row(
             children: [
               _actionIcon != null
@@ -55,7 +55,7 @@ class StepTile extends StatelessWidget {
                       size: 32,
                     )
                   : SizedBox(width: 32),
-              SizedBox(width: 16),
+              SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +65,7 @@ class StepTile extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: step == activeStep
                             ? Theme.of(context).colorScheme.primary
@@ -78,7 +78,6 @@ class StepTile extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 16,
                               color: step == activeStep
                                   ? Theme.of(context).colorScheme.primary
                                   : null,
@@ -121,7 +120,7 @@ class StepTile extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 12),
           step != activeStep
               ? Divider(
                   color: Theme.of(context).colorScheme.secondary,
