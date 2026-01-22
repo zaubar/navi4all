@@ -119,7 +119,7 @@ class HybridAdaptor:
                     )
                     steps.append(
                         Step(
-                            distance=0,
+                            distance=leg.distance,
                             lat=leg.start_place.coordinates.lat,
                             lon=leg.start_place.coordinates.lon,
                             relative_direction=RelativeDirection.transit_ride,
