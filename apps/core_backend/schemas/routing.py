@@ -46,6 +46,7 @@ class RelativeDirection(Enum):
     exit_station = "EXIT_STATION"
     follow_signs = "FOLLOW_SIGNS"
     arrive = "ARRIVE"
+    transit_transfer = "TRANSIT_TRANSFER"
     transit_board = "TRANSIT_BOARD"
     transit_ride = "TRANSIT_RIDE"
     transit_alight = "TRANSIT_ALIGHT"

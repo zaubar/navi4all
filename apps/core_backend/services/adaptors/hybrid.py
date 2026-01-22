@@ -60,7 +60,7 @@ class HybridAdaptor:
         # Make a request to the Valhalla adaptor for every walking or car leg
         for itinerary_detailed in otp_response.itineraries:
             for leg in itinerary_detailed.legs:
-                if leg.mode in [Mode.walk, Mode.car]:
+                if leg.mode in [Mode.walk, Mode.bicycle, Mode.car]:
                     leg_origin = polyline.decode(leg.geometry)[0]
                     leg_destination = polyline.decode(leg.geometry)[-1]
 
@@ -112,11 +112,23 @@ class HybridAdaptor:
                     )
 
                     # Step to ride transit
-                    stops_text: str = (
-                        "Haltestellen"
-                        if request.guidance_language == GuidanceLanguage.de
-                        else "stops"
-                    )
+                    stops_text: str = None
+                    if leg.intermediate_stops:
+                        stops_text = str(len(leg.intermediate_stops) + 1)
+                    else:
+                        stops_text = "1"
+                    if leg.intermediate_stops and len(leg.intermediate_stops) > 1:
+                        stops_text += (
+                            " Haltestellen"
+                            if request.guidance_language == GuidanceLanguage.de
+                            else " stops"
+                        )
+                    else:
+                        stops_text += (
+                            " Haltestelle"
+                            if request.guidance_language == GuidanceLanguage.de
+                            else " stop"
+                        )
                     steps.append(
                         Step(
                             distance=leg.distance,
@@ -124,10 +136,8 @@ class HybridAdaptor:
                             lon=leg.start_place.coordinates.lon,
                             relative_direction=RelativeDirection.transit_ride,
                             absolute_direction=AbsoluteDirection.unknown,
-                            street_name=f"{len(leg.intermediate_stops)} {stops_text}"
-                            if leg.intermediate_stops
-                            else "",
-                            bogus_name=False if leg.intermediate_stops else True,
+                            street_name=stops_text,
+                            bogus_name=False,
                             time_of_step=None,
                         )
                     )
@@ -147,6 +157,45 @@ class HybridAdaptor:
                     )
 
                     leg.steps = steps
+
+            # Modify the final step of all pre-transit legs to indicate a transfer
+            for i in range(len(itinerary_detailed.legs) - 1):
+                current_leg = itinerary_detailed.legs[i]
+                next_leg = itinerary_detailed.legs[i + 1]
+
+                if next_leg.mode in [
+                    Mode.bus,
+                    Mode.cable_car,
+                    Mode.coach,
+                    Mode.ferry,
+                    Mode.funicular,
+                    Mode.gondola,
+                    Mode.rail,
+                    Mode.subway,
+                    Mode.tram,
+                    Mode.transit,
+                    Mode.trolleybus,
+                    Mode.monorail,
+                ]:
+                    if (
+                        len(current_leg.steps) > 0
+                        and current_leg.steps[-1].relative_direction
+                        == RelativeDirection.arrive
+                    ):
+                        current_leg.steps[
+                            -1
+                        ] = Step(
+                            distance=current_leg.steps[-1].distance,
+                            lon=current_leg.steps[-1].lon,
+                            lat=current_leg.steps[-1].lat,
+                            relative_direction=RelativeDirection.transit_transfer,
+                            absolute_direction=current_leg.steps[-1].absolute_direction,
+                            street_name=next_leg.start_place.name,
+                            bogus_name=False,
+                            voice_instruction=None,
+                            text_instruction=None,
+                            time_of_step=current_leg.steps[-1].time_of_step,
+                        )
 
             # Recompute itinerary stats
             total_duration = sum(leg.duration for leg in itinerary_detailed.legs)
