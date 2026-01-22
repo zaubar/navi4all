@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:navi4all/core/config.dart';
@@ -231,10 +232,27 @@ class RoutingController extends ChangeNotifier {
 
   void _subscribeToLocationStream() {
     WakelockPlus.enable();
-    _positionSubscription = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
+
+    // Initialize location settings based on platform
+    LocationSettings locationSettings = const LocationSettings(
+      accuracy: LocationAccuracy.bestForNavigation,
+    );
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      locationSettings = AndroidSettings(
         accuracy: LocationAccuracy.bestForNavigation,
-      ),
+        intervalDuration: const Duration(seconds: 1),
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      locationSettings = AppleSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        activityType: ActivityType.otherNavigation,
+      );
+    }
+
+    // Register location stream subscription
+    _positionSubscription = Geolocator.getPositionStream(
+      locationSettings: locationSettings,
     ).listen(_onLocationChanged);
   }
 
