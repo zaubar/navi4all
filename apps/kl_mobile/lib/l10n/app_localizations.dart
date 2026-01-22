@@ -803,6 +803,12 @@ abstract class AppLocalizations {
   /// **'Arrive'**
   String get navigationRelativeDirectionArrive;
 
+  /// No description provided for @navigationRelativeDirectionTransitTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer to public transport.'**
+  String get navigationRelativeDirectionTransitTransfer;
+
   /// No description provided for @navigationRelativeDirectionTransitBoard.
   ///
   /// In en, this message translates to:

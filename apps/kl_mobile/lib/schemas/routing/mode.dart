@@ -72,6 +72,7 @@ enum RelativeDirection {
   EXIT_STATION,
   FOLLOW_SIGNS,
   ARRIVE,
+  TRANSIT_TRANSFER,
   TRANSIT_BOARD,
   TRANSIT_RIDE,
   TRANSIT_ALIGHT,
@@ -113,6 +114,8 @@ IconData? getRelativeDirectionIconMapping(RelativeDirection relativeDirection) {
       return Icons.rotate_left;
     case RelativeDirection.ARRIVE:
       return Icons.place_rounded;
+    case RelativeDirection.TRANSIT_TRANSFER:
+      return Icons.transit_enterexit;
     case RelativeDirection.TRANSIT_BOARD:
       return Icons.arrow_circle_right_outlined;
     case RelativeDirection.TRANSIT_RIDE:
@@ -178,6 +181,10 @@ String getRelativeDirectionTextMapping(
       )!.navigationRelativeDirectionFollowSigns;
     case RelativeDirection.ARRIVE:
       return AppLocalizations.of(context)!.navigationRelativeDirectionArrive;
+    case RelativeDirection.TRANSIT_TRANSFER:
+      return AppLocalizations.of(
+        context,
+      )!.navigationRelativeDirectionTransitTransfer;
     case RelativeDirection.TRANSIT_BOARD:
       return AppLocalizations.of(
         context,

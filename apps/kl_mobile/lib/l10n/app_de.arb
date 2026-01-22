@@ -229,6 +229,7 @@
     "navigationRelativeDirectionExitStation": "Bahnhof verlassen",
     "navigationRelativeDirectionFollowSigns": "Folgen Sie den Schildern",
     "navigationRelativeDirectionArrive": "Ankommen",
+    "navigationRelativeDirectionTransitTransfer": "Umsteigen auf den ÖPNV.",
     "navigationRelativeDirectionTransitBoard": "Einsteigen",
     "navigationRelativeDirectionTransitRide": "{mode} fahren",
     "@navigationRelativeDirectionTransitRide": {

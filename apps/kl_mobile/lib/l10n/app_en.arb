@@ -229,6 +229,7 @@
     "navigationRelativeDirectionExitStation": "Exit station",
     "navigationRelativeDirectionFollowSigns": "Follow signs",
     "navigationRelativeDirectionArrive": "Arrive",
+    "navigationRelativeDirectionTransitTransfer": "Transfer to public transport.",
     "navigationRelativeDirectionTransitBoard": "Board",
     "navigationRelativeDirectionTransitRide": "Ride the {mode}",
     "@navigationRelativeDirectionTransitRide": {

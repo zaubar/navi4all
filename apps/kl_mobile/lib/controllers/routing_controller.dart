@@ -151,7 +151,8 @@ class RoutingController extends ChangeNotifier {
         leg_schema.Step step = leg.steps[i];
 
         // Differentiate between linear and positional steps
-        if (step.relativeDirection == RelativeDirection.TRANSIT_BOARD ||
+        if (step.relativeDirection == RelativeDirection.TRANSIT_TRANSFER ||
+            step.relativeDirection == RelativeDirection.TRANSIT_BOARD ||
             step.relativeDirection == RelativeDirection.TRANSIT_ALIGHT ||
             step.relativeDirection == RelativeDirection.ARRIVE) {
           // This is a positional step
@@ -287,7 +288,8 @@ class RoutingController extends ChangeNotifier {
         List<maps_toolkit.LatLng> stepCoordinates = _actionTrail[leg]![step]!;
 
         // Differentiate between linear and positional steps
-        if (step.relativeDirection == RelativeDirection.TRANSIT_BOARD ||
+        if (step.relativeDirection == RelativeDirection.TRANSIT_TRANSFER ||
+            step.relativeDirection == RelativeDirection.TRANSIT_BOARD ||
             step.relativeDirection == RelativeDirection.TRANSIT_ALIGHT ||
             step.relativeDirection == RelativeDirection.ARRIVE) {
           // This is a positional step
@@ -355,7 +357,8 @@ class RoutingController extends ChangeNotifier {
     }
 
     // Only linear steps can be snapped
-    if (_activeStep!.relativeDirection == RelativeDirection.TRANSIT_BOARD ||
+    if (_activeStep!.relativeDirection == RelativeDirection.TRANSIT_TRANSFER ||
+        _activeStep!.relativeDirection == RelativeDirection.TRANSIT_BOARD ||
         _activeStep!.relativeDirection == RelativeDirection.TRANSIT_ALIGHT ||
         _activeStep!.relativeDirection == RelativeDirection.ARRIVE) {
       return null;

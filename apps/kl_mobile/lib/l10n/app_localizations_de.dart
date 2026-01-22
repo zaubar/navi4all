@@ -387,6 +387,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navigationRelativeDirectionArrive => 'Ankommen';
 
   @override
+  String get navigationRelativeDirectionTransitTransfer => 'Umsteigen auf den ÖPNV.';
+
+  @override
   String get navigationRelativeDirectionTransitBoard => 'Einsteigen';
 
   @override
