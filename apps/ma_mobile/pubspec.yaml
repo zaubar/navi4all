@@ -44,16 +44,22 @@ flutter:
   assets:
     - assets/parkstark_foreground.png
     - assets/p_reserviert.png
-    - assets/parking_avbl_yes.png
-    - assets/parking_avbl_no.png
-    - assets/parking_avbl_unknown.png
-    - assets/place.png
-    - assets/user_position.png
     - assets/base_map_light_thumbnail.png
     - assets/base_map_dark_thumbnail.png
     - assets/base_map_satellite_thumbnail.png
-    - assets/marker_walking.png
-    - assets/marker_bus.png
-    - assets/marker_train.png
-    - assets/line_dotted.png
     - assets/smart_logo.png
+    - assets/general/marker_user_position_general.png
+    - assets/general/marker_walking_general.png
+    - assets/general/marker_bus_general.png
+    - assets/general/marker_train_general.png
+    - assets/general/marker_place_general.png
+    - assets/general/line_walking_general.png
+    - assets/general/marker_parking_avbl_yes_general.png
+    - assets/general/marker_parking_avbl_no_general.png
+    - assets/general/marker_parking_avbl_unknown_general.png
+    - assets/vision_impaired/marker_user_position_vision_impaired.png
+    - assets/vision_impaired/marker_walking_vision_impaired.png
+    - assets/vision_impaired/marker_bus_vision_impaired.png
+    - assets/vision_impaired/marker_train_vision_impaired.png
+    - assets/vision_impaired/marker_place_vision_impaired.png
+    - assets/vision_impaired/line_walking_vision_impaired.png
