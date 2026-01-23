@@ -12,6 +12,7 @@ import 'package:smartroots/controllers/routing_controller.dart';
 import 'package:smartroots/controllers/theme_controller.dart';
 import 'package:smartroots/core/config.dart';
 import 'package:smartroots/core/processing_status.dart';
+import 'package:smartroots/core/theme/values.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 import 'package:smartroots/schemas/routing/leg.dart' as leg_schema;
 import 'package:smartroots/schemas/routing/mode.dart';
@@ -56,43 +57,79 @@ class _RoutingMapState extends State<RoutingMap> {
 
   Future<void> _onStyleLoaded() async {
     // Load custom marker icons
-    final bytes = await rootBundle.load('assets/parking_avbl_yes.png');
-    final list = bytes.buffer.asUint8List();
-    _mapController.addImage("parking_avbl_yes.png", list);
+    String assetMarkerUserPosition =
+        SmartRootsValues.assetMarkerUserPositionGeneral;
+    String assetMarkerWalking = SmartRootsValues.assetMarkerWalkingGeneral;
+    String assetMarkerBus = SmartRootsValues.assetMarkerBusGeneral;
+    String assetMarkerTrain = SmartRootsValues.assetMarkerTrainGeneral;
+    String assetMarkerPlace = SmartRootsValues.assetMarkerPlaceGeneral;
+    String assetLineWalking = SmartRootsValues.assetLineWalkingGeneral;
+    String assetParkingAvblYes =
+        SmartRootsValues.assetMarkerParkingAvblYesGeneral;
+    String assetParkingAvblNo =
+        SmartRootsValues.assetMarkerParkingAvblNoGeneral;
+    String assetParkingAvblUnknown =
+        SmartRootsValues.assetMarkerParkingAvblUnknownGeneral;
 
-    final bytes2 = await rootBundle.load('assets/parking_avbl_no.png');
-    final list2 = bytes2.buffer.asUint8List();
-    _mapController.addImage("parking_avbl_no.png", list2);
+    // Update assets for vision impaired profile
+    /* if (Provider.of<ThemeController>(context, listen: false).profileMode ==
+        ProfileMode.visionImpaired) {
+      assetMarkerUserPosition =
+          Navi4AllValues.assetMarkerUserPositionVisionImpaired;
+      assetMarkerWalking = Navi4AllValues.assetMarkerWalkingVisionImpaired;
+      assetMarkerBus = Navi4AllValues.assetMarkerBusVisionImpaired;
+      assetMarkerTrain = Navi4AllValues.assetMarkerTrainVisionImpaired;
+      assetMarkerPlace = Navi4AllValues.assetMarkerPlaceVisionImpaired;
+      assetLineWalking = Navi4AllValues.assetLineWalkingVisionImpaired;
+    } */
 
-    final bytes3 = await rootBundle.load('assets/parking_avbl_unknown.png');
-    final list3 = bytes3.buffer.asUint8List();
-    _mapController.addImage("parking_avbl_unknown.png", list3);
+    _mapController.addImage(
+      'assetMarkerUserPosition',
+      (await rootBundle.load(assetMarkerUserPosition)).buffer.asUint8List(),
+    );
 
-    final bytes4 = await rootBundle.load('assets/user_position.png');
-    final list4 = bytes4.buffer.asUint8List();
-    _mapController.addImage("user_position.png", list4);
+    _mapController.addImage(
+      'assetMarkerWalking',
+      (await rootBundle.load(assetMarkerWalking)).buffer.asUint8List(),
+    );
 
-    final bytes5 = await rootBundle.load('assets/marker_walking.png');
-    final list5 = bytes5.buffer.asUint8List();
-    _mapController.addImage("marker_walking.png", list5);
+    _mapController.addImage(
+      'assetMarkerBus',
+      (await rootBundle.load(assetMarkerBus)).buffer.asUint8List(),
+    );
 
-    final bytes6 = await rootBundle.load('assets/marker_bus.png');
-    final list6 = bytes6.buffer.asUint8List();
-    _mapController.addImage("marker_bus.png", list6);
+    _mapController.addImage(
+      'assetMarkerTrain',
+      (await rootBundle.load(assetMarkerTrain)).buffer.asUint8List(),
+    );
 
-    final bytes7 = await rootBundle.load('assets/marker_train.png');
-    final list7 = bytes7.buffer.asUint8List();
-    _mapController.addImage("marker_train.png", list7);
+    _mapController.addImage(
+      'assetMarkerPlace',
+      (await rootBundle.load(assetMarkerPlace)).buffer.asUint8List(),
+    );
 
-    final bytes8 = await rootBundle.load('assets/line_dotted.png');
-    final list8 = bytes8.buffer.asUint8List();
-    _mapController.addImage("line_dotted.png", list8);
+    _mapController.addImage(
+      'assetLineWalking',
+      (await rootBundle.load(assetLineWalking)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetParkingAvblYes',
+      (await rootBundle.load(assetParkingAvblYes)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetParkingAvblNo',
+      (await rootBundle.load(assetParkingAvblNo)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetParkingAvblUnknown',
+      (await rootBundle.load(assetParkingAvblUnknown)).buffer.asUint8List(),
+    );
 
     await Future.delayed(const Duration(milliseconds: 250));
     setState(() => _canInteractWithMap = true);
-
-    // Draw destination
-    _drawDestination();
 
     // Register listeners
     _routingController.addListener(_refocusCamera);
@@ -100,6 +137,7 @@ class _RoutingMapState extends State<RoutingMap> {
     _actionTrailController.addListener(_drawActionTrail);
     _actionTrailController.addListener(_drawStepActionPoints);
     _actionTrailController.addListener(_drawOrigin);
+    _actionTrailController.addListener(_drawDestination);
   }
 
   Future<void> _drawOrigin() async {
@@ -110,6 +148,13 @@ class _RoutingMapState extends State<RoutingMap> {
         ).actionTrailRendered;
 
     if (actionTrailRendered.isNotEmpty) {
+      String originColor =
+          Theme.of(context).textTheme.displayMedium?.color!
+              .toARGB32()
+              .toRadixString(16)
+              .substring(2) ??
+          "000000";
+
       // Build origin marker
       CircleOptions circleOptions = CircleOptions(
         geometry: LatLng(
@@ -117,7 +162,7 @@ class _RoutingMapState extends State<RoutingMap> {
           actionTrailRendered.first.value.first.longitude,
         ),
         circleRadius: 6.0,
-        circleColor: "#3685E2",
+        circleColor: "#$originColor",
         circleStrokeColor: "#FFFFFF",
         circleStrokeWidth: 2.0,
       );
@@ -139,34 +184,35 @@ class _RoutingMapState extends State<RoutingMap> {
   }
 
   Future<void> _drawDestination() async {
-    // Clear existing destination marker
-    if (_destinationSymbol != null) {
-      await _mapController.removeSymbol(_destinationSymbol!);
-    }
-
-    String iconName = 'marker_place.png';
+    String iconName = 'assetMarkerPlace';
     if (widget.destination.type == PlaceType.parkingSpot ||
         widget.destination.type == PlaceType.parkingSite) {
       if (!widget.destination.attributes?['has_realtime_data']) {
-        iconName = "parking_avbl_unknown.png";
+        iconName = "assetParkingAvblUnknown";
       } else if (widget.destination.attributes?['disabled_parking_available']) {
-        iconName = "parking_avbl_yes.png";
+        iconName = "assetParkingAvblYes";
       } else {
-        iconName = "parking_avbl_no.png";
+        iconName = "assetParkingAvblNo";
       }
     }
 
-    // Draw new destination marker
-    _destinationSymbol = await _mapController.addSymbol(
-      SymbolOptions(
-        geometry: LatLng(
-          widget.destination.coordinates.lat,
-          widget.destination.coordinates.lon,
-        ),
-        iconImage: iconName,
-        iconSize: 0.85,
+    // Build destination marker
+    SymbolOptions symbolOptions = SymbolOptions(
+      geometry: LatLng(
+        widget.destination.coordinates.lat,
+        widget.destination.coordinates.lon,
       ),
+      iconImage: iconName,
+      iconSize: 0.8,
     );
+
+    if (_destinationSymbol != null) {
+      // Update marker
+      await _mapController.updateSymbol(_destinationSymbol!, symbolOptions);
+    } else {
+      // Draw new marker
+      _destinationSymbol = await _mapController.addSymbol(symbolOptions);
+    }
   }
 
   Future<void> _drawActionTrail() async {
@@ -182,6 +228,13 @@ class _RoutingMapState extends State<RoutingMap> {
       _actionTrailLines.clear();
     }
 
+    final color =
+        (Theme.of(context).textTheme.bodyMedium?.color ??
+                Theme.of(context).colorScheme.secondary)
+            .toARGB32()
+            .toRadixString(16)
+            .substring(2);
+
     List<LineOptions> lineOptions = [];
     for (MapEntry<Mode, List<maps_toolkit.LatLng>> legModeCoordinates
         in actionTrailRendered) {
@@ -193,12 +246,12 @@ class _RoutingMapState extends State<RoutingMap> {
       lineOptions.add(
         LineOptions(
           geometry: lineCoordinates,
-          lineColor: "#0078D7",
+          lineColor: "#$color",
           lineWidth: 8.0,
           lineOpacity: 0.8,
           lineJoin: "round",
           linePattern: legModeCoordinates.key == Mode.WALK
-              ? 'line_dotted.png'
+              ? 'assetLineWalking'
               : null,
         ),
       );
@@ -234,32 +287,41 @@ class _RoutingMapState extends State<RoutingMap> {
       String? legActionSymbol;
       switch (leg.mode) {
         case Mode.WALK:
-          legActionSymbol = "marker_walking.png";
+          legActionSymbol = "assetMarkerWalking";
           break;
-        case Mode.SCOOTER:
         case Mode.BICYCLE:
         case Mode.CAR:
           legActionSymbol = null;
           break;
         case Mode.BUS:
-          legActionSymbol = "marker_bus.png";
+          legActionSymbol = "assetMarkerBus";
           break;
         case Mode.TRAM:
         case Mode.SUBWAY:
         case Mode.RAIL:
-          legActionSymbol = "marker_train.png";
+          legActionSymbol = 'assetMarkerTrain';
           break;
         default:
           break;
       }
 
       if (legActionSymbol != null) {
+        double legOriginLat;
+        double legOriginLon;
+
+        if (actionTrail[leg]!.keys.isNotEmpty) {
+          legOriginLat = actionTrail[leg]!.keys.first.lat;
+          legOriginLon = actionTrail[leg]!.keys.first.lon;
+        } else {
+          List<maps_toolkit.LatLng> decodedLegPoints =
+              maps_toolkit.PolygonUtil.decode(leg.geometry);
+          legOriginLat = decodedLegPoints.first.latitude;
+          legOriginLon = decodedLegPoints.first.longitude;
+        }
+
         legMarkers.add(
           SymbolOptions(
-            geometry: LatLng(
-              actionTrail[leg]!.keys.first.lat,
-              actionTrail[leg]!.keys.first.lon,
-            ),
+            geometry: LatLng(legOriginLat, legOriginLon),
             iconImage: legActionSymbol,
             iconSize: 0.7,
           ),
@@ -301,7 +363,7 @@ class _RoutingMapState extends State<RoutingMap> {
       // Build user position marker
       SymbolOptions symbolOptions = SymbolOptions(
         geometry: LatLng(currentPosition.latitude, currentPosition.longitude),
-        iconImage: "user_position.png",
+        iconImage: 'assetMarkerUserPosition',
         iconSize: 0.7,
       );
 
@@ -362,9 +424,9 @@ class _RoutingMapState extends State<RoutingMap> {
             northeast: LatLng(maxLat, maxLng),
           ),
           left: 48,
-          top: 240,
+          top: 224,
           right: 48,
-          bottom: 336,
+          bottom: 352,
         ),
         duration: const Duration(seconds: 2),
       );
@@ -398,6 +460,7 @@ class _RoutingMapState extends State<RoutingMap> {
     _actionTrailController.removeListener(_drawActionTrail);
     _actionTrailController.removeListener(_drawStepActionPoints);
     _actionTrailController.removeListener(_drawOrigin);
+    _actionTrailController.removeListener(_drawDestination);
     super.dispose();
   }
 

@@ -517,7 +517,6 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                         height: 56,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(32),
-                          color: Theme.of(context).colorScheme.secondary,
                         ),
                         child: Row(
                           children: [

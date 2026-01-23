@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:navi4all/controllers/theme_controller.dart';
 import 'package:navi4all/controllers/routing_controller.dart';
 // import 'package:navi4all/core/config.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navi4all/core/theme/labels.dart';
 import 'package:navi4all/view/splash/splash.dart';

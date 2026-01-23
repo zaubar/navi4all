@@ -9,6 +9,7 @@ import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:provider/provider.dart';
 import 'package:smartroots/controllers/theme_controller.dart';
 import 'package:smartroots/core/config.dart';
+import 'package:smartroots/core/theme/values.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/services/poi_parking.dart';
 import 'package:smartroots/schemas/routing/place.dart';
@@ -42,9 +43,12 @@ class _PlaceMapState extends State<PlaceMap> with WidgetsBindingObserver {
     _mapController.onCircleTapped.clear();
 
     // Load custom marker icons
-    final bytes4 = await rootBundle.load('assets/place.png');
-    final list4 = bytes4.buffer.asUint8List();
-    _mapController.addImage("place.png", list4);
+    String assetMarkerPlace = SmartRootsValues.assetMarkerPlaceGeneral;
+
+    _mapController.addImage(
+      'assetMarkerPlace',
+      (await rootBundle.load(assetMarkerPlace)).buffer.asUint8List(),
+    );
 
     await Future.delayed(const Duration(milliseconds: 250));
     setState(() => _canInteractWithMap = true);
@@ -241,8 +245,8 @@ class _PlaceMapState extends State<PlaceMap> with WidgetsBindingObserver {
           widget.place.coordinates.lat,
           widget.place.coordinates.lon,
         ),
-        iconImage: "place.png",
-        iconSize: 1,
+        iconImage: "assetMarkerPlace",
+        iconSize: 0.8,
       ),
     );
   }

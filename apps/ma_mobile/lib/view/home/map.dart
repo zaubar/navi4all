@@ -3,7 +3,6 @@ import 'dart:math';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:provider/provider.dart';
@@ -42,19 +41,6 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
   Future<void> _onStyleLoaded() async {
     // Clear existing markers and listeners
     _mapController.onFeatureTapped.clear();
-
-    // Load custom marker icons
-    final bytes = await rootBundle.load('assets/parking_avbl_yes.png');
-    final list = bytes.buffer.asUint8List();
-    await _mapController.addImage("parking_avbl_yes.png", list);
-
-    final bytes2 = await rootBundle.load('assets/parking_avbl_no.png');
-    final list2 = bytes2.buffer.asUint8List();
-    await _mapController.addImage("parking_avbl_no.png", list2);
-
-    final bytes3 = await rootBundle.load('assets/parking_avbl_unknown.png');
-    final list3 = bytes3.buffer.asUint8List();
-    await _mapController.addImage("parking_avbl_unknown.png", list3);
 
     await Future.delayed(const Duration(milliseconds: 250));
     setState(() => _canInteractWithMap = true);
@@ -463,9 +449,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                       )!.homeMapScreenLayersButtonSemantic,
                       child: FloatingActionButton(
                         shape: CircleBorder(),
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.secondary,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
                         onPressed: () => _onLayersButtonPressed(),
                         child: Icon(
                           Icons.layers,
@@ -484,9 +468,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
                       )!.homeMapScreenCurrentLocationButtonSemantic,
                       child: FloatingActionButton(
                         shape: CircleBorder(),
-                        backgroundColor: Theme.of(
-                          context,
-                        ).colorScheme.secondary,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
                         onPressed: () => _panToUserLocation(),
                         child: Icon(
                           Icons.my_location,

@@ -929,6 +929,36 @@ abstract class AppLocalizations {
   /// **'Arrive'**
   String get navigationRelativeDirectionArrive;
 
+  /// No description provided for @navigationRelativeDirectionTransitTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer to public transport.'**
+  String get navigationRelativeDirectionTransitTransfer;
+
+  /// No description provided for @navigationRelativeDirectionTransitBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Board'**
+  String get navigationRelativeDirectionTransitBoard;
+
+  /// No description provided for @navigationRelativeDirectionTransitRide.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride the {mode}'**
+  String navigationRelativeDirectionTransitRide(String mode);
+
+  /// No description provided for @navigationRelativeDirectionTransitAlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Alight'**
+  String get navigationRelativeDirectionTransitAlight;
+
+  /// No description provided for @itineraryDepartureTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Depart {time}'**
+  String itineraryDepartureTime(String time);
+
   /// No description provided for @navigationStepDistanceToAction.
   ///
   /// In en, this message translates to:
@@ -1222,6 +1252,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{time}, {distance} to destination.'**
   String routingScreenNavigationStatsSemantic(String time, String distance);
+
+  /// No description provided for @modeBicycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bicycle'**
+  String get modeBicycle;
+
+  /// No description provided for @modeBus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus'**
+  String get modeBus;
+
+  /// No description provided for @modeCableCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Cable Car'**
+  String get modeCableCar;
+
+  /// No description provided for @modeCar.
+  ///
+  /// In en, this message translates to:
+  /// **'Car'**
+  String get modeCar;
+
+  /// No description provided for @modeCoach.
+  ///
+  /// In en, this message translates to:
+  /// **'Coach'**
+  String get modeCoach;
+
+  /// No description provided for @modeFerry.
+  ///
+  /// In en, this message translates to:
+  /// **'Ferry'**
+  String get modeFerry;
+
+  /// No description provided for @modeFunicular.
+  ///
+  /// In en, this message translates to:
+  /// **'Funicular'**
+  String get modeFunicular;
+
+  /// No description provided for @modeGondola.
+  ///
+  /// In en, this message translates to:
+  /// **'Gondola'**
+  String get modeGondola;
+
+  /// No description provided for @modeRail.
+  ///
+  /// In en, this message translates to:
+  /// **'Train'**
+  String get modeRail;
+
+  /// No description provided for @modeSubway.
+  ///
+  /// In en, this message translates to:
+  /// **'U-Bahn'**
+  String get modeSubway;
+
+  /// No description provided for @modeTram.
+  ///
+  /// In en, this message translates to:
+  /// **'Tram'**
+  String get modeTram;
+
+  /// No description provided for @modeTransit.
+  ///
+  /// In en, this message translates to:
+  /// **'Transit'**
+  String get modeTransit;
+
+  /// No description provided for @modeWalk.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk'**
+  String get modeWalk;
+
+  /// No description provided for @modeTrolleybus.
+  ///
+  /// In en, this message translates to:
+  /// **'Trolleybus'**
+  String get modeTrolleybus;
+
+  /// No description provided for @modeMonorail.
+  ///
+  /// In en, this message translates to:
+  /// **'Monorail'**
+  String get modeMonorail;
+
+  /// No description provided for @routingScreenLegTransitDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'towards\n{direction}'**
+  String routingScreenLegTransitDirection(String direction);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

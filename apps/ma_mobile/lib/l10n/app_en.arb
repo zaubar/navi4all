@@ -250,6 +250,25 @@
     "navigationRelativeDirectionExitStation": "Exit station",
     "navigationRelativeDirectionFollowSigns": "Follow signs",
     "navigationRelativeDirectionArrive": "Arrive",
+    "navigationRelativeDirectionTransitTransfer": "Transfer to public transport.",
+    "navigationRelativeDirectionTransitBoard": "Board",
+    "navigationRelativeDirectionTransitRide": "Ride the {mode}",
+    "@navigationRelativeDirectionTransitRide": {
+        "placeholders": {
+            "mode": {
+                "type": "String"
+            }
+        }
+    },
+    "navigationRelativeDirectionTransitAlight": "Alight",
+    "itineraryDepartureTime": "Depart {time}",
+    "@itineraryDepartureTime": {
+        "placeholders": {
+            "time": {
+                "type": "String"
+            }
+        }
+    },
     "navigationStepDistanceToAction": "in {distance}",
     "@navigationStepDistanceToAction": {
         "placeholders": {
@@ -450,6 +469,29 @@
                 "type": "String"
             },
             "distance": {
+                "type": "String"
+            }
+        }
+    },
+    "modeBicycle": "Bicycle",
+    "modeBus": "Bus",
+    "modeCableCar": "Cable Car",
+    "modeCar": "Car",
+    "modeCoach": "Coach",
+    "modeFerry": "Ferry",
+    "modeFunicular": "Funicular",
+    "modeGondola": "Gondola",
+    "modeRail": "Train",
+    "modeSubway": "U-Bahn",
+    "modeTram": "Tram",
+    "modeTransit": "Transit",
+    "modeWalk": "Walk",
+    "modeTrolleybus": "Trolleybus",
+    "modeMonorail": "Monorail",
+    "routingScreenLegTransitDirection": "towards\n{direction}",
+    "@routingScreenLegTransitDirection": {
+        "placeholders": {
+            "direction": {
                 "type": "String"
             }
         }

@@ -1,118 +1,133 @@
 import 'package:flutter/material.dart';
-import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/core/utils.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/leg.dart' as leg_schema;
 import 'package:smartroots/schemas/routing/mode.dart';
 
 class StepTile extends StatelessWidget {
+  final Mode mode;
   final leg_schema.Step step;
   final leg_schema.Step? activeStep;
 
-  const StepTile({super.key, required this.step, this.activeStep});
+  const StepTile({
+    super.key,
+    required this.step,
+    this.activeStep,
+    required this.mode,
+  });
 
-  String _getSemanticLabel(BuildContext context) {
-    // Build semantic label for step
-    String semanticLabel = "";
+  IconData? get _actionIcon =>
+      getRelativeDirectionIconMapping(step.relativeDirection);
 
-    // Exclude distance for final audio stage
-    if (step.distance >= 1000) {
-      semanticLabel += AppLocalizations.of(context)!
-          .navigationStepDistanceToActionKilometres(
-            '${TextFormatter.formatKilometersDistanceFromMeters(step.distance)}. ',
-          );
+  String _getStepTextInstruction(BuildContext context) {
+    if (step.textInstruction != null && step.textInstruction!.isNotEmpty) {
+      return step.textInstruction!;
     } else {
-      semanticLabel +=
-          '${AppLocalizations.of(context)!.navigationStepDistanceToActionMetres(TextFormatter.formatMetersDistanceFromMeters(step.distance).toString())}. ';
+      return getRelativeDirectionTextMapping(
+        step.relativeDirection,
+        context,
+        mode: mode,
+      );
     }
-    semanticLabel += getRelativeDirectionTextMapping(
-      step.relativeDirection,
-      context,
-    );
-
-    return step == activeStep
-        ? AppLocalizations.of(
-            context,
-          )!.routingScreenNavigationStepActiveSemantic(semanticLabel)
-        : AppLocalizations.of(
-            context,
-          )!.routingScreenNavigationStepInactiveSemantic(semanticLabel);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      excludeSemantics: true,
-      label: _getSemanticLabel(context),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
-          color: step == activeStep
-              ? Theme.of(context).colorScheme.tertiary
-              : Theme.of(context).colorScheme.surface,
-        ),
-        child: Column(
-          children: [
-            SizedBox(height: 16),
-            Row(
-              children: [
-                Icon(
-                  getRelativeDirectionIconMapping(step.relativeDirection),
-                  color: step == activeStep
-                      ? Theme.of(context).textTheme.displayMedium!.color
-                      : SmartRootsColors.maBlue,
-                  size: 32,
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        getRelativeDirectionTextMapping(
-                          step.relativeDirection,
-                          context,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16.0),
+        color: step == activeStep
+            ? Theme.of(context).colorScheme.secondary
+            : Theme.of(context).colorScheme.surface,
+      ),
+      child: Column(
+        children: [
+          SizedBox(height: 12),
+          Row(
+            children: [
+              _actionIcon != null
+                  ? Icon(
+                      _actionIcon,
+                      color: step == activeStep
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.secondary,
+                      size: 32,
+                    )
+                  : SizedBox(width: 32),
+              SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _getStepTextInstruction(context),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: step == activeStep
+                            ? Theme.of(context).colorScheme.primary
+                            : null,
                       ),
-                      !step.bogusName
-                          ? Text(
-                              step.streetName,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 16),
-                            )
-                          : SizedBox.shrink(),
-                      step.relativeDirection != RelativeDirection.DEPART
-                          ? Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.navigationStepDistanceToAction(
-                                TextFormatter.formatDistanceValueText(
-                                  step.distance,
-                                ),
+                    ),
+                    !step.bogusName
+                        ? Text(
+                            step.streetName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: step == activeStep
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                    step.relativeDirection != RelativeDirection.DEPART &&
+                            step.distance > 0
+                        ? Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.navigationStepDistanceToAction(
+                              TextFormatter.formatDistanceValueText(
+                                step.distance,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          : SizedBox.shrink(),
-                    ],
-                  ),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: step == activeStep
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                    step.timeOfStep != null
+                        ? Text(
+                            TextFormatter.formatTimeOfDay(step.timeOfStep!),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: step == activeStep
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                  ],
                 ),
-              ],
-            ),
-            SizedBox(height: 16),
-            step != activeStep
-                ? Divider(color: SmartRootsColors.maBlue, height: 0.0)
-                : SizedBox.shrink(),
-          ],
-        ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          step != activeStep
+              ? Divider(
+                  color: Theme.of(context).colorScheme.secondary,
+                  height: 0.0,
+                )
+              : SizedBox.shrink(),
+        ],
       ),
     );
   }

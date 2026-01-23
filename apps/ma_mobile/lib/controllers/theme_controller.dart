@@ -8,6 +8,14 @@ class ThemeController extends ChangeNotifier {
   BaseMapStyle _baseMapStyle = BaseMapStyle.light;
   Color textColorLight = SmartRootsColors.maBlueExtraExtraDark;
   Color textColorDark = SmartRootsColors.maBlueLight;
+  Color surfaceColorLight = SmartRootsColors.maSurfaceLight;
+  Color surfaceColorDark = SmartRootsColors.maSurfaceDark;
+  Color primaryColorLight = SmartRootsColors.maBlueExtraExtraDark;
+  Color primaryColorDark = SmartRootsColors.maBlueExtraExtraDark;
+  Color secondaryColorLight = SmartRootsColors.maBlue;
+  Color secondaryColorDark = SmartRootsColors.maBlue;
+  Color tertiaryColorLight = SmartRootsColors.maBlueLight;
+  Color tertiaryColorDark = SmartRootsColors.maTertiaryDark;
 
   ThemeController(BuildContext context) {
     Brightness platformBrightness = MediaQuery.of(context).platformBrightness;

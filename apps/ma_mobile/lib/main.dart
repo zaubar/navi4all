@@ -7,7 +7,6 @@ import 'package:smartroots/controllers/favorites_controller.dart';
 import 'package:smartroots/controllers/routing_controller.dart';
 import 'package:smartroots/controllers/theme_controller.dart';
 import 'package:smartroots/core/config.dart';
-import 'package:smartroots/core/theme/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartroots/core/theme/labels.dart';
 import 'package:smartroots/view/splash/splash.dart';
@@ -80,10 +79,11 @@ class SmartRootsApp extends StatelessWidget {
           themeMode: themeController.themeMode,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
-              seedColor: SmartRootsColors.maBlueExtraDark,
-              surface: SmartRootsColors.maSurfaceLight,
-              secondary: SmartRootsColors.maSecondaryLight,
-              tertiary: SmartRootsColors.maTertiaryLight,
+              seedColor: themeController.textColorLight,
+              surface: themeController.surfaceColorLight,
+              primary: themeController.primaryColorLight,
+              secondary: themeController.secondaryColorLight,
+              tertiary: themeController.tertiaryColorLight,
               brightness: Brightness.light,
             ),
             textTheme: GoogleFonts.robotoTextTheme(
@@ -96,10 +96,11 @@ class SmartRootsApp extends StatelessWidget {
           ),
           darkTheme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
-              seedColor: SmartRootsColors.maBlueExtraDark,
-              surface: SmartRootsColors.maSurfaceDark,
-              secondary: SmartRootsColors.maSecondaryDark,
-              tertiary: SmartRootsColors.maTertiaryDark,
+              seedColor: themeController.textColorDark,
+              surface: themeController.surfaceColorDark,
+              primary: themeController.primaryColorDark,
+              secondary: themeController.secondaryColorDark,
+              tertiary: themeController.tertiaryColorDark,
               brightness: Brightness.dark,
             ),
             textTheme: GoogleFonts.robotoTextTheme(

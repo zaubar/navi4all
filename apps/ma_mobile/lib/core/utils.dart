@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/itinerary.dart';
 import 'package:smartroots/schemas/routing/place.dart';
@@ -93,4 +94,7 @@ class TextFormatter {
     }
     return '';
   }
+
+  static String formatTimeOfDay(DateTime dateTime) =>
+      DateFormat.Hm().format(dateTime);
 }

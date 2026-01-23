@@ -38,7 +38,6 @@ class RoutingScreen extends StatefulWidget {
 }
 
 class RoutingState extends State<RoutingScreen> {
-  late Place _parkingLocation;
   late NavigationInstructionsController _navigationInstructionsController;
   late NavigationAudioController _navigationAudioController;
   late NavigationDigressingController _navigationDigressingController;
@@ -53,8 +52,6 @@ class RoutingState extends State<RoutingScreen> {
   @override
   void initState() {
     super.initState();
-
-    _parkingLocation = widget.parkingLocation;
 
     _navigationInstructionsController =
         Provider.of<NavigationInstructionsController>(context, listen: false);
@@ -79,13 +76,16 @@ class RoutingState extends State<RoutingScreen> {
       address: '',
       coordinates: Coordinates(lat: 0.0, lon: 0.0),
     );
-    _destination = _parkingLocation;
+    _destination = widget.parkingLocation;
 
     // Initiate availability monitoring
-    Provider.of<AvailabilityController>(
-      context,
-      listen: false,
-    ).startMonitoring(_parkingLocation);
+    if (_destination.type == PlaceType.parkingSpot ||
+        _destination.type == PlaceType.parkingSite) {
+      Provider.of<AvailabilityController>(
+        context,
+        listen: false,
+      ).startMonitoring(_destination);
+    }
 
     // Listen for availability changes
     Provider.of<AvailabilityController>(context, listen: false).addListener(() {
@@ -93,7 +93,7 @@ class RoutingState extends State<RoutingScreen> {
           Provider.of<AvailabilityController>(context, listen: false);
       if (availabilityController.state == AvailabilityControllerState.change) {
         setState(() {
-          _parkingLocation = availabilityController.parkingLocation!;
+          _destination = availabilityController.parkingLocation!;
         });
         _showAvailabilityChangeDialog();
         availabilityController.stopMonitoring();
@@ -133,29 +133,35 @@ class RoutingState extends State<RoutingScreen> {
                     alignment: Alignment.topLeft,
                     child: Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color:
-                                (_parkingLocation
-                                    .attributes?['has_realtime_data'])
-                                ? (_parkingLocation
-                                          .attributes?['disabled_parking_available'])
-                                      ? SmartRootsColors.maGreen
-                                      : SmartRootsColors.maRed
-                                : SmartRootsColors.maBlueExtraDark,
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.local_parking,
-                                size: 16,
-                                color: SmartRootsColors.maWhite,
+                        _destination.type == PlaceType.parkingSpot ||
+                                _destination.type == PlaceType.parkingSite
+                            ? Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color:
+                                      (_destination
+                                          .attributes?['has_realtime_data'])
+                                      ? (_destination
+                                                .attributes?['disabled_parking_available'])
+                                            ? SmartRootsColors.maGreen
+                                            : SmartRootsColors.maRed
+                                      : SmartRootsColors.maBlueExtraDark,
+                                  borderRadius: BorderRadius.circular(32),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.local_parking,
+                                      size: 16,
+                                      color: SmartRootsColors.maWhite,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Icon(
+                                Icons.place_rounded,
+                                color: SmartRootsColors.maBlueExtraExtraDark,
                               ),
-                            ],
-                          ),
-                        ),
                         SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -218,11 +224,11 @@ class RoutingState extends State<RoutingScreen> {
                               listen: false,
                             ).stopNavigation();
 
-                            Place place = _parkingLocation;
                             Navigator.of(context).pop();
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => PlaceScreen(place: place),
+                                builder: (context) =>
+                                    PlaceScreen(place: _destination),
                               ),
                             );
 
@@ -621,7 +627,7 @@ class RoutingState extends State<RoutingScreen> {
         children: [
           Semantics(
             excludeSemantics: true,
-            child: RoutingMap(destination: _parkingLocation),
+            child: RoutingMap(destination: _destination),
           ),
           Consumer<RoutingController>(
             builder: (context, routingController, _) => Semantics(
@@ -881,7 +887,10 @@ class RoutingState extends State<RoutingScreen> {
                                 NavigationStatus.navigating
                             ? Material(
                                 elevation: 4,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(16),
+                                  topRight: Radius.circular(16),
+                                ),
                                 child: InkWell(
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(16),
@@ -912,12 +921,9 @@ class RoutingState extends State<RoutingScreen> {
                                   child: Container(
                                     height: 56,
                                     decoration: BoxDecoration(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.secondary,
                                       borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(28),
-                                        topRight: Radius.circular(28),
+                                        topLeft: Radius.circular(16),
+                                        topRight: Radius.circular(16),
                                       ),
                                     ),
                                     child: Row(
@@ -997,75 +1003,111 @@ class RoutingState extends State<RoutingScreen> {
                                   bottomRight: Radius.circular(16),
                                 )
                               : BorderRadius.circular(64),
-                          child: Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft:
-                                    routingController.navigationStatus !=
-                                        NavigationStatus.navigating
-                                    ? Radius.circular(0)
-                                    : Radius.circular(64),
-                                topRight:
-                                    routingController.navigationStatus !=
-                                        NavigationStatus.navigating
-                                    ? Radius.circular(0)
-                                    : Radius.circular(64),
-                                bottomLeft:
-                                    routingController.navigationStatus !=
-                                        NavigationStatus.navigating
-                                    ? Radius.circular(16)
-                                    : Radius.circular(64),
-                                bottomRight:
-                                    routingController.navigationStatus !=
-                                        NavigationStatus.navigating
-                                    ? Radius.circular(16)
-                                    : Radius.circular(64),
-                              ),
-                              color: Theme.of(context).colorScheme.secondary,
+                          child: InkWell(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(16),
+                              bottomRight: Radius.circular(16),
                             ),
-                            child: Row(
-                              children: [
-                                SizedBox(width: 16),
-                                Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        (_parkingLocation
-                                            .attributes?['has_realtime_data'])
-                                        ? (_parkingLocation
-                                                  .attributes?['disabled_parking_available'])
-                                              ? SmartRootsColors.maGreen
-                                              : SmartRootsColors.maRed
-                                        : SmartRootsColors.maBlueExtraDark,
-                                    borderRadius: BorderRadius.circular(32),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.local_parking,
-                                        size: 16,
-                                        color: SmartRootsColors.maWhite,
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const SearchScreen(
+                                        isSecondarySearch: true,
+                                        isOriginPlaceSearch: false,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  )
+                                  .then((result) {
+                                    if (result is Place) {
+                                      setState(() {
+                                        _destination = result;
+                                        routingController.stopNavigation();
+                                      });
+                                      _fetchItineraries();
+                                    }
+                                  });
+                            },
+                            child: Container(
+                              height: 56,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft:
+                                      routingController.navigationStatus !=
+                                          NavigationStatus.navigating
+                                      ? Radius.circular(0)
+                                      : Radius.circular(64),
+                                  topRight:
+                                      routingController.navigationStatus !=
+                                          NavigationStatus.navigating
+                                      ? Radius.circular(0)
+                                      : Radius.circular(64),
+                                  bottomLeft:
+                                      routingController.navigationStatus !=
+                                          NavigationStatus.navigating
+                                      ? Radius.circular(16)
+                                      : Radius.circular(64),
+                                  bottomRight:
+                                      routingController.navigationStatus !=
+                                          NavigationStatus.navigating
+                                      ? Radius.circular(16)
+                                      : Radius.circular(64),
                                 ),
-                                SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    _destination.id ==
-                                            SmartRootsValues.userLocation
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.origDestCurrentLocation
-                                        : _destination.name,
-                                    style: const TextStyle(fontSize: 16),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                              ),
+                              child: Row(
+                                children: [
+                                  SizedBox(width: 16),
+                                  _destination.type == PlaceType.parkingSpot ||
+                                          _destination.type ==
+                                              PlaceType.parkingSite
+                                      ? Container(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                (_destination
+                                                    .attributes?['has_realtime_data'])
+                                                ? (_destination
+                                                          .attributes?['disabled_parking_available'])
+                                                      ? SmartRootsColors.maGreen
+                                                      : SmartRootsColors.maRed
+                                                : SmartRootsColors
+                                                      .maBlueExtraDark,
+                                            borderRadius: BorderRadius.circular(
+                                              32,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.local_parking,
+                                                size: 16,
+                                                color: SmartRootsColors.maWhite,
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : Icon(
+                                          Icons.place_rounded,
+                                          color: SmartRootsColors
+                                              .maBlueExtraExtraDark,
+                                        ),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      _destination.id ==
+                                              SmartRootsValues.userLocation
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.origDestCurrentLocation
+                                          : _destination.name,
+                                      style: const TextStyle(fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 16),
-                              ],
+                                  SizedBox(width: 16),
+                                ],
+                              ),
                             ),
                           ),
                         ),

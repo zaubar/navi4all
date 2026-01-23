@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(32),
                                 color: _pageIndex == 0
-                                    ? Theme.of(context).colorScheme.secondary
+                                    ? Theme.of(context).colorScheme.surface
                                     : Theme.of(context).colorScheme.tertiary,
                               ),
                               child: Row(
@@ -143,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             }),
                         backgroundColor: _pageIndex == 0
-                            ? Theme.of(context).colorScheme.secondary
+                            ? Theme.of(context).colorScheme.surface
                             : Theme.of(context).colorScheme.tertiary,
                         selectedIndex: _pageIndex,
                         onDestinationSelected: (index) => setState(() {

@@ -21,12 +21,15 @@ abstract class LegSummary with _$LegSummary {
 @freezed
 abstract class LegDetailed with _$LegDetailed {
   const factory LegDetailed({
+    @JsonKey(name: "start_time") required DateTime startTime,
+    @JsonKey(name: "end_time") required DateTime endTime,
     required Mode mode,
     required int duration,
     required int distance,
     required String geometry,
     required List<Step> steps,
     Route? route,
+    String? headsign,
   }) = _LegDetailed;
 
   factory LegDetailed.fromJson(Map<String, Object?> json) =>
@@ -56,6 +59,9 @@ abstract class Step with _$Step {
     required AbsoluteDirection absoluteDirection,
     @JsonKey(name: "street_name") required String streetName,
     @JsonKey(name: "bogus_name") required bool bogusName,
+    @JsonKey(name: "voice_instruction") String? voiceInstruction,
+    @JsonKey(name: "text_instruction") String? textInstruction,
+    @JsonKey(name: "time_of_step") DateTime? timeOfStep,
   }) = _Step;
 
   factory Step.fromJson(Map<String, Object?> json) => _$StepFromJson(json);

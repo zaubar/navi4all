@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:smartroots/controllers/theme_controller.dart';
 import 'package:smartroots/core/config.dart';
 import 'package:smartroots/core/persistence/preference_helper.dart';
+import 'package:smartroots/core/theme/values.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 import 'package:smartroots/services/poi_parking.dart';
@@ -46,17 +47,27 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
 
   Future<void> _onStyleLoaded() async {
     // Load custom marker icons
-    final bytes = await rootBundle.load('assets/parking_avbl_yes.png');
-    final list = bytes.buffer.asUint8List();
-    await _mapController.addImage("parking_avbl_yes.png", list);
+    String assetParkingAvblYes =
+        SmartRootsValues.assetMarkerParkingAvblYesGeneral;
+    String assetParkingAvblNo =
+        SmartRootsValues.assetMarkerParkingAvblNoGeneral;
+    String assetParkingAvblUnknown =
+        SmartRootsValues.assetMarkerParkingAvblUnknownGeneral;
 
-    final bytes2 = await rootBundle.load('assets/parking_avbl_no.png');
-    final list2 = bytes2.buffer.asUint8List();
-    await _mapController.addImage("parking_avbl_no.png", list2);
+    _mapController.addImage(
+      'assetParkingAvblYes',
+      (await rootBundle.load(assetParkingAvblYes)).buffer.asUint8List(),
+    );
 
-    final bytes3 = await rootBundle.load('assets/parking_avbl_unknown.png');
-    final list3 = bytes3.buffer.asUint8List();
-    await _mapController.addImage("parking_avbl_unknown.png", list3);
+    _mapController.addImage(
+      'assetParkingAvblNo',
+      (await rootBundle.load(assetParkingAvblNo)).buffer.asUint8List(),
+    );
+
+    _mapController.addImage(
+      'assetParkingAvblUnknown',
+      (await rootBundle.load(assetParkingAvblUnknown)).buffer.asUint8List(),
+    );
 
     await Future.delayed(const Duration(milliseconds: 250));
     setState(() => _canInteractWithMap = true);
@@ -328,13 +339,13 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
 
     String iconName;
     if (!_parkingLocation.attributes?["has_realtime_data"]) {
-      iconName = "parking_avbl_unknown.png";
+      iconName = "assetParkingAvblUnknown";
     } else if (widget
         .parkingLocation
         .attributes?["disabled_parking_available"]) {
-      iconName = "parking_avbl_yes.png";
+      iconName = "assetParkingAvblYes";
     } else {
-      iconName = "parking_avbl_no.png";
+      iconName = "assetParkingAvblNo";
     }
 
     await _mapController.addSymbol(
@@ -344,7 +355,7 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
           _parkingLocation.coordinates.lon,
         ),
         iconImage: iconName,
-        iconSize: 0.85,
+        iconSize: 0.8,
       ),
     );
   }

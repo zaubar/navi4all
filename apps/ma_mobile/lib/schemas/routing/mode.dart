@@ -2,26 +2,56 @@ import 'package:flutter/material.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 
 enum Mode {
-  AIRPLANE,
   BICYCLE,
   BUS,
   CABLE_CAR,
   CAR,
   COACH,
   FERRY,
-  FLEX,
   FUNICULAR,
   GONDOLA,
   RAIL,
-  SCOOTER,
   SUBWAY,
   TRAM,
-  CARPOOL,
-  TAXI,
   TRANSIT,
   WALK,
   TROLLEYBUS,
   MONORAIL,
+}
+
+String getModeTextMapping(Mode mode, BuildContext context) {
+  switch (mode) {
+    case Mode.BICYCLE:
+      return AppLocalizations.of(context)!.modeBicycle;
+    case Mode.BUS:
+      return AppLocalizations.of(context)!.modeBus;
+    case Mode.CABLE_CAR:
+      return AppLocalizations.of(context)!.modeCableCar;
+    case Mode.CAR:
+      return AppLocalizations.of(context)!.modeCar;
+    case Mode.COACH:
+      return AppLocalizations.of(context)!.modeCoach;
+    case Mode.FERRY:
+      return AppLocalizations.of(context)!.modeFerry;
+    case Mode.FUNICULAR:
+      return AppLocalizations.of(context)!.modeFunicular;
+    case Mode.GONDOLA:
+      return AppLocalizations.of(context)!.modeGondola;
+    case Mode.RAIL:
+      return AppLocalizations.of(context)!.modeRail;
+    case Mode.SUBWAY:
+      return AppLocalizations.of(context)!.modeSubway;
+    case Mode.TRAM:
+      return AppLocalizations.of(context)!.modeTram;
+    case Mode.TRANSIT:
+      return AppLocalizations.of(context)!.modeTransit;
+    case Mode.WALK:
+      return AppLocalizations.of(context)!.modeWalk;
+    case Mode.TROLLEYBUS:
+      return AppLocalizations.of(context)!.modeTrolleybus;
+    case Mode.MONORAIL:
+      return AppLocalizations.of(context)!.modeMonorail;
+  }
 }
 
 enum RelativeDirection {
@@ -42,9 +72,13 @@ enum RelativeDirection {
   EXIT_STATION,
   FOLLOW_SIGNS,
   ARRIVE,
+  TRANSIT_TRANSFER,
+  TRANSIT_BOARD,
+  TRANSIT_RIDE,
+  TRANSIT_ALIGHT,
 }
 
-IconData getRelativeDirectionIconMapping(RelativeDirection relativeDirection) {
+IconData? getRelativeDirectionIconMapping(RelativeDirection relativeDirection) {
   switch (relativeDirection) {
     case RelativeDirection.CONTINUE:
       return Icons.straight;
@@ -80,13 +114,22 @@ IconData getRelativeDirectionIconMapping(RelativeDirection relativeDirection) {
       return Icons.rotate_left;
     case RelativeDirection.ARRIVE:
       return Icons.place_rounded;
+    case RelativeDirection.TRANSIT_TRANSFER:
+      return Icons.transit_enterexit;
+    case RelativeDirection.TRANSIT_BOARD:
+      return Icons.arrow_circle_right_outlined;
+    case RelativeDirection.TRANSIT_RIDE:
+      return null;
+    case RelativeDirection.TRANSIT_ALIGHT:
+      return Icons.arrow_circle_left_outlined;
   }
 }
 
 String getRelativeDirectionTextMapping(
   RelativeDirection relativeDirection,
-  BuildContext context,
-) {
+  BuildContext context, {
+  Mode mode = Mode.TRANSIT,
+}) {
   switch (relativeDirection) {
     case RelativeDirection.DEPART:
       return AppLocalizations.of(context)!.navigationRelativeDirectionDepart;
@@ -138,6 +181,24 @@ String getRelativeDirectionTextMapping(
       )!.navigationRelativeDirectionFollowSigns;
     case RelativeDirection.ARRIVE:
       return AppLocalizations.of(context)!.navigationRelativeDirectionArrive;
+    case RelativeDirection.TRANSIT_TRANSFER:
+      return AppLocalizations.of(
+        context,
+      )!.navigationRelativeDirectionTransitTransfer;
+    case RelativeDirection.TRANSIT_BOARD:
+      return AppLocalizations.of(
+        context,
+      )!.navigationRelativeDirectionTransitBoard;
+    case RelativeDirection.TRANSIT_RIDE:
+      return AppLocalizations.of(
+        context,
+      )!.navigationRelativeDirectionTransitRide(
+        getModeTextMapping(mode, context),
+      );
+    case RelativeDirection.TRANSIT_ALIGHT:
+      return AppLocalizations.of(
+        context,
+      )!.navigationRelativeDirectionTransitAlight;
   }
 }
 

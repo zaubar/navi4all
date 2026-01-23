@@ -450,6 +450,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navigationRelativeDirectionArrive => 'Ankommen';
 
   @override
+  String get navigationRelativeDirectionTransitTransfer => 'Umsteigen auf den ÖPNV.';
+
+  @override
+  String get navigationRelativeDirectionTransitBoard => 'Einsteigen';
+
+  @override
+  String navigationRelativeDirectionTransitRide(String mode) {
+    return '$mode fahren';
+  }
+
+  @override
+  String get navigationRelativeDirectionTransitAlight => 'Aussteigen';
+
+  @override
+  String itineraryDepartureTime(String time) {
+    return 'Los um $time';
+  }
+
+  @override
   String navigationStepDistanceToAction(String distance) {
     return 'in $distance';
   }
@@ -634,5 +653,55 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String routingScreenNavigationStatsSemantic(String time, String distance) {
     return '$time, $distance zum Zielort.';
+  }
+
+  @override
+  String get modeBicycle => 'Fahrrad';
+
+  @override
+  String get modeBus => 'Bus';
+
+  @override
+  String get modeCableCar => 'Seilbahn';
+
+  @override
+  String get modeCar => 'Auto';
+
+  @override
+  String get modeCoach => 'Reisebus';
+
+  @override
+  String get modeFerry => 'Fähre';
+
+  @override
+  String get modeFunicular => 'Standseilbahn';
+
+  @override
+  String get modeGondola => 'Gondel';
+
+  @override
+  String get modeRail => 'Zug';
+
+  @override
+  String get modeSubway => 'U-Bahn';
+
+  @override
+  String get modeTram => 'Tram';
+
+  @override
+  String get modeTransit => 'ÖV';
+
+  @override
+  String get modeWalk => 'Zu Fuß';
+
+  @override
+  String get modeTrolleybus => 'Oberleitungsbus';
+
+  @override
+  String get modeMonorail => 'Einschienenbahn';
+
+  @override
+  String routingScreenLegTransitDirection(String direction) {
+    return 'in Richtung\n$direction';
   }
 }
