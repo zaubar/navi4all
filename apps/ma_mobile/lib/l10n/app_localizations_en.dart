@@ -523,7 +523,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeMapScreenLayersButtonSemantic => 'Change map style.';
 
   @override
-  String get homeMapScreenCurrentLocationButtonSemantic => 'Go to current location.';
+  String get homeMapScreenCurrentLocationButtonSemantic => 'Show your current location. Tap the search bar to search for your destination, and parking spots nearby.';
 
   @override
   String get homeFavoritesScreenSemantic => 'Favourites screen.';

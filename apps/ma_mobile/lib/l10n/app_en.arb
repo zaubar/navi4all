@@ -306,7 +306,7 @@
     "searchScreenErrorNoSuggestions": "No results found. Try searching for other places, addresses or transit stations.",
     "homeMapScreenSemantic": "Map screen.",
     "homeMapScreenLayersButtonSemantic": "Change map style.",
-    "homeMapScreenCurrentLocationButtonSemantic": "Go to current location.",
+    "homeMapScreenCurrentLocationButtonSemantic": "Show your current location. Tap the search bar to search for your destination, and parking spots nearby.",
     "homeFavoritesScreenSemantic": "Favourites screen.",
     "favoritesScreenSemantic": "Favorites screen. With {count} favorites.",
     "@favoritesScreenSemantic": {
