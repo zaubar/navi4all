@@ -14,7 +14,10 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   @override
   void initState() {
-    Future.delayed(Duration(milliseconds: 1500)).then((_) {
+    super.initState();
+    Future.delayed(Duration(milliseconds: 1500)).then((_) async {
+      await PreferenceHelper.incrementLaunchCount();
+
       PreferenceHelper.isOnboardingComplete().then((isComplete) {
         if (!isComplete) {
           Navigator.of(context).pushReplacement(
@@ -27,8 +30,6 @@ class _SplashState extends State<Splash> {
         }
       });
     });
-
-    super.initState();
   }
 
   @override

@@ -12,6 +12,8 @@ String keyThemeMode = "ma_theme_mode";
 String keyBaseMapStyle = "ma_base_map_style";
 String keyRecentSearches = "ma_recent_searches";
 String keySearchRadius = "ma_search_radius";
+String keyUserEngagementEvents = "ma_user_engagement_events";
+String keyLaunchCount = "ma_launch_count";
 
 class PreferenceHelper {
   static Future<bool> isOnboardingComplete() async {
@@ -138,5 +140,37 @@ class PreferenceHelper {
   static Future<void> setSearchRadius(int radius) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setInt(keySearchRadius, radius);
+  }
+
+  static List<String> _getStoredUserEngagementEvents(
+    SharedPreferences preferences,
+  ) => preferences.getStringList(keyUserEngagementEvents) ?? [];
+
+  static Future<void> addDisplayedUserEngagementEvent(String eventId) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> events = _getStoredUserEngagementEvents(preferences);
+
+    if (!events.contains(eventId)) {
+      events.add(eventId);
+      await preferences.setStringList(keyUserEngagementEvents, events);
+    }
+  }
+
+  static Future<bool> isUserEngagementEventDisplayed(String eventId) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> events = _getStoredUserEngagementEvents(preferences);
+    return events.contains(eventId);
+  }
+
+  static Future<int> getLaunchCount() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getInt(keyLaunchCount) ?? 0;
+  }
+
+  static Future<int> incrementLaunchCount() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final int nextCount = (preferences.getInt(keyLaunchCount) ?? 0) + 1;
+    await preferences.setInt(keyLaunchCount, nextCount);
+    return nextCount;
   }
 }

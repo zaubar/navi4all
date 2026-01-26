@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:smartroots/core/analytics/events.dart';
+import 'package:smartroots/core/config.dart';
+import 'package:smartroots/core/persistence/preference_helper.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
+import 'package:smartroots/schemas/user_engagement/user_engagement_event.dart';
+import 'package:smartroots/services/user_engagement.dart';
 import 'package:smartroots/view/home/map.dart';
 import 'package:smartroots/view/favourites/favorites.dart';
 import 'package:smartroots/view/settings/settings.dart';
 import 'package:smartroots/view/search/search.dart';
+import 'package:smartroots/view/user_engagement/user_engagement_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +22,45 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _pageIndex = 0;
   List<Widget> get _pages => [HomeMap(), FavoritesScreen(), SettingsScreen()];
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showUserEngagementEvent();
+    });
+  }
+
+  Future<void> _showUserEngagementEvent() async {
+    try {
+      if (await PreferenceHelper.getLaunchCount() <
+          Settings.userEngagementMinLaunchCount) {
+        return;
+      }
+
+      UserEngagementEvent? event = await UserEngagementService().getEvent();
+      if (event == null) {
+        return;
+      }
+
+      bool alreadyDisplayed =
+          await PreferenceHelper.isUserEngagementEventDisplayed(event.eventId);
+      if (alreadyDisplayed) {
+        return;
+      }
+
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => UserEngagementDialog(event: event),
+      );
+
+      await PreferenceHelper.addDisplayedUserEngagementEvent(event.eventId);
+    } catch (_) {
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
