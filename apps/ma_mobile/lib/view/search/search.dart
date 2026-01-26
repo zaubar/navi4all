@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:provider/provider.dart';
 import 'package:smartroots/controllers/autocomplete_controller.dart';
+import 'package:smartroots/core/theme/icons.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/view/parking_location/parking_location.dart';
@@ -317,7 +318,7 @@ class _SearchSuggestion extends StatelessWidget {
                     : Icon(
                         isRecentSearch
                             ? Icons.history_rounded
-                            : Icons.location_on_rounded,
+                            : PlaceTypeIcons.get(place.type),
                         color: SmartRootsColors.maBlue,
                       ),
                 const SizedBox(width: 12),

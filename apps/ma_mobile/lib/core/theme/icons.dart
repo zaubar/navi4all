@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartroots/schemas/routing/mode.dart';
+import 'package:smartroots/schemas/routing/place.dart';
 
 class ModeIcons {
   static const Map<Mode, IconData> icons = {
@@ -22,5 +23,18 @@ class ModeIcons {
 
   static IconData get(Mode mode) {
     return icons[mode] ?? Icons.commute;
+  }
+}
+
+class PlaceTypeIcons {
+  static const Map<PlaceType, IconData> icons = {
+    PlaceType.address: Icons.place_outlined,
+    PlaceType.street: Icons.signpost_outlined,
+    PlaceType.parkingSpot: Icons.local_parking,
+    PlaceType.parkingSite: Icons.local_parking,
+  };
+
+  static IconData get(PlaceType type) {
+    return icons[type] ?? Icons.place_outlined;
   }
 }
