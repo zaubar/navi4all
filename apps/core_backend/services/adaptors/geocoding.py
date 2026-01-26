@@ -48,12 +48,17 @@ class GeocodingAdaptor:
 
         places = []
         for feature in response.json()["features"]:
+            # Determine place type
+            type: PlaceType = PlaceType.ADDRESS
+            if feature["properties"]["layer"] == PlaceType.STREET.value:
+                type = PlaceType.STREET
+            
             places.append(
                 Place(
                     id=feature["properties"]["id"],
                     name=feature["properties"]["name"],
                     address=feature["properties"]["label"],
-                    type=PlaceType.ADDRESS,
+                    type=type,
                     street=feature["properties"].get("street", None),
                     locality=feature["properties"].get("locality", None),
                     postcode=feature["properties"].get("postalcode", None),

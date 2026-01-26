@@ -25,5 +25,6 @@ class Place(BaseModel):
 
 class PlaceType(Enum):
     ADDRESS = "address"
+    STREET = "street"
     PARKING_SPOT = "parkingSpot"
     PARKING_SITE = "parkingSite"
