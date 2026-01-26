@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     REDIS_HOST: str = "navi4all-redis"
     REDIS_PORT: int = 6379
 
+    # User engagement settings
+    USER_ENGAGEMENT_EVENT_FILE: str | None = None
+
     # Adaptor settings
     OPEN_TRIP_PLANNER_URL: str
     OPEN_TRIP_PLANNER_KL_URL: str

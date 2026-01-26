@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from endpoints.routing import router as routing_router
 from endpoints.geocoding import router as geocoding_router
+from endpoints.user_engagement import router as user_engagement_router
 from core.config import settings
 
 app = FastAPI(
@@ -20,6 +21,7 @@ app.add_middleware(
 
 app.include_router(routing_router, prefix=settings.API_VERSION)
 app.include_router(geocoding_router, prefix=settings.API_VERSION)
+app.include_router(user_engagement_router, prefix=settings.API_VERSION)
 
 @app.get("/")
 async def root():
