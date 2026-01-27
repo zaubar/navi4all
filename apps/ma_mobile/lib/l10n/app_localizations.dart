@@ -1058,7 +1058,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeMapScreenCurrentLocationButtonSemantic.
   ///
   /// In en, this message translates to:
-  /// **'Show your current location. Tap the search bar to search for your destination, and parking spots nearby.'**
+  /// **'Show your current location.'**
   String get homeMapScreenCurrentLocationButtonSemantic;
 
   /// No description provided for @homeFavoritesScreenSemantic.

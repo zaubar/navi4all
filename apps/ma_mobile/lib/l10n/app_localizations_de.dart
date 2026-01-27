@@ -523,7 +523,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homeMapScreenLayersButtonSemantic => 'Kartenstil ändern.';
 
   @override
-  String get homeMapScreenCurrentLocationButtonSemantic => 'Zum aktuellen Standort zentrieren. Tippen Sie auf die Suchleiste, um nach Ihrem Ziel und nahegelegenen Parkplätzen zu suchen.';
+  String get homeMapScreenCurrentLocationButtonSemantic => 'Zum aktuellen Standort zentrieren.';
 
   @override
   String get homeFavoritesScreenSemantic => 'Favoritenbildschirm.';

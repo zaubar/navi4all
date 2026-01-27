@@ -306,7 +306,7 @@
     "searchScreenErrorNoSuggestions": "Keine Ergebnisse gefunden. Versuchen Sie, nach anderen Orten, Adressen oder Verkehrsstationen zu suchen.",
     "homeMapScreenSemantic": "Kartenbildschirm.",
     "homeMapScreenLayersButtonSemantic": "Kartenstil ändern.",
-    "homeMapScreenCurrentLocationButtonSemantic": "Zum aktuellen Standort zentrieren. Tippen Sie auf die Suchleiste, um nach Ihrem Ziel und nahegelegenen Parkplätzen zu suchen.",
+    "homeMapScreenCurrentLocationButtonSemantic": "Zum aktuellen Standort zentrieren.",
     "homeFavoritesScreenSemantic": "Favoritenbildschirm.",
     "favoritesScreenSemantic": "Favoritenbildschirm. Mit {count} Favoriten.",
     "@favoritesScreenSemantic": {
