@@ -237,13 +237,13 @@ class _FavoritesInformationScreen extends StatelessWidget {
           const SizedBox(height: 32),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maBlueExtraExtraDark,
-            icon: Icon(Icons.star_border),
+            icon: Icon(Icons.star_border, color: SmartRootsColors.maWhite),
             hint: AppLocalizations.of(context)!.onboardingFavoritesNotFavorited,
           ),
           const SizedBox(height: 16),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maBlueExtraExtraDark,
-            icon: Icon(Icons.star),
+            icon: Icon(Icons.star, color: SmartRootsColors.maWhite),
             hint: AppLocalizations.of(context)!.onboardingFavoritesFavorited,
           ),
         ],
