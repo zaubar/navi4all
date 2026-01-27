@@ -44,10 +44,30 @@ class _PlaceMapState extends State<PlaceMap> with WidgetsBindingObserver {
 
     // Load custom marker icons
     String assetMarkerPlace = SmartRootsValues.assetMarkerPlaceGeneral;
-
     _mapController.addImage(
       'assetMarkerPlace',
       (await rootBundle.load(assetMarkerPlace)).buffer.asUint8List(),
+    );
+
+    String assetMarkerMiniParkingYes =
+        SmartRootsValues.assetMarkerMiniParkingYesGeneral;
+    _mapController.addImage(
+      'assetMarkerMiniParkingYes',
+      (await rootBundle.load(assetMarkerMiniParkingYes)).buffer.asUint8List(),
+    );
+    String assetMarkerMiniParkingNo =
+        SmartRootsValues.assetMarkerMiniParkingNoGeneral;
+    _mapController.addImage(
+      'assetMarkerMiniParkingNo',
+      (await rootBundle.load(assetMarkerMiniParkingNo)).buffer.asUint8List(),
+    );
+    String assetMarkerMiniParkingUnknown =
+        SmartRootsValues.assetMarkerMiniParkingUnknownGeneral;
+    _mapController.addImage(
+      'assetMarkerMiniParkingUnknown',
+      (await rootBundle.load(
+        assetMarkerMiniParkingUnknown,
+      )).buffer.asUint8List(),
     );
 
     await Future.delayed(const Duration(milliseconds: 250));
@@ -314,11 +334,11 @@ class _PlaceMapState extends State<PlaceMap> with WidgetsBindingObserver {
     await _mapController.addLayer(
       'parking_unknown',
       'parking_unknown_layer',
-      CircleLayerProperties(
-        circleColor: '#3685E2',
-        circleRadius: 6.0,
-        circleStrokeWidth: 1.0,
-        circleStrokeColor: '#FFFFFF',
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingUnknown',
+        iconSize: 0.3,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
     );
 
@@ -326,11 +346,11 @@ class _PlaceMapState extends State<PlaceMap> with WidgetsBindingObserver {
     await _mapController.addLayer(
       'parking_occupied',
       'parking_occupied_layer',
-      CircleLayerProperties(
-        circleColor: '#F4B1A4',
-        circleRadius: 6.0,
-        circleStrokeWidth: 1.0,
-        circleStrokeColor: '#FFFFFF',
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingNo',
+        iconSize: 0.3,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
     );
 
@@ -338,11 +358,11 @@ class _PlaceMapState extends State<PlaceMap> with WidgetsBindingObserver {
     await _mapController.addLayer(
       'parking_available',
       'parking_available_layer',
-      CircleLayerProperties(
-        circleColor: '#089161',
-        circleRadius: 6.0,
-        circleStrokeWidth: 1.0,
-        circleStrokeColor: '#FFFFFF',
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingYes',
+        iconSize: 0.3,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
     );
   }

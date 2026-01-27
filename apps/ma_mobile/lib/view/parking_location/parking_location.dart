@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:smartroots/controllers/favorites_controller.dart';
 import 'package:smartroots/core/analytics/events.dart';
 import 'package:smartroots/core/config.dart';
-import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/mode.dart';
 import 'package:smartroots/services/poi_parking.dart';
@@ -450,28 +449,8 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                               ),
                           child: Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color:
-                                      (_parkingLocation
-                                          .attributes?['has_realtime_data'])
-                                      ? (_parkingLocation
-                                                .attributes?['disabled_parking_available'])
-                                            ? SmartRootsColors.maGreen
-                                            : SmartRootsColors.maRed
-                                      : SmartRootsColors.maBlueExtraDark,
-                                  borderRadius: BorderRadius.circular(32),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.local_parking,
-                                      size: 16,
-                                      color: SmartRootsColors.maWhite,
-                                    ),
-                                  ],
-                                ),
+                              WidgetGenerator.getParkingPlaceIcon(
+                                _parkingLocation,
                               ),
                               SizedBox(width: 8),
                               Text(

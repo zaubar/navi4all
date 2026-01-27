@@ -185,6 +185,7 @@ class _RoutingMapState extends State<RoutingMap> {
 
   Future<void> _drawDestination() async {
     String iconName = 'assetMarkerPlace';
+    double iconSize = 0.8;
     if (widget.destination.type == PlaceType.parkingSpot ||
         widget.destination.type == PlaceType.parkingSite) {
       if (!widget.destination.attributes?['has_realtime_data']) {
@@ -194,6 +195,7 @@ class _RoutingMapState extends State<RoutingMap> {
       } else {
         iconName = "assetParkingAvblNo";
       }
+      iconSize = 0.5;
     }
 
     // Build destination marker
@@ -203,7 +205,7 @@ class _RoutingMapState extends State<RoutingMap> {
         widget.destination.coordinates.lon,
       ),
       iconImage: iconName,
-      iconSize: 0.8,
+      iconSize: iconSize,
     );
 
     if (_destinationSymbol != null) {

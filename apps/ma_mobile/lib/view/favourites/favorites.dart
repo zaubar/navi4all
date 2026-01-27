@@ -182,27 +182,7 @@ class _FavouritesListItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: parkingLocation.attributes!['has_realtime_data']
-                        ? parkingLocation
-                                  .attributes!['disabled_parking_available']
-                              ? SmartRootsColors.maGreen
-                              : SmartRootsColors.maRed
-                        : SmartRootsColors.maBlueExtraDark,
-                    borderRadius: BorderRadius.circular(32),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.local_parking,
-                        size: 16,
-                        color: SmartRootsColors.maWhite,
-                      ),
-                    ],
-                  ),
-                ),
+                WidgetGenerator.getParkingPlaceIcon(parkingLocation),
                 SizedBox(width: 12),
                 Expanded(
                   child: Column(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartroots/core/persistence/preference_helper.dart';
+import 'package:smartroots/core/theme/values.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/view/home/home.dart';
@@ -171,7 +172,10 @@ class _SymbolInformationScreen extends StatelessWidget {
           const SizedBox(height: 32),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maGreen,
-            icon: Icons.local_parking,
+            icon: Image.asset(
+              SmartRootsValues.assetMarkerParkingAvblYesGeneral,
+              width: 32.0,
+            ),
             hint: AppLocalizations.of(
               context,
             )!.onboardingSymbolInformationParkingAvailable,
@@ -179,7 +183,10 @@ class _SymbolInformationScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maRed,
-            icon: Icons.local_parking,
+            icon: Image.asset(
+              SmartRootsValues.assetMarkerParkingAvblNoGeneral,
+              width: 32.0,
+            ),
             hint: AppLocalizations.of(
               context,
             )!.onboardingSymbolInformationParkingUnavailable,
@@ -187,7 +194,10 @@ class _SymbolInformationScreen extends StatelessWidget {
           const SizedBox(height: 16),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maBlueExtraDark,
-            icon: Icons.local_parking,
+            icon: Image.asset(
+              SmartRootsValues.assetMarkerParkingAvblUnknownGeneral,
+              width: 32.0,
+            ),
             hint: AppLocalizations.of(
               context,
             )!.onboardingSymbolInformationParkingUnknown,
@@ -227,13 +237,13 @@ class _FavoritesInformationScreen extends StatelessWidget {
           const SizedBox(height: 32),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maBlueExtraExtraDark,
-            icon: Icons.star_border,
+            icon: Icon(Icons.star_border),
             hint: AppLocalizations.of(context)!.onboardingFavoritesNotFavorited,
           ),
           const SizedBox(height: 16),
           _SymbolLegendRow(
             iconColor: SmartRootsColors.maBlueExtraExtraDark,
-            icon: Icons.star,
+            icon: Icon(Icons.star),
             hint: AppLocalizations.of(context)!.onboardingFavoritesFavorited,
           ),
         ],
@@ -244,7 +254,7 @@ class _FavoritesInformationScreen extends StatelessWidget {
 
 class _SymbolLegendRow extends StatelessWidget {
   final Color iconColor;
-  final IconData icon;
+  final Widget icon;
   final String hint;
 
   const _SymbolLegendRow({
@@ -256,15 +266,7 @@ class _SymbolLegendRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      Container(
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          color: iconColor,
-          borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: SmartRootsColors.maWhite, width: 1),
-        ),
-        child: Row(children: [Icon(icon, color: SmartRootsColors.maWhite)]),
-      ),
+      icon,
       const SizedBox(width: 16),
       Expanded(
         child: Text(

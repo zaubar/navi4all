@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:smartroots/core/theme/values.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/itinerary.dart';
 import 'package:smartroots/schemas/routing/place.dart';
@@ -97,4 +98,28 @@ class TextFormatter {
 
   static String formatTimeOfDay(DateTime dateTime) =>
       DateFormat.Hm().format(dateTime);
+}
+
+class WidgetGenerator {
+  static Widget getParkingPlaceIcon(Place place) {
+    if (place.type != PlaceType.parkingSpot &&
+        place.type != PlaceType.parkingSite) {
+      throw Exception('Place must be a parking location to get widget.');
+    }
+
+    bool hasRealtimeData = place.attributes!['has_realtime_data'] ?? false;
+    bool disabledParkingAvailable =
+        place.attributes!['disabled_parking_available'] ?? false;
+
+    String assetPath = SmartRootsValues.assetMarkerParkingAvblUnknownGeneral;
+    if (hasRealtimeData) {
+      if (disabledParkingAvailable) {
+        assetPath = SmartRootsValues.assetMarkerParkingAvblYesGeneral;
+      } else {
+        assetPath = SmartRootsValues.assetMarkerParkingAvblNoGeneral;
+      }
+    }
+
+    return Image.asset(assetPath, width: 32.0);
+  }
 }

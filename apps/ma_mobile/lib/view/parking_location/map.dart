@@ -69,6 +69,27 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
       (await rootBundle.load(assetParkingAvblUnknown)).buffer.asUint8List(),
     );
 
+    String assetMarkerMiniParkingYes =
+        SmartRootsValues.assetMarkerMiniParkingYesGeneral;
+    _mapController.addImage(
+      'assetMarkerMiniParkingYes',
+      (await rootBundle.load(assetMarkerMiniParkingYes)).buffer.asUint8List(),
+    );
+    String assetMarkerMiniParkingNo =
+        SmartRootsValues.assetMarkerMiniParkingNoGeneral;
+    _mapController.addImage(
+      'assetMarkerMiniParkingNo',
+      (await rootBundle.load(assetMarkerMiniParkingNo)).buffer.asUint8List(),
+    );
+    String assetMarkerMiniParkingUnknown =
+        SmartRootsValues.assetMarkerMiniParkingUnknownGeneral;
+    _mapController.addImage(
+      'assetMarkerMiniParkingUnknown',
+      (await rootBundle.load(
+        assetMarkerMiniParkingUnknown,
+      )).buffer.asUint8List(),
+    );
+
     await Future.delayed(const Duration(milliseconds: 250));
     setState(() => _canInteractWithMap = true);
 
@@ -295,13 +316,12 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
     await _mapController.addLayer(
       'parking_unknown',
       'parking_unknown_layer',
-      CircleLayerProperties(
-        circleColor: '#3685E2',
-        circleRadius: 6.0,
-        circleOpacity: 0.5,
-        circleStrokeWidth: 1.0,
-        circleStrokeColor: "#FFFFFF",
-        circleStrokeOpacity: 0.5,
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingUnknown',
+        iconSize: 0.3,
+        iconOpacity: 0.5,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
     );
 
@@ -309,13 +329,12 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
     await _mapController.addLayer(
       'parking_occupied',
       'parking_occupied_layer',
-      CircleLayerProperties(
-        circleColor: '#F4B1A4',
-        circleRadius: 6.0,
-        circleOpacity: 0.5,
-        circleStrokeWidth: 1.0,
-        circleStrokeColor: "#FFFFFF",
-        circleStrokeOpacity: 0.5,
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingNo',
+        iconSize: 0.3,
+        iconOpacity: 0.5,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
     );
 
@@ -323,13 +342,12 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
     await _mapController.addLayer(
       'parking_available',
       'parking_available_layer',
-      CircleLayerProperties(
-        circleColor: '#089161',
-        circleRadius: 6.0,
-        circleOpacity: 0.5,
-        circleStrokeWidth: 1.0,
-        circleStrokeColor: "#FFFFFF",
-        circleStrokeOpacity: 0.5,
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingYes',
+        iconSize: 0.3,
+        iconOpacity: 0.5,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
     );
   }
@@ -355,7 +373,7 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
           _parkingLocation.coordinates.lon,
         ),
         iconImage: iconName,
-        iconSize: 0.8,
+        iconSize: 0.5,
       ),
     );
   }

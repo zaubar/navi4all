@@ -57,6 +57,9 @@ flutter:
     - assets/general/marker_parking_avbl_yes_general.png
     - assets/general/marker_parking_avbl_no_general.png
     - assets/general/marker_parking_avbl_unknown_general.png
+    - assets/general/marker_mini_parking_yes_general.png
+    - assets/general/marker_mini_parking_no_general.png
+    - assets/general/marker_mini_parking_unknown_general.png
     - assets/vision_impaired/marker_user_position_vision_impaired.png
     - assets/vision_impaired/marker_walking_vision_impaired.png
     - assets/vision_impaired/marker_bus_vision_impaired.png

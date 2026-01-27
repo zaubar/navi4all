@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ import 'package:smartroots/core/analytics/events.dart';
 import 'package:smartroots/core/config.dart';
 import 'package:smartroots/core/persistence/preference_helper.dart';
 import 'package:smartroots/core/theme/base_map_style.dart';
+import 'package:smartroots/core/theme/values.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 import 'package:smartroots/services/poi_parking.dart';
@@ -41,6 +43,28 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
   Future<void> _onStyleLoaded() async {
     // Clear existing markers and listeners
     _mapController.onFeatureTapped.clear();
+
+    // Load custom marker icons
+    String assetMarkerMiniParkingYes =
+        SmartRootsValues.assetMarkerMiniParkingYesGeneral;
+    _mapController.addImage(
+      'assetMarkerMiniParkingYes',
+      (await rootBundle.load(assetMarkerMiniParkingYes)).buffer.asUint8List(),
+    );
+    String assetMarkerMiniParkingNo =
+        SmartRootsValues.assetMarkerMiniParkingNoGeneral;
+    _mapController.addImage(
+      'assetMarkerMiniParkingNo',
+      (await rootBundle.load(assetMarkerMiniParkingNo)).buffer.asUint8List(),
+    );
+    String assetMarkerMiniParkingUnknown =
+        SmartRootsValues.assetMarkerMiniParkingUnknownGeneral;
+    _mapController.addImage(
+      'assetMarkerMiniParkingUnknown',
+      (await rootBundle.load(
+        assetMarkerMiniParkingUnknown,
+      )).buffer.asUint8List(),
+    );
 
     await Future.delayed(const Duration(milliseconds: 250));
     setState(() => _canInteractWithMap = true);
@@ -566,11 +590,11 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     await _mapController.addLayer(
       'parking_unknown',
       'parking_unknown_layer',
-      CircleLayerProperties(
-        circleColor: '#3685E2',
-        circleRadius: 6.0,
-        circleStrokeWidth: 1.0,
-        circleStrokeColor: '#FFFFFF',
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingUnknown',
+        iconSize: 0.3,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
       filter: [
         '!',
@@ -582,27 +606,11 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     await _mapController.addLayer(
       'parking_unknown',
       'parking_unknown_clusters',
-      CircleLayerProperties(
-        circleColor: '#3685E2',
-        circleRadius: [
-          'interpolate',
-          ['linear'],
-          ['get', 'point_count'],
-          2,
-          13,
-          5,
-          15,
-          10,
-          17,
-          25,
-          19,
-          50,
-          21,
-          100,
-          25,
-        ],
-        circleStrokeWidth: 2.0,
-        circleStrokeColor: '#FFFFFF',
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingUnknown',
+        iconSize: 0.7,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
       filter: ['has', 'point_count'],
     );
@@ -625,11 +633,11 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     await _mapController.addLayer(
       'parking_occupied',
       'parking_occupied_layer',
-      CircleLayerProperties(
-        circleColor: '#F4B1A4',
-        circleRadius: 6.0,
-        circleStrokeWidth: 1.0,
-        circleStrokeColor: '#FFFFFF',
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingNo',
+        iconSize: 0.3,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
       filter: [
         '!',
@@ -641,27 +649,11 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     await _mapController.addLayer(
       'parking_occupied',
       'parking_occupied_clusters',
-      CircleLayerProperties(
-        circleColor: '#F4B1A4',
-        circleRadius: [
-          'interpolate',
-          ['linear'],
-          ['get', 'point_count'],
-          2,
-          13,
-          5,
-          15,
-          10,
-          17,
-          25,
-          19,
-          50,
-          21,
-          100,
-          25,
-        ],
-        circleStrokeWidth: 2.0,
-        circleStrokeColor: '#FFFFFF',
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingNo',
+        iconSize: 0.7,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
       filter: ['has', 'point_count'],
     );
@@ -684,11 +676,11 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     await _mapController.addLayer(
       'parking_available',
       'parking_available_layer',
-      CircleLayerProperties(
-        circleColor: '#089161',
-        circleRadius: 6.0,
-        circleStrokeWidth: 1.0,
-        circleStrokeColor: '#FFFFFF',
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingYes',
+        iconSize: 0.3,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
       filter: [
         '!',
@@ -700,27 +692,11 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     await _mapController.addLayer(
       'parking_available',
       'parking_available_clusters',
-      CircleLayerProperties(
-        circleColor: '#089161',
-        circleRadius: [
-          'interpolate',
-          ['linear'],
-          ['get', 'point_count'],
-          2,
-          13,
-          5,
-          15,
-          10,
-          17,
-          25,
-          19,
-          50,
-          21,
-          100,
-          25,
-        ],
-        circleStrokeWidth: 2.0,
-        circleStrokeColor: '#FFFFFF',
+      SymbolLayerProperties(
+        iconImage: 'assetMarkerMiniParkingYes',
+        iconSize: 0.7,
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
       ),
       filter: ['has', 'point_count'],
     );

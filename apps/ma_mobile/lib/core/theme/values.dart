@@ -32,4 +32,10 @@ class SmartRootsValues {
       "assets/general/marker_parking_avbl_no_general.png";
   static const String assetMarkerParkingAvblUnknownGeneral =
       "assets/general/marker_parking_avbl_unknown_general.png";
+  static const String assetMarkerMiniParkingYesGeneral =
+      "assets/general/marker_mini_parking_yes_general.png";
+  static const String assetMarkerMiniParkingNoGeneral =
+      "assets/general/marker_mini_parking_no_general.png";
+  static const String assetMarkerMiniParkingUnknownGeneral =
+      "assets/general/marker_mini_parking_unknown_general.png";
 }

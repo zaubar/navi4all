@@ -5,7 +5,6 @@ import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:smartroots/core/analytics/events.dart';
 import 'package:smartroots/core/config.dart';
 import 'package:smartroots/core/persistence/preference_helper.dart';
-import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 import 'package:smartroots/view/common/sliding_bottom_sheet.dart';
@@ -230,7 +229,6 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
                         height: 56,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(32),
-                          color: Theme.of(context).colorScheme.secondary,
                         ),
                         child: Row(
                           children: [
@@ -343,27 +341,7 @@ class PlaceListItem extends StatelessWidget {
                 style: const TextStyle(fontSize: 16),
               ),
               SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: (parkingLocation.attributes?['has_realtime_data'])
-                      ? (parkingLocation
-                                .attributes?['disabled_parking_available'])
-                            ? SmartRootsColors.maGreen
-                            : SmartRootsColors.maRed
-                      : SmartRootsColors.maBlueExtraDark,
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.local_parking,
-                      size: 16,
-                      color: SmartRootsColors.maWhite,
-                    ),
-                  ],
-                ),
-              ),
+              WidgetGenerator.getParkingPlaceIcon(parkingLocation),
             ],
           ),
         ),

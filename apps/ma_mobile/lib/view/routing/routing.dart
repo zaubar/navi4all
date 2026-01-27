@@ -135,29 +135,7 @@ class RoutingState extends State<RoutingScreen> {
                       children: [
                         _destination.type == PlaceType.parkingSpot ||
                                 _destination.type == PlaceType.parkingSite
-                            ? Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(
-                                  color:
-                                      (_destination
-                                          .attributes?['has_realtime_data'])
-                                      ? (_destination
-                                                .attributes?['disabled_parking_available'])
-                                            ? SmartRootsColors.maGreen
-                                            : SmartRootsColors.maRed
-                                      : SmartRootsColors.maBlueExtraDark,
-                                  borderRadius: BorderRadius.circular(32),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.local_parking,
-                                      size: 16,
-                                      color: SmartRootsColors.maWhite,
-                                    ),
-                                  ],
-                                ),
-                              )
+                            ? WidgetGenerator.getParkingPlaceIcon(_destination)
                             : Icon(
                                 Icons.place_rounded,
                                 color: SmartRootsColors.maBlueExtraExtraDark,
@@ -1060,31 +1038,8 @@ class RoutingState extends State<RoutingScreen> {
                                   _destination.type == PlaceType.parkingSpot ||
                                           _destination.type ==
                                               PlaceType.parkingSite
-                                      ? Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                (_destination
-                                                    .attributes?['has_realtime_data'])
-                                                ? (_destination
-                                                          .attributes?['disabled_parking_available'])
-                                                      ? SmartRootsColors.maGreen
-                                                      : SmartRootsColors.maRed
-                                                : SmartRootsColors
-                                                      .maBlueExtraDark,
-                                            borderRadius: BorderRadius.circular(
-                                              32,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.local_parking,
-                                                size: 16,
-                                                color: SmartRootsColors.maWhite,
-                                              ),
-                                            ],
-                                          ),
+                                      ? WidgetGenerator.getParkingPlaceIcon(
+                                          _destination,
                                         )
                                       : Icon(
                                           Icons.place_rounded,
