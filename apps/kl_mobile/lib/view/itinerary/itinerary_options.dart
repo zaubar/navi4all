@@ -115,7 +115,8 @@ class _WidgetDepartureTimeOptions extends StatelessWidget {
     final TimeOfDay? newJourneyTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(
-        Provider.of<ItineraryController>(context, listen: false).time!,
+        Provider.of<ItineraryController>(context, listen: false).time ??
+            DateTime.now(),
       ),
     );
 
@@ -127,7 +128,7 @@ class _WidgetDepartureTimeOptions extends StatelessWidget {
       context,
       listen: false,
     );
-    final DateTime currentDateTime = itineraryController.time!;
+    final DateTime currentDateTime = itineraryController.time ?? DateTime.now();
     final DateTime updatedDateTime = DateTime(
       currentDateTime.year,
       currentDateTime.month,
@@ -173,11 +174,13 @@ class _WidgetDepartureTimeOptions extends StatelessWidget {
             builder: (context, itineraryController, _) => SheetButton(
               icon: Icons.schedule_outlined,
               label: itineraryController.hasParametersSet
-                  ? AppLocalizations.of(context)!.itineraryDepartureTime(
-                      DateFormat(
-                        DateFormat.HOUR24_MINUTE,
-                      ).format(itineraryController.time!),
-                    )
+                  ? itineraryController.time != null
+                        ? AppLocalizations.of(context)!.itineraryDepartureTime(
+                            DateFormat(
+                              DateFormat.HOUR24_MINUTE,
+                            ).format(itineraryController.time!),
+                          )
+                        : AppLocalizations.of(context)!.itineraryDepartureNow
                   : '...',
               onTap: () => _showJourneyTimePicker(context),
             ),

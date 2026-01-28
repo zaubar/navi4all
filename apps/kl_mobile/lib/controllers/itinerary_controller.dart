@@ -43,15 +43,14 @@ class ItineraryController extends ChangeNotifier {
       _destinationPlace != null &&
       _primaryMode != null &&
       _routingRequestConfig != null &&
-      _time != null &&
       _isArrivalTime != null;
 
   void setParameters({
     required BuildContext context,
     required Place originPlace,
     required Place destinationPlace,
-    required DateTime time,
     required Mode primaryMode,
+    DateTime? time,
     bool isArrivalTime = false,
   }) {
     _originPlace = originPlace;
@@ -137,7 +136,7 @@ class ItineraryController extends ChangeNotifier {
         originLon: _originPlace!.coordinates.lon,
         destinationLat: _destinationPlace!.coordinates.lat,
         destinationLon: _destinationPlace!.coordinates.lon,
-        time: _time!,
+        time: _time != null ? _time! : DateTime.now(),
         transportModes: _primaryMode! == Mode.TRANSIT
             ? _routingRequestConfig!.transitModes.map((e) => e.name).toList()
             : [_primaryMode!.name],

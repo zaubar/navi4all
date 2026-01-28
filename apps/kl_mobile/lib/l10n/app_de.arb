@@ -248,6 +248,7 @@
             }
         }
     },
+    "itineraryDepartureNow": "Los jetzt",
     "itineraryModeTabWalking": "Zu Fuß",
     "itineraryModeTabPublicTransport": "ÖPNV",
     "navigationStepDistanceToAction": "in {distance}",

@@ -833,6 +833,12 @@ abstract class AppLocalizations {
   /// **'Depart {time}'**
   String itineraryDepartureTime(String time);
 
+  /// No description provided for @itineraryDepartureNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Depart now'**
+  String get itineraryDepartureNow;
+
   /// No description provided for @itineraryModeTabWalking.
   ///
   /// In en, this message translates to:

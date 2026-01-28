@@ -96,7 +96,6 @@ class _PlaceScreenState extends State<PlaceScreen> {
       originPlace: originPlace,
       destinationPlace: destinationPlace,
       primaryMode: Mode.TRANSIT,
-      time: DateTime.now(),
     );
   }
 

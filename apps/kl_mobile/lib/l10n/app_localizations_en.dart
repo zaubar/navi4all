@@ -406,6 +406,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get itineraryDepartureNow => 'Depart now';
+
+  @override
   String get itineraryModeTabWalking => 'Walking';
 
   @override
