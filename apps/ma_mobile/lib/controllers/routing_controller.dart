@@ -982,35 +982,32 @@ class NavigationAudioController extends ChangeNotifier {
       return;
     }
 
-    // If no leg and step was snapped to, or the step is a DEPART instruction, skip audio
+    // If no leg and step was snapped to, skip audio
     if (_navigationInstructionsController.instructionLeg == null ||
-        _navigationInstructionsController.instructionStep == null ||
-        (_navigationInstructionsController.instructionStep != null &&
-            _navigationInstructionsController
-                    .instructionStep
-                    ?.relativeDirection ==
-                RelativeDirection.DEPART)) {
+        _navigationInstructionsController.instructionStep == null) {
       return;
     }
 
-    // If nothing in the instruction changed, skip audio update
-    if (_instructionLeg == _navigationInstructionsController.instructionLeg &&
-        _instructionStep == _navigationInstructionsController.instructionStep) {
-      return;
-    }
+    final leg_schema.LegDetailed? newLeg =
+        _navigationInstructionsController.instructionLeg;
+    final leg_schema.Step? newStep =
+        _navigationInstructionsController.instructionStep;
+
+    final bool legStepChanged =
+        _instructionLeg != newLeg || _instructionStep != newStep;
 
     // Determine best audio stage for distance to next instruction
     AudioStage newAudioStage = _getBestAudioStageForDistance(
       _navigationInstructionsController.instructionStep!.distance,
     );
+    final bool stageChanged = newAudioStage != _audioStage;
 
-    // If audio stage hasn't changed, skip update
-    if (newAudioStage == _audioStage) {
+    if (!legStepChanged && !stageChanged) {
       return;
     }
 
-    _instructionLeg = _navigationInstructionsController.instructionLeg;
-    _instructionStep = _navigationInstructionsController.instructionStep;
+    _instructionLeg = newLeg;
+    _instructionStep = newStep;
     _audioStage = newAudioStage;
     notifyListeners();
   }
