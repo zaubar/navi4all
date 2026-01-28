@@ -105,7 +105,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchScreenPrompt => 'Start typing to search for places, addresses or transit stations.';
 
   @override
-  String get searchScreenNoResults => 'No results found.';
+  String get searchScreenErrorNoSuggestions => 'No results found. Try searching for other places, addresses or transit stations.';
 
   @override
   String addressInfoBackToSearchButtonSemantic(String name) {
@@ -623,6 +623,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String searchScreenSearchFieldSemantic(String input) {
     return 'Search field. Input: $input.';
+  }
+
+  @override
+  String searchScreenRecentSearchItemSemantic(String name) {
+    return 'Recent search: $name.';
   }
 
   @override

@@ -287,11 +287,11 @@ abstract class AppLocalizations {
   /// **'Start typing to search for places, addresses or transit stations.'**
   String get searchScreenPrompt;
 
-  /// No description provided for @searchScreenNoResults.
+  /// No description provided for @searchScreenErrorNoSuggestions.
   ///
   /// In en, this message translates to:
-  /// **'No results found.'**
-  String get searchScreenNoResults;
+  /// **'No results found. Try searching for other places, addresses or transit stations.'**
+  String get searchScreenErrorNoSuggestions;
 
   /// No description provided for @addressInfoBackToSearchButtonSemantic.
   ///
@@ -1240,6 +1240,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search field. Input: {input}.'**
   String searchScreenSearchFieldSemantic(String input);
+
+  /// No description provided for @searchScreenRecentSearchItemSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent search: {name}.'**
+  String searchScreenRecentSearchItemSemantic(String name);
 
   /// No description provided for @itinerariesScreenSemantic.
   ///

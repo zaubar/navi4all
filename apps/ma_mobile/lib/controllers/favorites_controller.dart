@@ -38,7 +38,7 @@ class FavoritesController extends ChangeNotifier {
     try {
       _favorites.clear();
 
-      // Fetch favourites from persistent storage
+      // Fetch favorites from persistent storage
       List<Place> favoritesMetadata = await PreferenceHelper.getFavorites();
 
       // Refresh latest status of each favourite
@@ -60,7 +60,7 @@ class FavoritesController extends ChangeNotifier {
         }
       }
 
-      // Post-process favourites
+      // Post-process favorites
       _favorites.sort(
         (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
       );

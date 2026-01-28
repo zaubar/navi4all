@@ -3,13 +3,16 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:navi4all/core/persistence/preference_helper.dart';
 import 'package:navi4all/schemas/routing/place.dart';
+// import 'package:navi4all/services/poi_parking.dart';
 
 class FavoritesController extends ChangeNotifier {
+  // POIParkingService parkingService = POIParkingService();
+
   final List<Place> _favorites = [];
   FavoritesControllerState _state = FavoritesControllerState.idle;
 
   FavoritesController(BuildContext context) {
-    _refresh();
+    refresh();
   }
 
   UnmodifiableListView<Place> get favorites => UnmodifiableListView(_favorites);
@@ -17,24 +20,24 @@ class FavoritesController extends ChangeNotifier {
 
   Future<void> addFavorite(Place place) async {
     await PreferenceHelper.addFavorite(place);
-    _refresh();
+    refresh();
   }
 
-  Future<void> removeFavorite(String id) async {
-    await PreferenceHelper.removeFavorite(id);
-    _refresh();
+  Future<void> removeFavorite(Place place) async {
+    await PreferenceHelper.removeFavorite(place);
+    refresh();
   }
 
-  Future<bool> checkIsFavorite(String id) async {
-    return await PreferenceHelper.isFavorite(id);
+  Future<bool> checkIsFavorite(Place place) async {
+    return await PreferenceHelper.isFavorite(place);
   }
 
-  Future<void> _refresh() async {
+  Future<void> refresh() async {
     _state = FavoritesControllerState.refreshing;
 
-    _favorites.clear();
-
     try {
+      _favorites.clear();
+
       // Fetch favorites from persistent storage
       List<Place> favoritesMetadata = await PreferenceHelper.getFavorites();
 

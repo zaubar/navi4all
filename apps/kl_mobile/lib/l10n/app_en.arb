@@ -32,7 +32,7 @@
     "searchTextFieldOriginHintSemantic": "Text input. Type to search for an origin location.",
     "searchTextFieldDestinationHintSemantic": "Text input. Type to search for a destination location.",
     "searchScreenPrompt": "Start typing to search for places, addresses or transit stations.",
-    "searchScreenNoResults": "No results found.",
+    "searchScreenErrorNoSuggestions": "No results found. Try searching for other places, addresses or transit stations.",
     "addressInfoBackToSearchButtonSemantic": "Selected destination: {name}, tap to return to search results.",
     "@addressInfoBackToSearchButtonSemantic": {
         "placeholders": {
@@ -371,6 +371,14 @@
     "@searchScreenSearchFieldSemantic": {
         "placeholders": {
             "input": {
+                "type": "String"
+            }
+        }
+    },
+    "searchScreenRecentSearchItemSemantic": "Recent search: {name}.",
+    "@searchScreenRecentSearchItemSemantic": {
+        "placeholders": {
+            "name": {
                 "type": "String"
             }
         }

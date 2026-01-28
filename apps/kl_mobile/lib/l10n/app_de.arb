@@ -32,7 +32,7 @@
     "searchTextFieldOriginHintSemantic": "Textfeld für die Eingabe. Tippen Sie, um einen Startort zu suchen.",
     "searchTextFieldDestinationHintSemantic": "Textfeld für die Eingabe. Tippen Sie, um einen Zielort zu suchen.",
     "searchScreenPrompt": "Beginnen Sie mit der Eingabe, um nach Orten, Adressen oder Haltestellen zu suchen.",
-    "searchScreenNoResults": "Keine Ergebnisse gefunden.",
+    "searchScreenErrorNoSuggestions": "Keine Ergebnisse gefunden. Versuchen Sie, nach anderen Orten, Adressen oder Verkehrsstationen zu suchen.",
     "addressInfoBackToSearchButtonSemantic": "Ausgewähltes Ziel: {name}, tippen Sie, um zu den Suchergebnissen zurückzukehren.",
     "@addressInfoBackToSearchButtonSemantic": {
         "placeholders": {
@@ -371,6 +371,14 @@
     "@searchScreenSearchFieldSemantic": {
         "placeholders": {
             "input": {
+                "type": "String"
+            }
+        }
+    },
+    "searchScreenRecentSearchItemSemantic": "Letzte Suche: {name}.",
+    "@searchScreenRecentSearchItemSemantic": {
+        "placeholders": {
+            "name": {
                 "type": "String"
             }
         }
