@@ -8,10 +8,12 @@ import 'package:smartroots/schemas/routing/place.dart';
 
 String keyOnboardingComplete = "ma_onboarding_complete";
 String keyFavorites = "ma_favorites";
+String keyProfileMode = "ma_profile_mode";
 String keyThemeMode = "ma_theme_mode";
 String keyBaseMapStyle = "ma_base_map_style";
 String keyRecentSearches = "ma_recent_searches";
 String keySearchRadius = "ma_search_radius";
+String keyRoutingRequestConfig = "ma_routing_request_config";
 String keyUserEngagementEvents = "ma_user_engagement_events";
 String keyLaunchCount = "ma_launch_count";
 
@@ -23,7 +25,7 @@ class PreferenceHelper {
 
   static Future<void> setOnboardingComplete(bool complete) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setBool(keyOnboardingComplete, complete);
+    await preferences.setBool(keyOnboardingComplete, complete);
   }
 
   static List<String> _getStoredFavorites(SharedPreferences preferences) =>
@@ -73,6 +75,18 @@ class PreferenceHelper {
     return false;
   }
 
+  /* static Future<ProfileMode> getProfileMode() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return ProfileMode.values.byName(
+      preferences.getString(keyProfileMode) ?? ProfileMode.general.name,
+    );
+  }
+
+  static Future<void> setProfileMode(ProfileMode mode) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString(keyProfileMode, mode.name);
+  } */
+
   static Future<ThemeMode> getThemeMode() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return ThemeMode.values.byName(
@@ -82,7 +96,7 @@ class PreferenceHelper {
 
   static Future<void> setThemeMode(ThemeMode mode) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString(keyThemeMode, mode.name);
+    await preferences.setString(keyThemeMode, mode.name);
   }
 
   static Future<BaseMapStyle> getBaseMapStyle() async {
@@ -94,7 +108,7 @@ class PreferenceHelper {
 
   static Future<void> setBaseMapStyle(BaseMapStyle style) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString(keyBaseMapStyle, style.name);
+    await preferences.setString(keyBaseMapStyle, style.name);
   }
 
   static Future<void> addRecentSearch(Place place) async {
@@ -141,6 +155,26 @@ class PreferenceHelper {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setInt(keySearchRadius, radius);
   }
+
+  /* static Future<void> setRoutingRequestConfig(
+    RoutingRequestConfig config,
+  ) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString(
+      keyRoutingRequestConfig,
+      jsonEncode(config.toJson()),
+    );
+  }
+
+  static Future<RoutingRequestConfig?> getRoutingRequestConfig() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? configString = preferences.getString(keyRoutingRequestConfig);
+
+    if (configString != null) {
+      return RoutingRequestConfig.fromJson(jsonDecode(configString));
+    }
+    return null;
+  } */
 
   static List<String> _getStoredUserEngagementEvents(
     SharedPreferences preferences,
