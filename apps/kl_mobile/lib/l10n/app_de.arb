@@ -398,5 +398,6 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "routingScreenNotificationDescription": "Navigiere zu deinem Ziel."
 }

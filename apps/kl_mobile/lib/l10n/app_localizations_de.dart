@@ -658,4 +658,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String routingScreenLegTransitDirection(String direction) {
     return 'in Richtung\n$direction';
   }
+
+  @override
+  String get routingScreenNotificationDescription => 'Navigiere zu deinem Ziel.';
 }

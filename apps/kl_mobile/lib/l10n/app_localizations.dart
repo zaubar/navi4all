@@ -1300,6 +1300,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'towards\n{direction}'**
   String routingScreenLegTransitDirection(String direction);
+
+  /// No description provided for @routingScreenNotificationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigating to your destination.'**
+  String get routingScreenNotificationDescription;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
