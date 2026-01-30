@@ -45,7 +45,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
     _isFavorite = await Provider.of<FavoritesController>(
       context,
       listen: false,
-    ).checkIsFavorite(place.id);
+    ).checkIsFavorite(place);
     setState(() {});
   }
 
@@ -54,7 +54,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
       await Provider.of<FavoritesController>(
         context,
         listen: false,
-      ).removeFavorite(place.id);
+      ).removeFavorite(place);
     } else {
       await Provider.of<FavoritesController>(
         context,
@@ -96,7 +96,6 @@ class _PlaceScreenState extends State<PlaceScreen> {
       originPlace: originPlace,
       destinationPlace: destinationPlace,
       primaryMode: Mode.TRANSIT,
-      time: DateTime.now(),
     );
   }
 

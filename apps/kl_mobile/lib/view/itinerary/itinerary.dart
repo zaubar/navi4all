@@ -35,7 +35,8 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
     final TimeOfDay? newJourneyTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(
-        Provider.of<ItineraryController>(context, listen: false).time!,
+        Provider.of<ItineraryController>(context, listen: false).time ??
+            DateTime.now(),
       ),
     );
 
@@ -47,7 +48,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
       context,
       listen: false,
     );
-    final DateTime currentDateTime = itineraryController.time!;
+    final DateTime currentDateTime = itineraryController.time ?? DateTime.now();
     final DateTime updatedDateTime = DateTime(
       currentDateTime.year,
       currentDateTime.month,
@@ -90,7 +91,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
       context: context,
       originPlace: itineraryController.originPlace!,
       destinationPlace: itineraryController.destinationPlace!,
-      time: itineraryController.time!,
+      time: itineraryController.time,
       primaryMode: itineraryController.primaryMode!,
     );
   }
@@ -109,11 +110,17 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                 SheetButton(
                   icon: Icons.schedule_outlined,
                   label: itineraryController.hasParametersSet
-                      ? AppLocalizations.of(context)!.itineraryDepartureTime(
-                          DateFormat(
-                            DateFormat.HOUR24_MINUTE,
-                          ).format(itineraryController.time!),
-                        )
+                      ? itineraryController.time != null
+                            ? AppLocalizations.of(
+                                context,
+                              )!.itineraryDepartureTime(
+                                DateFormat(
+                                  DateFormat.HOUR24_MINUTE,
+                                ).format(itineraryController.time!),
+                              )
+                            : AppLocalizations.of(
+                                context,
+                              )!.itineraryDepartureNow
                       : '...',
                   onTap: _showJourneyTimePicker,
                 ),
@@ -157,7 +164,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                   originPlace: itineraryController.originPlace!,
                   destinationPlace: itineraryController.destinationPlace!,
                   primaryMode: _modes.keys.toList()[index],
-                  time: itineraryController.time!,
+                  time: itineraryController.time,
                   isArrivalTime: itineraryController.isArrivalTime!,
                 );
               },
@@ -349,7 +356,7 @@ class _OrigDestPickerState extends State<OrigDestPicker> {
       originPlace: originPlace,
       destinationPlace: itineraryController.destinationPlace!,
       primaryMode: itineraryController.primaryMode!,
-      time: itineraryController.time!,
+      time: itineraryController.time,
       isArrivalTime: itineraryController.isArrivalTime!,
     );
   }
@@ -379,7 +386,7 @@ class _OrigDestPickerState extends State<OrigDestPicker> {
       originPlace: itineraryController.originPlace!,
       destinationPlace: destinationPlace,
       primaryMode: itineraryController.primaryMode!,
-      time: itineraryController.time!,
+      time: itineraryController.time,
       isArrivalTime: itineraryController.isArrivalTime!,
     );
   }
@@ -397,7 +404,7 @@ class _OrigDestPickerState extends State<OrigDestPicker> {
       originPlace: destinationPlace!,
       destinationPlace: originPlace!,
       primaryMode: itineraryController.primaryMode!,
-      time: itineraryController.time!,
+      time: itineraryController.time,
       isArrivalTime: itineraryController.isArrivalTime!,
     );
   }

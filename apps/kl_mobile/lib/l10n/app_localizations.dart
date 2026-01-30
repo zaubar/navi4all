@@ -287,11 +287,11 @@ abstract class AppLocalizations {
   /// **'Start typing to search for places, addresses or transit stations.'**
   String get searchScreenPrompt;
 
-  /// No description provided for @searchScreenNoResults.
+  /// No description provided for @searchScreenErrorNoSuggestions.
   ///
   /// In en, this message translates to:
-  /// **'No results found.'**
-  String get searchScreenNoResults;
+  /// **'No results found. Try searching for other places, addresses or transit stations.'**
+  String get searchScreenErrorNoSuggestions;
 
   /// No description provided for @addressInfoBackToSearchButtonSemantic.
   ///
@@ -833,6 +833,12 @@ abstract class AppLocalizations {
   /// **'Depart {time}'**
   String itineraryDepartureTime(String time);
 
+  /// No description provided for @itineraryDepartureNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Depart now'**
+  String get itineraryDepartureNow;
+
   /// No description provided for @itineraryModeTabWalking.
   ///
   /// In en, this message translates to:
@@ -1241,6 +1247,12 @@ abstract class AppLocalizations {
   /// **'Search field. Input: {input}.'**
   String searchScreenSearchFieldSemantic(String input);
 
+  /// No description provided for @searchScreenRecentSearchItemSemantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent search: {name}.'**
+  String searchScreenRecentSearchItemSemantic(String name);
+
   /// No description provided for @itinerariesScreenSemantic.
   ///
   /// In en, this message translates to:
@@ -1288,6 +1300,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'towards\n{direction}'**
   String routingScreenLegTransitDirection(String direction);
+
+  /// No description provided for @routingScreenNotificationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigating to your destination.'**
+  String get routingScreenNotificationDescription;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

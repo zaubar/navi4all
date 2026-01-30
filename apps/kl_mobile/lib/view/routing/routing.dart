@@ -271,7 +271,6 @@ class RoutingState extends State<RoutingScreen> {
               coordinates: Coordinates(lat: 0, lon: 0),
             ),
             destinationPlace: _itineraryController.destinationPlace!,
-            time: DateTime.now(),
             primaryMode: _itineraryController.primaryMode!,
           );
           return;
@@ -296,7 +295,6 @@ class RoutingState extends State<RoutingScreen> {
                   context: context,
                   originPlace: _itineraryController.originPlace!,
                   destinationPlace: _itineraryController.destinationPlace!,
-                  time: _itineraryController.time!,
                   primaryMode: _itineraryController.primaryMode!,
                 );
               }

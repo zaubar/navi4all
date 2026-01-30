@@ -267,21 +267,37 @@ class RoutingController extends ChangeNotifier {
 
     // Perform leg and step tracking
     for (leg_schema.LegDetailed leg in _actionTrail.keys) {
-      // Ensure leg is after or equal to active leg
-      if (_activeLeg != null &&
-          leg != _activeLeg &&
-          _actionTrail.keys.toList().indexOf(leg) <
-              _actionTrail.keys.toList().indexOf(_activeLeg!)) {
-        continue;
+      // Ensure leg is active or immediately after active leg
+      if (_activeLeg != null) {
+        int legIndex = _actionTrail.keys.toList().indexOf(leg);
+        int activeLegIndex = _actionTrail.keys.toList().indexOf(_activeLeg!);
+        if (legIndex < activeLegIndex || legIndex > activeLegIndex + 1) {
+          continue;
+        }
       }
 
       for (leg_schema.Step step in _actionTrail[leg]!.keys) {
-        // Ensure step is after or equal to active step
-        if (_activeStep != null &&
-            step != _activeStep &&
-            _actionTrail[leg]!.keys.toList().indexOf(step) <
-                _actionTrail[leg]!.keys.toList().indexOf(_activeStep!)) {
-          continue;
+        // Ensure step is active or immediately after active step
+        if (activeStep != null) {
+          if (_activeLeg == leg) {
+            // Checking the current active leg
+            int stepIndex = _actionTrail[leg]!.keys.toList().indexOf(step);
+            int activeStepIndex = _actionTrail[leg]!.keys.toList().indexOf(
+              _activeStep!,
+            );
+            if (stepIndex < activeStepIndex ||
+                stepIndex > activeStepIndex + 1) {
+              // Only the active step and the one after are relevant
+              continue;
+            }
+          } else {
+            // Checking the leg immediately after the active leg
+            int stepIndex = _actionTrail[leg]!.keys.toList().indexOf(step);
+            if (stepIndex > 0) {
+              // Only the first step of the next leg is relevant
+              continue;
+            }
+          }
         }
 
         List<maps_toolkit.LatLng> stepCoordinates = _actionTrail[leg]![step]!;
@@ -837,7 +853,16 @@ class NavigationInstructionsController extends ChangeNotifier {
       List<leg_schema.Step> steps = actionTrail[leg]!.keys.toList();
       int activeStepIndex = 0;
       if (i == activeLegIndex && activeStep != null) {
-        activeStepIndex = steps.indexOf(activeStep) + 1;
+        // Skip to upcoming step only if active step is linear and non-transit
+        if (activeStep.relativeDirection !=
+                RelativeDirection.TRANSIT_TRANSFER &&
+            activeStep.relativeDirection != RelativeDirection.TRANSIT_BOARD &&
+            activeStep.relativeDirection != RelativeDirection.TRANSIT_ALIGHT &&
+            activeStep.relativeDirection != RelativeDirection.ARRIVE) {
+          activeStepIndex = steps.indexOf(activeStep) + 1;
+        } else {
+          activeStepIndex = steps.indexOf(activeStep);
+        }
       }
 
       // Build new upcoming steps list using distance-to-step
@@ -957,35 +982,32 @@ class NavigationAudioController extends ChangeNotifier {
       return;
     }
 
-    // If no leg and step was snapped to, or the step is a DEPART instruction, skip audio
+    // If no leg and step was snapped to, skip audio
     if (_navigationInstructionsController.instructionLeg == null ||
-        _navigationInstructionsController.instructionStep == null ||
-        (_navigationInstructionsController.instructionStep != null &&
-            _navigationInstructionsController
-                    .instructionStep
-                    ?.relativeDirection ==
-                RelativeDirection.DEPART)) {
+        _navigationInstructionsController.instructionStep == null) {
       return;
     }
 
-    // If nothing in the instruction changed, skip audio update
-    if (_instructionLeg == _navigationInstructionsController.instructionLeg &&
-        _instructionStep == _navigationInstructionsController.instructionStep) {
-      return;
-    }
+    final leg_schema.LegDetailed? newLeg =
+        _navigationInstructionsController.instructionLeg;
+    final leg_schema.Step? newStep =
+        _navigationInstructionsController.instructionStep;
+
+    final bool legStepChanged =
+        _instructionLeg != newLeg || _instructionStep != newStep;
 
     // Determine best audio stage for distance to next instruction
     AudioStage newAudioStage = _getBestAudioStageForDistance(
       _navigationInstructionsController.instructionStep!.distance,
     );
+    final bool stageChanged = newAudioStage != _audioStage;
 
-    // If audio stage hasn't changed, skip update
-    if (newAudioStage == _audioStage) {
+    if (!legStepChanged && !stageChanged) {
       return;
     }
 
-    _instructionLeg = _navigationInstructionsController.instructionLeg;
-    _instructionStep = _navigationInstructionsController.instructionStep;
+    _instructionLeg = newLeg;
+    _instructionStep = newStep;
     _audioStage = newAudioStage;
     notifyListeners();
   }

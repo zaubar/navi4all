@@ -53,7 +53,6 @@ class _PlaceScreenState extends State<PlaceScreen> {
       originPlace: originPlace,
       destinationPlace: destinationPlace,
       primaryMode: Mode.TRANSIT,
-      time: DateTime.now(),
     );
   }
 
@@ -61,7 +60,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
     _isFavorite = await Provider.of<FavoritesController>(
       context,
       listen: false,
-    ).checkIsFavorite(place.id);
+    ).checkIsFavorite(place);
     setState(() {});
   }
 
@@ -70,7 +69,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
       await Provider.of<FavoritesController>(
         context,
         listen: false,
-      ).removeFavorite(place.id);
+      ).removeFavorite(place);
     } else {
       await Provider.of<FavoritesController>(
         context,
@@ -148,7 +147,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                             destinationPlace:
                                 itineraryController.destinationPlace!,
                             primaryMode: Mode.WALK,
-                            time: itineraryController.time!,
+                            time: itineraryController.time,
                             isArrivalTime: itineraryController.isArrivalTime!,
                           );
                           Navigator.of(context).push(
@@ -179,7 +178,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                             destinationPlace:
                                 itineraryController.destinationPlace!,
                             primaryMode: Mode.TRANSIT,
-                            time: itineraryController.time!,
+                            time: itineraryController.time,
                             isArrivalTime: itineraryController.isArrivalTime!,
                           );
                           Navigator.of(context).push(

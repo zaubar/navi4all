@@ -105,7 +105,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get searchScreenPrompt => 'Beginnen Sie mit der Eingabe, um nach Orten, Adressen oder Haltestellen zu suchen.';
 
   @override
-  String get searchScreenNoResults => 'Keine Ergebnisse gefunden.';
+  String get searchScreenErrorNoSuggestions => 'Keine Ergebnisse gefunden. Versuchen Sie, nach anderen Orten, Adressen oder Verkehrsstationen zu suchen.';
 
   @override
   String addressInfoBackToSearchButtonSemantic(String name) {
@@ -406,6 +406,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get itineraryDepartureNow => 'Los jetzt';
+
+  @override
   String get itineraryModeTabWalking => 'Zu Fuß';
 
   @override
@@ -626,6 +629,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String searchScreenRecentSearchItemSemantic(String name) {
+    return 'Letzte Suche: $name.';
+  }
+
+  @override
   String get itinerariesScreenSemantic => 'Reisebildschirm.';
 
   @override
@@ -650,4 +658,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String routingScreenLegTransitDirection(String direction) {
     return 'in Richtung\n$direction';
   }
+
+  @override
+  String get routingScreenNotificationDescription => 'Navigiere zu deinem Ziel.';
 }

@@ -32,7 +32,7 @@
     "searchTextFieldOriginHintSemantic": "Textfeld für die Eingabe. Tippen Sie, um einen Startort zu suchen.",
     "searchTextFieldDestinationHintSemantic": "Textfeld für die Eingabe. Tippen Sie, um einen Zielort zu suchen.",
     "searchScreenPrompt": "Beginnen Sie mit der Eingabe, um nach Orten, Adressen oder Haltestellen zu suchen.",
-    "searchScreenNoResults": "Keine Ergebnisse gefunden.",
+    "searchScreenErrorNoSuggestions": "Keine Ergebnisse gefunden. Versuchen Sie, nach anderen Orten, Adressen oder Verkehrsstationen zu suchen.",
     "addressInfoBackToSearchButtonSemantic": "Ausgewähltes Ziel: {name}, tippen Sie, um zu den Suchergebnissen zurückzukehren.",
     "@addressInfoBackToSearchButtonSemantic": {
         "placeholders": {
@@ -248,6 +248,7 @@
             }
         }
     },
+    "itineraryDepartureNow": "Los jetzt",
     "itineraryModeTabWalking": "Zu Fuß",
     "itineraryModeTabPublicTransport": "ÖPNV",
     "navigationStepDistanceToAction": "in {distance}",
@@ -375,6 +376,14 @@
             }
         }
     },
+    "searchScreenRecentSearchItemSemantic": "Letzte Suche: {name}.",
+    "@searchScreenRecentSearchItemSemantic": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
     "itinerariesScreenSemantic": "Reisebildschirm.",
     "routingScreenSemantic": "Navigationsbildschirm.",
     "routingScreenExitRoutingButtonSemantic": "Navigation beenden.",
@@ -389,5 +398,6 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "routingScreenNotificationDescription": "Navigiere zu deinem Ziel."
 }

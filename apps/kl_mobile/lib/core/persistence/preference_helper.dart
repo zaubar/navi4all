@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:navi4all/core/config.dart';
 import 'package:navi4all/core/theme/profile_mode.dart';
 import 'package:navi4all/schemas/routing/place.dart';
 import 'package:navi4all/schemas/routing/request_config.dart';
@@ -12,7 +13,11 @@ String keyFavorites = "kl_favorites";
 String keyProfileMode = "kl_profile_mode";
 String keyThemeMode = "kl_theme_mode";
 String keyBaseMapStyle = "kl_base_map_style";
+String keyRecentSearches = "kl_recent_searches";
+String keySearchRadius = "kl_search_radius";
 String keyRoutingRequestConfig = "kl_routing_request_config";
+String keyUserEngagementEvents = "kl_user_engagement_events";
+String keyLaunchCount = "kl_launch_count";
 
 class PreferenceHelper {
   static Future<bool> isOnboardingComplete() async {
@@ -47,25 +52,25 @@ class PreferenceHelper {
     await preferences.setStringList(keyFavorites, favorites);
   }
 
-  static Future<void> removeFavorite(String id) async {
+  static Future<void> removeFavorite(Place place) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     List<String> favorites = _getStoredFavorites(preferences);
 
     favorites.removeWhere((item) {
-      Place place = Place.fromJson(jsonDecode(item));
-      return place.id == id;
+      Place storedPlace = Place.fromJson(jsonDecode(item));
+      return storedPlace.id == place.id && storedPlace.type == place.type;
     });
 
     await preferences.setStringList(keyFavorites, favorites);
   }
 
-  static Future<bool> isFavorite(String id) async {
+  static Future<bool> isFavorite(Place place) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     List<String> favorites = _getStoredFavorites(preferences);
 
     for (var item in favorites) {
-      Place place = Place.fromJson(jsonDecode(item));
-      if (place.id == id) {
+      Place storedPlace = Place.fromJson(jsonDecode(item));
+      if (storedPlace.id == place.id && storedPlace.type == place.type) {
         return true;
       }
     }
@@ -108,6 +113,51 @@ class PreferenceHelper {
     await preferences.setString(keyBaseMapStyle, style.name);
   }
 
+  static Future<void> addRecentSearch(Place place) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> recentSearches =
+        preferences.getStringList(keyRecentSearches) ?? [];
+
+    // Remove existing entry if it exists
+    recentSearches.removeWhere((item) {
+      Place existingPlace = Place.fromJson(jsonDecode(item));
+      return existingPlace.id == place.id;
+    });
+
+    // Add to the beginning of the list
+    recentSearches.insert(0, jsonEncode(place.toJson()));
+
+    // Retain a limited number of recent searches
+    if (recentSearches.length > Settings.numRecentSearchesRetained) {
+      recentSearches = recentSearches.sublist(
+        0,
+        Settings.numRecentSearchesRetained,
+      );
+    }
+
+    await preferences.setStringList(keyRecentSearches, recentSearches);
+  }
+
+  static Future<List<Place>> getRecentSearches() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> recentSearches =
+        preferences.getStringList(keyRecentSearches) ?? [];
+
+    return recentSearches
+        .map((item) => Place.fromJson(jsonDecode(item)))
+        .toList();
+  }
+
+  /* static Future<int> getSearchRadius() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getInt(keySearchRadius) ?? Settings.searchRadiusDefault;
+  }
+
+  static Future<void> setSearchRadius(int radius) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setInt(keySearchRadius, radius);
+  } */
+
   static Future<void> setRoutingRequestConfig(
     RoutingRequestConfig config,
   ) async {
@@ -126,5 +176,37 @@ class PreferenceHelper {
       return RoutingRequestConfig.fromJson(jsonDecode(configString));
     }
     return null;
+  }
+
+  /* static List<String> _getStoredUserEngagementEvents(
+    SharedPreferences preferences,
+  ) => preferences.getStringList(keyUserEngagementEvents) ?? [];
+
+  static Future<void> addDisplayedUserEngagementEvent(String eventId) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> events = _getStoredUserEngagementEvents(preferences);
+
+    if (!events.contains(eventId)) {
+      events.add(eventId);
+      await preferences.setStringList(keyUserEngagementEvents, events);
+    }
+  }
+
+  static Future<bool> isUserEngagementEventDisplayed(String eventId) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> events = _getStoredUserEngagementEvents(preferences);
+    return events.contains(eventId);
+  } */
+
+  static Future<int> getLaunchCount() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getInt(keyLaunchCount) ?? 0;
+  }
+
+  static Future<int> incrementLaunchCount() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final int nextCount = (preferences.getInt(keyLaunchCount) ?? 0) + 1;
+    await preferences.setInt(keyLaunchCount, nextCount);
+    return nextCount;
   }
 }
