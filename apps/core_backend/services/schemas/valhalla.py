@@ -106,6 +106,7 @@ class ValhallaManeuverType(int, Enum):
 
 
 MANEUVER_TYPE_TO_RELATIVE_DIRECTION: dict[ValhallaManeuverType, RelativeDirection] = {
+    ValhallaManeuverType.kNone: RelativeDirection.continue_,
     ValhallaManeuverType.kStart: RelativeDirection.depart,
     ValhallaManeuverType.kStartRight: RelativeDirection.depart,
     ValhallaManeuverType.kStartLeft: RelativeDirection.depart,
@@ -125,7 +126,6 @@ MANEUVER_TYPE_TO_RELATIVE_DIRECTION: dict[ValhallaManeuverType, RelativeDirectio
     ValhallaManeuverType.kEscalatorEnter: RelativeDirection.continue_,
     ValhallaManeuverType.kBuildingEnter: RelativeDirection.continue_,
     ValhallaManeuverType.kBuildingExit: RelativeDirection.exit_station,
-    ValhallaManeuverType.kNone: RelativeDirection.continue_,
     ValhallaManeuverType.kDestination: RelativeDirection.arrive,
     ValhallaManeuverType.kDestinationRight: RelativeDirection.arrive,
     ValhallaManeuverType.kDestinationLeft: RelativeDirection.arrive,
@@ -177,6 +177,14 @@ class ValhallaManeuver(BaseModel):
     length: float  # in kilometers
     begin_shape_index: int
     end_shape_index: int
+    
+    @field_validator("type", mode="before")
+    @classmethod
+    def validate_type(cls, value: int):
+        try:
+            return ValhallaManeuverType(value)
+        except ValueError:
+            return ValhallaManeuverType.kNone
 
 
 class ValhallaSummary(BaseModel):

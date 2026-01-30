@@ -69,7 +69,7 @@ class Step(BaseModel):
     lon: float
     lat: float
     relative_direction: RelativeDirection
-    absolute_direction: AbsoluteDirection
+    absolute_direction: AbsoluteDirection = AbsoluteDirection.unknown
     street_name: str
     bogus_name: bool
     voice_instruction: str | None = None

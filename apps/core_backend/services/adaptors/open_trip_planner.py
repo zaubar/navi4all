@@ -166,7 +166,6 @@ class OpenTripPlannerAdaptor:
                                 lon=step.lon,
                                 lat=step.lat,
                                 relative_direction=step.relative_direction.value,
-                                absolute_direction=step.absolute_direction.value,
                                 street_name=step.street_name,
                                 bogus_name=step.bogus_name,
                             )

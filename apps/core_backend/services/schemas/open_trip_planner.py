@@ -138,7 +138,6 @@ class OTPStep(BaseModel):
     lon: float
     lat: float
     relative_direction: OTPRelativeDirection
-    absolute_direction: OTPAbsoluteDirection
     street_name: str
     bogus_name: bool
 

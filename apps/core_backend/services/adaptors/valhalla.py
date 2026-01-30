@@ -115,7 +115,6 @@ class ValhallaAdaptor:
                         relative_direction=MANEUVER_TYPE_TO_RELATIVE_DIRECTION.get(
                             maneuver.type,
                         ),
-                        absolute_direction=AbsoluteDirection.unknown,
                         street_name=maneuver.instruction,
                         bogus_name=True,
                         text_instruction=maneuver.instruction,
