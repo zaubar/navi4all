@@ -48,7 +48,7 @@ class ValhallaAdaptor:
         async_client: AsyncClient,
         request: RoutingPlanRequestModel,
         summarized: bool = True,
-    ) -> RoutingPlanSummaryResponseModel:
+    ) -> RoutingPlanSummaryResponseModel | RoutingPlanDetailedResponseModel:
         """Make a route request to the Valhalla routing engine."""
 
         # Reformat request payload

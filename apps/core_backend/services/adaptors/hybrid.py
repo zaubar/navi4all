@@ -42,7 +42,7 @@ class HybridAdaptor:
         async_client: AsyncClient,
         request: RoutingPlanRequestModel,
         summarized: bool = True,
-    ) -> RoutingPlanSummaryResponseModel:
+    ) -> RoutingPlanSummaryResponseModel | RoutingPlanDetailedResponseModel:
         """Make a route request to the OpenTripPlanner and Valhalla routing engines."""
 
         # Make a request to the OpenTripPlanner adaptor
