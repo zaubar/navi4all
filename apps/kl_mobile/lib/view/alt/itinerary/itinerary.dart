@@ -1,30 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:navi4all/controllers/itinerary_controller.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
+import 'package:navi4all/schemas/routing/mode.dart';
+import 'package:navi4all/schemas/routing/place.dart';
 import 'package:navi4all/view/itinerary/itinerary.dart';
 import 'package:navi4all/view/common/accessible_button.dart';
 import 'package:navi4all/view/itinerary/itinerary_options.dart';
 import 'package:provider/provider.dart';
 
 class ItineraryScreen extends StatefulWidget {
-  const ItineraryScreen({super.key});
+  final Place origin;
+  final Place destination;
+  final Mode primaryMode;
+
+  const ItineraryScreen({
+    super.key,
+    required this.origin,
+    required this.destination,
+    required this.primaryMode,
+  });
 
   @override
   State<ItineraryScreen> createState() => _ItineraryScreenState();
 }
 
 class _ItineraryScreenState extends State<ItineraryScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize itinerary controller
+    Provider.of<ItineraryController>(context, listen: false).setParameters(
+      context: context,
+      originPlace: widget.origin,
+      destinationPlace: widget.destination,
+      primaryMode: widget.primaryMode,
+    );
+  }
+
   Future<void> _showItineraryOptions() async {
     var _ = await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ItineraryOptions(
-          altMode: true,
-          routingMode: Provider.of<ItineraryController>(
-            context,
-            listen: false,
-          ).primaryMode!,
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => ItineraryOptions(altMode: true)),
     );
   }
 

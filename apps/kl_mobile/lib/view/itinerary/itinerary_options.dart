@@ -17,13 +17,8 @@ import 'package:provider/provider.dart';
 
 class ItineraryOptions extends StatefulWidget {
   final bool altMode;
-  final Mode routingMode;
 
-  const ItineraryOptions({
-    super.key,
-    required this.altMode,
-    required this.routingMode,
-  });
+  const ItineraryOptions({super.key, required this.altMode});
 
   @override
   State<ItineraryOptions> createState() => _ItineraryOptionsState();

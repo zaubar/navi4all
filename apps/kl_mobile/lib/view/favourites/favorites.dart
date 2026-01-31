@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:navi4all/controllers/canvas_controller.dart';
-import 'package:navi4all/controllers/place_controller.dart';
 import 'package:navi4all/schemas/routing/place.dart';
-import 'package:navi4all/view/canvas/canvas_screen.dart';
+import 'package:navi4all/view/alt/place/place.dart' as alt_place;
+import 'package:navi4all/view/place/place.dart';
 import 'package:navi4all/view/common/accessible_button.dart';
 import 'package:navi4all/view/common/accessible_icon_button.dart';
 import 'package:provider/provider.dart';
@@ -81,18 +80,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           itemBuilder: (context, index) => _FavoritesListItem(
                             place: favoritesController.favorites[index],
                             onTap: () {
-                              Provider.of<CanvasController>(
-                                context,
-                                listen: false,
-                              ).setState(CanvasControllerState.place);
-                              Provider.of<PlaceController>(
-                                context,
-                                listen: false,
-                              ).setPlace(favoritesController.favorites[index]);
+                              Place place =
+                                  favoritesController.favorites[index];
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      CanvasScreen(altMode: widget.altMode),
+                                  builder: (context) => widget.altMode
+                                      ? alt_place.PlaceScreen(place: place)
+                                      : PlaceScreen(place: place),
                                 ),
                               );
                             },

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:navi4all/controllers/canvas_controller.dart';
-import 'package:navi4all/controllers/place_controller.dart';
 import 'package:navi4all/core/theme/icons.dart';
-import 'package:navi4all/view/canvas/canvas_screen.dart';
 import 'package:navi4all/view/common/accessible_button.dart';
 import 'package:provider/provider.dart';
 import 'package:navi4all/controllers/autocomplete_controller.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
 import 'package:navi4all/schemas/routing/place.dart';
+import 'package:navi4all/view/place/place.dart';
+import 'package:navi4all/view/alt/place/place.dart' as alt_place;
 
 class SearchScreen extends StatefulWidget {
   final bool isSecondarySearch;
@@ -53,14 +52,11 @@ class _SearchScreenState extends State<SearchScreen> {
     if (widget.isSecondarySearch) {
       Navigator.of(context).pop(place);
     } else {
-      Provider.of<CanvasController>(
-        context,
-        listen: false,
-      ).setState(CanvasControllerState.place);
-      Provider.of<PlaceController>(context, listen: false).setPlace(place);
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => CanvasScreen(altMode: widget.altMode),
+          builder: (context) => widget.altMode
+              ? alt_place.PlaceScreen(place: place)
+              : PlaceScreen(place: place),
         ),
       );
     }

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:navi4all/controllers/canvas_controller.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:navi4all/controllers/itinerary_controller.dart';
-import 'package:navi4all/controllers/place_controller.dart';
 import 'package:navi4all/core/theme/values.dart';
 import 'package:navi4all/core/utils.dart';
 import 'package:navi4all/schemas/routing/coordinates.dart';
+import 'package:navi4all/schemas/routing/itinerary.dart';
 import 'package:navi4all/schemas/routing/mode.dart';
+import 'package:navi4all/view/itinerary/itinerary.dart';
+import 'package:navi4all/view/canvas/sliding_bottom_sheet.dart';
 import 'package:navi4all/view/common/accessible_icon_button.dart';
+import 'package:navi4all/view/place/map.dart';
 import 'package:navi4all/view/search/search.dart';
 // import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +21,8 @@ import 'package:navi4all/view/common/sheet_button.dart';
 import 'dart:core';
 
 class PlaceScreen extends StatefulWidget {
-  const PlaceScreen({super.key});
+  final Place place;
+  const PlaceScreen({super.key, required this.place});
 
   @override
   State<StatefulWidget> createState() => _PlaceScreenState();
@@ -26,19 +30,17 @@ class PlaceScreen extends StatefulWidget {
 
 class _PlaceScreenState extends State<PlaceScreen> {
   bool _isFavorite = false;
+  ItinerarySummary? _itinerarySummary;
 
   @override
   void initState() {
-    _checkIfFavorite(
-      Provider.of<PlaceController>(context, listen: false).place!,
-    );
-
-    _initializeItineraries();
-    Provider.of<PlaceController>(context, listen: false).addListener(() {
-      _initializeItineraries();
-    });
-
     super.initState();
+
+    // Initialize favorite status
+    _checkIfFavorite(widget.place);
+
+    // Initialize itinerary summary
+    _initializeItinerarySummary();
   }
 
   Future<void> _checkIfFavorite(Place place) async {
@@ -74,179 +76,155 @@ class _PlaceScreenState extends State<PlaceScreen> {
     });
   }
 
-  Future<void> _initializeItineraries() async {
-    // Initialize origin and destination places
-    Place originPlace = Place(
-      id: Navi4AllValues.userLocation,
-      name: '',
-      type: PlaceType.address,
-      description: '',
-      address: '',
-      coordinates: Coordinates(lat: 0.0, lon: 0.0),
+  Future<(Place, bool)> _getOriginPlace(BuildContext context) async {
+    Position? userLocation;
+
+    // Check location permission status
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
+      // Fetch user location (lazy)
+      userLocation = await Geolocator.getLastKnownPosition();
+    }
+
+    return (
+      Place(
+        id: Navi4AllValues.userLocation,
+        name: '',
+        type: PlaceType.address,
+        description: '',
+        address: '',
+        coordinates: Coordinates(
+          lat: userLocation?.latitude ?? 0.0,
+          lon: userLocation?.longitude ?? 0.0,
+        ),
+      ),
+      userLocation != null,
     );
+  }
 
-    Place destinationPlace = Provider.of<PlaceController>(
-      context,
-      listen: false,
-    ).place!;
+  Future<void> _initializeItinerarySummary() async {
+    // Build origin and destination places
+    Place originPlace;
+    bool userLocationAvailable;
+    (originPlace, userLocationAvailable) = await _getOriginPlace(context);
 
-    // Set itinerary parameters
-    Provider.of<ItineraryController>(context, listen: false).setParameters(
-      context: context,
-      originPlace: originPlace,
-      destinationPlace: destinationPlace,
-      primaryMode: Mode.TRANSIT,
+    Place destinationPlace = widget.place;
+
+    // Only attempt to fetch itineraries if user location is available
+    if (!userLocationAvailable) {
+      return;
+    }
+
+    // Fetch itineraries
+    List<ItinerarySummary> itineraries =
+        await Provider.of<ItineraryController>(
+          context,
+          listen: false,
+        ).fetchItinerariesOnce(
+          context: context,
+          origin: originPlace,
+          destination: destinationPlace,
+          primaryMode: Mode.TRANSIT,
+        );
+    if (itineraries.isNotEmpty) {
+      setState(() {
+        _itinerarySummary = itineraries.first;
+      });
+    }
+  }
+
+  Future<void> _onRouteTap() async {
+    // Build origin and destination places
+    Place originPlace;
+    (originPlace, _) = await _getOriginPlace(context);
+
+    Place destinationPlace = widget.place;
+
+    // Navigate to itinerary screen
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) =>
+            ItineraryScreen(origin: originPlace, destination: destinationPlace),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return
-    // PlaceMap(place: widget.place),
-    Consumer<PlaceController>(
-      builder: (context, placeController, _) => Row(
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    children: [
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      body: Stack(
+        children: [
+          PlaceMap(place: widget.place),
+          SlidingBottomSheet(
+            stickyHeader: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
                           children: [
-                            Text(
-                              placeController.place != null
-                                  ? placeController.place!.name
-                                  : '...',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                height: 1.25,
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.place.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      height: 1.25,
+                                    ),
+                                  ),
+                                  Text(
+                                    widget.place.description,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              placeController.place != null
-                                  ? placeController.place!.description
-                                  : '...',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            SizedBox(width: 8),
+                            AccessibleIconButton(
+                              icon: _isFavorite
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              onTap: () => _toggleFavorite(widget.place),
+                            ),
+                            SizedBox(width: 8),
+                            AccessibleIconButton(
+                              icon: Icons.close_rounded,
+                              onTap: () => Navigator.of(context).pop(),
                             ),
                           ],
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      AccessibleIconButton(
-                        icon: _isFavorite ? Icons.star : Icons.star_border,
-                        onTap: () => placeController.place != null
-                            ? _toggleFavorite(placeController.place!)
-                            : null,
-                      ),
-                      SizedBox(width: 8),
-                      AccessibleIconButton(
-                        icon: Icons.close_rounded,
-                        onTap: () {
-                          placeController.reset();
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: SheetButton(
-                          icon: Icons.directions_outlined,
-                          label: AppLocalizations.of(
-                            context,
-                          )!.placeScreenRouteButton,
-                          onTap: () {
-                            Provider.of<CanvasController>(
-                              context,
-                              listen: false,
-                            ).setState(CanvasControllerState.itinerary);
-
-                            // Analytics event
-                            /* MatomoTracker.instance.trackEvent(
-                                      eventInfo: EventInfo(
-                                        category: EventCategory
-                                            .parkingLocationScreen
-                                            .toString(),
-                                        action: EventAction
-                                            .parkingLocationScreenRouteInternalClicked
-                                            .toString(),
-                                      ),
-                                    ); */
-                          },
-                          shrinkWrap: false,
+                        SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Flexible(
+                              flex: 1,
+                              child: SheetButton(
+                                icon: Icons.directions_outlined,
+                                label: AppLocalizations.of(
+                                  context,
+                                )!.placeScreenRouteButton,
+                                onTap: _onRouteTap,
+                                shrinkWrap: false,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      /* SizedBox(width: 8),
-                              Flexible(
-                                flex: 1,
-                                child: SheetButton(
-                                  icon: Icons.directions_transit_filled_outlined,
-                                  label: AppLocalizations.of(
-                                    context,
-                                  )!.placeScreenRouteButton,
-                                  onTap: () {
-                                    // Analytics event
-                                    /* MatomoTracker.instance.trackEvent(
-                                      eventInfo: EventInfo(
-                                        category: EventCategory
-                                            .parkingLocationScreen
-                                            .toString(),
-                                        action: EventAction
-                                            .parkingLocationScreenRouteExternalClicked
-                                            .toString(),
-                                      ),
-                                    ); */
-                                  },
-                                  shrinkWrap: false,
-                                ),
-                              ), */
-                      /*SizedBox(width: 8),
-                              Flexible(
-                                flex: 2,
-                                child: SheetButton(
-                                  icon: _isFavorite
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  label: AppLocalizations.of(
-                                    context,
-                                  )!.parkingLocationButtonFavourite,
-                                  onTap: () => _toggleFavorite(),
-                                  shrinkWrap: false,
-                                ),
-                              ),*/
-                    ],
-                  ),
-                  SizedBox(height: 16),
-                  Consumer(
-                    builder:
-                        (
-                          context,
-                          ItineraryController itineraryController,
-                          child,
-                        ) =>
-                            itineraryController.hasParametersSet &&
-                                itineraryController.itineraries.isNotEmpty
+                        SizedBox(height: 16),
+                        _itinerarySummary != null
                             ? Row(
                                 children: [
                                   Icon(
-                                    itineraryController
-                                                .itineraries
-                                                .first
-                                                .legs
-                                                .length >
-                                            1
+                                    _itinerarySummary!.legs.length > 1
                                         ? Icons.directions_transit_outlined
                                         : Icons.directions_walk_outlined,
                                     color: Theme.of(
@@ -255,7 +233,9 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                   ),
                                   SizedBox(width: 8.0),
                                   Text(
-                                    '${(itineraryController.itineraries.first.duration / 60).round()} min',
+                                    TextFormatter.formatDurationText(
+                                      _itinerarySummary!.duration,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(fontSize: 16),
@@ -271,7 +251,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                   SizedBox(width: 6.0),
                                   Text(
                                     TextFormatter.formatDistanceText(
-                                      itineraryController.itineraries.first,
+                                      _itinerarySummary!,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -280,75 +260,28 @@ class _PlaceScreenState extends State<PlaceScreen> {
                                 ],
                               )
                             : SizedBox.shrink(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-    /* SafeArea(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 32, left: 16, right: 16),
-                child: Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(28),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const SearchScreen(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: 56,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(32),
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              color: Theme.of(
-                                      context,
-                                    ).textTheme.displayMedium?.color,
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          Expanded(
-                            child: Text(
-                              widget.place.name,
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ), */
+            listViewBuilder: (context, controller) => Container(),
+            initSize: 0.35,
+            maxSize: 0.4,
+          ),
+          SafeArea(child: PlaceSearchBar(place: widget.place, altMode: false)),
+        ],
+      ),
+    );
   }
 }
 
 class PlaceSearchBar extends StatelessWidget {
+  final Place place;
   final bool altMode;
 
-  const PlaceSearchBar({super.key, required this.altMode});
+  const PlaceSearchBar({super.key, required this.place, required this.altMode});
 
   Future<void> _search(BuildContext context) async {
     Place? result = await Navigator.of(context).push(
@@ -358,7 +291,9 @@ class PlaceSearchBar extends StatelessWidget {
       ),
     );
     if (result != null) {
-      Provider.of<PlaceController>(context, listen: false).setPlace(result);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => PlaceScreen(place: result)),
+      );
     }
   }
 
@@ -386,25 +321,19 @@ class PlaceSearchBar extends StatelessWidget {
                         ? Theme.of(context).colorScheme.surface
                         : Theme.of(context).colorScheme.tertiary,
                   ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
-                      SizedBox(width: 24),
                       Icon(
                         Icons.search,
                         color: Theme.of(context).textTheme.displayMedium?.color,
                       ),
                       SizedBox(width: 16),
                       Expanded(
-                        child: Consumer<PlaceController>(
-                          builder: (context, placeController, _) => Text(
-                            placeController.place != null
-                                ? placeController.place!.name
-                                : AppLocalizations.of(
-                                    context,
-                                  )!.homeSearchButtonHint,
-                            style: const TextStyle(fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        child: Text(
+                          place.name,
+                          style: const TextStyle(fontSize: 16),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],

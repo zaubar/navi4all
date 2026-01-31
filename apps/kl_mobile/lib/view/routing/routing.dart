@@ -157,8 +157,9 @@ class RoutingState extends State<RoutingScreen> {
     // Delay allows map to initialize
     await Future.delayed(Duration(milliseconds: 500));
 
-    // Initialise TTS language
-    await flutterTts.setLanguage(AppLocalizations.of(context)!.localeName);
+    // Initialise TTS
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setVolume(1.0);
 
     try {
       await _fetchItineraryDetails(widget.itinerarySummary.itineraryId);
@@ -214,13 +215,13 @@ class RoutingState extends State<RoutingScreen> {
         Provider.of<RoutingController>(
           context,
           listen: false,
-        ).startNavigation();
+        ).startNavigation(context);
         break;
       case NavigationStatus.paused:
         Provider.of<RoutingController>(
           context,
           listen: false,
-        ).resumeNavigation();
+        ).resumeNavigation(context);
         break;
       case NavigationStatus.navigating:
         Provider.of<RoutingController>(
@@ -255,27 +256,6 @@ class RoutingState extends State<RoutingScreen> {
       flutterTts.speak(
         AppLocalizations.of(context)!.routingScreenReroutingDialogTitle,
       );
-
-      // If primary mode is not transit, attempt to reroute automatically
-      if (_itineraryController.primaryMode != Mode.TRANSIT) {
-        // Refresh itineraries
-        if (_itineraryController.hasParametersSet) {
-          _itineraryController.setParameters(
-            context: context,
-            originPlace: Place(
-              id: Navi4AllValues.userLocation,
-              name: '',
-              type: PlaceType.address,
-              description: '',
-              address: '',
-              coordinates: Coordinates(lat: 0, lon: 0),
-            ),
-            destinationPlace: _itineraryController.destinationPlace!,
-            primaryMode: _itineraryController.primaryMode!,
-          );
-          return;
-        }
-      }
 
       // Show rerouting dialog
       showDialog(
@@ -343,7 +323,7 @@ class RoutingState extends State<RoutingScreen> {
     );
 
     // Restart navigation
-    routingController.startNavigation();
+    routingController.startNavigation(context);
   }
 
   void _buildLegTiles() {
@@ -415,403 +395,419 @@ class RoutingState extends State<RoutingScreen> {
     _navigationDigressingController.removeListener(
       _watchNavigationDigressingState,
     );
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          RoutingMap(destination: widget.destinationPlace),
-          Consumer<RoutingController>(
-            builder: (context, routingController, _) => SlidingBottomSheet(
-              SizedBox.shrink(),
-              listItems: _processingStatus == ProcessingStatus.completed
-                  ? _legTiles
-                  : null,
-              body:
-                  _processingStatus == ProcessingStatus.processing ||
-                      _processingStatus == ProcessingStatus.error
-                  ? NavigationProcessingTile(
-                      processingStatus: _processingStatus,
-                    )
-                  : SizedBox(height: 128.0),
-              initSize: 0.35,
-              maxSize: 0.7,
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Divider(
-                    height: 0.0,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    padding: const EdgeInsets.all(16.0),
-                    child: Material(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                            ),
-                            child: Consumer<NavigationStatsController>(
-                              builder:
-                                  (
-                                    context,
-                                    navigationStatsController,
-                                    _,
-                                  ) => Row(
-                                    children: [
-                                      Icon(
-                                        widget.itinerarySummary.legs.length > 1
-                                            ? Icons.directions_transit
-                                            : ModeIcons.get(
-                                                widget
-                                                    .itinerarySummary
-                                                    .legs
-                                                    .first
-                                                    .mode,
-                                              ),
-                                        color: Theme.of(
-                                          context,
-                                        ).textTheme.displayMedium?.color,
-                                      ),
-                                      SizedBox(width: 12.0),
-                                      navigationStatsController.timeToArrival !=
-                                              null
-                                          ? Text(
-                                              TextFormatter.formatDurationText(
-                                                navigationStatsController
-                                                    .timeToArrival!,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 16),
-                                            )
-                                          : SizedBox.shrink(),
-                                      SizedBox(width: 6.0),
-                                      Icon(
-                                        Icons.circle,
-                                        size: 6,
-                                        color: Theme.of(
-                                          context,
-                                        ).textTheme.displayMedium?.color,
-                                      ),
-                                      SizedBox(width: 6.0),
-                                      navigationStatsController
-                                                  .distanceToArrival !=
-                                              null
-                                          ? Text(
-                                              TextFormatter.formatDistanceValueText(
-                                                navigationStatsController
-                                                    .distanceToArrival!,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 16),
-                                            )
-                                          : SizedBox.shrink(),
-                                    ],
-                                  ),
-                            ),
-                          ),
-                          SizedBox(height: 12.0),
-                          Consumer<RoutingController>(
-                            builder: (context, routingController, _) => Row(
-                              children: [
-                                Expanded(
-                                  child: SheetButton(
-                                    icon:
-                                        routingController.navigationStatus ==
-                                            NavigationStatus.idle
-                                        ? Icons.play_arrow
-                                        : routingController.navigationStatus ==
-                                              NavigationStatus.navigating
-                                        ? Icons.pause
-                                        : routingController.navigationStatus ==
-                                              NavigationStatus.arrived
-                                        ? Icons.check
-                                        : Icons.play_arrow,
-                                    label:
-                                        routingController.navigationStatus ==
-                                            NavigationStatus.idle
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.routingScreenNavigationStartButton
-                                        : routingController.navigationStatus ==
-                                              NavigationStatus.navigating
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.routingScreenNavigationPauseButton
-                                        : routingController.navigationStatus ==
-                                              NavigationStatus.arrived
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.routingScreenNavigationDoneButton
-                                        : AppLocalizations.of(
-                                            context,
-                                          )!.routingScreenNavigationResumeButton,
-                                    semanticLabel:
-                                        routingController.navigationStatus ==
-                                            NavigationStatus.idle
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.routingScreenNavigationStartButton
-                                        : routingController.navigationStatus ==
-                                              NavigationStatus.navigating
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.routingScreenNavigationPauseButton
-                                        : routingController.navigationStatus ==
-                                              NavigationStatus.arrived
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.routingScreenNavigationDoneButton
-                                        : AppLocalizations.of(
-                                            context,
-                                          )!.routingScreenNavigationResumeButton,
-                                    onTap: () => _toggleNavigationState(),
-                                    shrinkWrap: false,
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                AccessibleIconButton(
-                                  icon:
-                                      routingController.audioStatus ==
-                                          AudioStatus.muted
-                                      ? Icons.volume_off
-                                      : Icons.volume_up,
-                                  semanticLabel:
-                                      routingController.audioStatus ==
-                                          AudioStatus.muted
-                                      ? AppLocalizations.of(
-                                          context,
-                                        )!.routeNavigationMuteButtonUnmuteText
-                                      : AppLocalizations.of(
-                                          context,
-                                        )!.routeNavigationMuteButtonMuteText,
-                                  onTap: () => _toggleAudioStatus(),
-                                ),
-                                SizedBox(width: 8),
-                                AccessibleIconButton(
-                                  icon: Icons.close,
-                                  semanticLabel: AppLocalizations.of(
-                                    context,
-                                  )!.routingScreenExitRoutingButtonSemantic,
-                                  onTap: () {
-                                    routingController.stopNavigation();
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        Provider.of<RoutingController>(context, listen: false).stopNavigation();
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            RoutingMap(destination: widget.destinationPlace),
+            Consumer<RoutingController>(
+              builder: (context, routingController, _) => SlidingBottomSheet(
+                SizedBox.shrink(),
+                listItems: _processingStatus == ProcessingStatus.completed
+                    ? _legTiles
+                    : null,
+                body:
+                    _processingStatus == ProcessingStatus.processing ||
+                        _processingStatus == ProcessingStatus.error
+                    ? NavigationProcessingTile(
+                        processingStatus: _processingStatus,
+                      )
+                    : SizedBox(height: 128.0),
+                initSize: 0.35,
+                maxSize: 0.75,
               ),
             ),
-          ),
-          SafeArea(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-                child: Consumer<RoutingController>(
-                  builder: (context, routingController, _) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Semantics(
-                        label: AppLocalizations.of(context)!
-                            .origDestPickerOriginSemantic(
-                              widget.originPlace.id ==
-                                      Navi4AllValues.userLocation
-                                  ? AppLocalizations.of(
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Divider(
+                      height: 0.0,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                      ),
+                      padding: const EdgeInsets.all(16.0),
+                      child: Material(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                              ),
+                              child: Consumer<NavigationStatsController>(
+                                builder:
+                                    (
                                       context,
-                                    )!.origDestCurrentLocation
-                                  : widget.originPlace.name,
-                            ),
-                        excludeSemantics: true,
-                        button: true,
-                        focused: true,
-                        child:
-                            routingController.navigationStatus !=
-                                NavigationStatus.navigating
-                            ? Material(
-                                elevation: 4,
-                                borderRadius: BorderRadius.circular(16),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16),
-                                  ),
-                                  onTap: null,
-                                  child: Container(
-                                    height: 56,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.surface,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(28),
-                                        topRight: Radius.circular(28),
-                                      ),
-                                    ),
-                                    child: Row(
+                                      navigationStatsController,
+                                      _,
+                                    ) => Row(
                                       children: [
-                                        SizedBox(width: 16),
-                                        Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Material(
-                                            elevation: 2.0,
-                                            borderRadius: BorderRadius.circular(
-                                              12.0,
-                                            ),
-                                            child: Container(
-                                              width: 20.0,
-                                              height: 20.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Theme.of(context)
-                                                    .textTheme
-                                                    .displayMedium
-                                                    ?.color,
-                                                border: Border.all(
-                                                  color: Navi4AllColors.klWhite,
-                                                  width: 3.0,
+                                        Icon(
+                                          widget.itinerarySummary.legs.length >
+                                                  1
+                                              ? Icons.directions_transit
+                                              : ModeIcons.get(
+                                                  widget
+                                                      .itinerarySummary
+                                                      .legs
+                                                      .first
+                                                      .mode,
+                                                ),
+                                          color: Theme.of(
+                                            context,
+                                          ).textTheme.displayMedium?.color,
+                                        ),
+                                        SizedBox(width: 12.0),
+                                        navigationStatsController
+                                                    .timeToArrival !=
+                                                null
+                                            ? Text(
+                                                TextFormatter.formatDurationText(
+                                                  navigationStatsController
+                                                      .timeToArrival!,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(fontSize: 16),
+                                              )
+                                            : SizedBox.shrink(),
+                                        SizedBox(width: 6.0),
+                                        Icon(
+                                          Icons.circle,
+                                          size: 6,
+                                          color: Theme.of(
+                                            context,
+                                          ).textTheme.displayMedium?.color,
+                                        ),
+                                        SizedBox(width: 6.0),
+                                        navigationStatsController
+                                                    .distanceToArrival !=
+                                                null
+                                            ? Text(
+                                                TextFormatter.formatDistanceValueText(
+                                                  navigationStatsController
+                                                      .distanceToArrival!,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(fontSize: 16),
+                                              )
+                                            : SizedBox.shrink(),
+                                      ],
+                                    ),
+                              ),
+                            ),
+                            SizedBox(height: 12.0),
+                            Consumer<RoutingController>(
+                              builder: (context, routingController, _) => Row(
+                                children: [
+                                  Expanded(
+                                    child: SheetButton(
+                                      icon:
+                                          routingController.navigationStatus ==
+                                              NavigationStatus.idle
+                                          ? Icons.play_arrow
+                                          : routingController
+                                                    .navigationStatus ==
+                                                NavigationStatus.navigating
+                                          ? Icons.pause
+                                          : routingController
+                                                    .navigationStatus ==
+                                                NavigationStatus.arrived
+                                          ? Icons.check
+                                          : Icons.play_arrow,
+                                      label:
+                                          routingController.navigationStatus ==
+                                              NavigationStatus.idle
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.routingScreenNavigationStartButton
+                                          : routingController
+                                                    .navigationStatus ==
+                                                NavigationStatus.navigating
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.routingScreenNavigationPauseButton
+                                          : routingController
+                                                    .navigationStatus ==
+                                                NavigationStatus.arrived
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.routingScreenNavigationDoneButton
+                                          : AppLocalizations.of(
+                                              context,
+                                            )!.routingScreenNavigationResumeButton,
+                                      semanticLabel:
+                                          routingController.navigationStatus ==
+                                              NavigationStatus.idle
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.routingScreenNavigationStartButton
+                                          : routingController
+                                                    .navigationStatus ==
+                                                NavigationStatus.navigating
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.routingScreenNavigationPauseButton
+                                          : routingController
+                                                    .navigationStatus ==
+                                                NavigationStatus.arrived
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.routingScreenNavigationDoneButton
+                                          : AppLocalizations.of(
+                                              context,
+                                            )!.routingScreenNavigationResumeButton,
+                                      onTap: () => _toggleNavigationState(),
+                                      shrinkWrap: false,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  AccessibleIconButton(
+                                    icon:
+                                        routingController.audioStatus ==
+                                            AudioStatus.muted
+                                        ? Icons.volume_off
+                                        : Icons.volume_up,
+                                    semanticLabel:
+                                        routingController.audioStatus ==
+                                            AudioStatus.muted
+                                        ? AppLocalizations.of(
+                                            context,
+                                          )!.routeNavigationMuteButtonUnmuteText
+                                        : AppLocalizations.of(
+                                            context,
+                                          )!.routeNavigationMuteButtonMuteText,
+                                    onTap: () => _toggleAudioStatus(),
+                                  ),
+                                  SizedBox(width: 8),
+                                  AccessibleIconButton(
+                                    icon: Icons.close,
+                                    semanticLabel: AppLocalizations.of(
+                                      context,
+                                    )!.routingScreenExitRoutingButtonSemantic,
+                                    onTap: () {
+                                      routingController.stopNavigation();
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                  child: Consumer<RoutingController>(
+                    builder: (context, routingController, _) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Semantics(
+                          label: AppLocalizations.of(context)!
+                              .origDestPickerOriginSemantic(
+                                widget.originPlace.id ==
+                                        Navi4AllValues.userLocation
+                                    ? AppLocalizations.of(
+                                        context,
+                                      )!.origDestCurrentLocation
+                                    : widget.originPlace.name,
+                              ),
+                          excludeSemantics: true,
+                          button: true,
+                          focused: true,
+                          child:
+                              routingController.navigationStatus !=
+                                  NavigationStatus.navigating
+                              ? Material(
+                                  elevation: 4,
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(16),
+                                      topRight: Radius.circular(16),
+                                    ),
+                                    onTap: null,
+                                    child: Container(
+                                      height: 56,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(28),
+                                          topRight: Radius.circular(28),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(width: 16),
+                                          Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Material(
+                                              elevation: 2.0,
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: Container(
+                                                width: 20.0,
+                                                height: 20.0,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Theme.of(context)
+                                                      .textTheme
+                                                      .displayMedium
+                                                      ?.color,
+                                                  border: Border.all(
+                                                    color:
+                                                        Navi4AllColors.klWhite,
+                                                    width: 3.0,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(
-                                            widget.originPlace.id ==
-                                                    Navi4AllValues.userLocation
-                                                ? AppLocalizations.of(
-                                                    context,
-                                                  )!.origDestCurrentLocation
-                                                : widget.originPlace.name,
-                                            style: const TextStyle(
-                                              fontSize: 16,
+                                          SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              widget.originPlace.id ==
+                                                      Navi4AllValues
+                                                          .userLocation
+                                                  ? AppLocalizations.of(
+                                                      context,
+                                                    )!.origDestCurrentLocation
+                                                  : widget.originPlace.name,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
                                           ),
-                                        ),
-                                        SizedBox(width: 16),
-                                      ],
+                                          SizedBox(width: 16),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
+                                )
+                              : SizedBox.shrink(),
+                        ),
+                        routingController.navigationStatus !=
+                                NavigationStatus.navigating
+                            ? Divider(
+                                height: 0,
+                                color: Theme.of(context).colorScheme.secondary,
                               )
                             : SizedBox.shrink(),
-                      ),
-                      routingController.navigationStatus !=
-                              NavigationStatus.navigating
-                          ? Divider(
-                              height: 0,
-                              color: Theme.of(context).colorScheme.secondary,
-                            )
-                          : SizedBox.shrink(),
-                      Semantics(
-                        label: AppLocalizations.of(context)!
-                            .origDestPickerDestinationSemantic(
-                              widget.destinationPlace.id ==
-                                      Navi4AllValues.userLocation
-                                  ? AppLocalizations.of(
-                                      context,
-                                    )!.origDestCurrentLocation
-                                  : widget.destinationPlace.name,
-                            ),
-                        excludeSemantics: true,
-                        button: false,
-                        child: Material(
-                          elevation: 4,
-                          borderRadius:
-                              routingController.navigationStatus !=
-                                  NavigationStatus.navigating
-                              ? BorderRadius.only(
-                                  bottomLeft: Radius.circular(16),
-                                  bottomRight: Radius.circular(16),
-                                )
-                              : BorderRadius.circular(64),
-                          child: Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft:
-                                    routingController.navigationStatus !=
-                                        NavigationStatus.navigating
-                                    ? Radius.circular(0)
-                                    : Radius.circular(64),
-                                topRight:
-                                    routingController.navigationStatus !=
-                                        NavigationStatus.navigating
-                                    ? Radius.circular(0)
-                                    : Radius.circular(64),
-                                bottomLeft:
-                                    routingController.navigationStatus !=
-                                        NavigationStatus.navigating
-                                    ? Radius.circular(16)
-                                    : Radius.circular(64),
-                                bottomRight:
-                                    routingController.navigationStatus !=
-                                        NavigationStatus.navigating
-                                    ? Radius.circular(16)
-                                    : Radius.circular(64),
+                        Semantics(
+                          label: AppLocalizations.of(context)!
+                              .origDestPickerDestinationSemantic(
+                                widget.destinationPlace.id ==
+                                        Navi4AllValues.userLocation
+                                    ? AppLocalizations.of(
+                                        context,
+                                      )!.origDestCurrentLocation
+                                    : widget.destinationPlace.name,
                               ),
-                              color: Theme.of(context).colorScheme.surface,
-                            ),
-                            child: Row(
-                              children: [
-                                SizedBox(width: 16),
-                                Icon(
-                                  Icons.place_rounded,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.displayMedium?.color,
+                          excludeSemantics: true,
+                          button: false,
+                          child: Material(
+                            elevation: 4,
+                            borderRadius:
+                                routingController.navigationStatus !=
+                                    NavigationStatus.navigating
+                                ? BorderRadius.only(
+                                    bottomLeft: Radius.circular(16),
+                                    bottomRight: Radius.circular(16),
+                                  )
+                                : BorderRadius.circular(64),
+                            child: Container(
+                              height: 56,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft:
+                                      routingController.navigationStatus !=
+                                          NavigationStatus.navigating
+                                      ? Radius.circular(0)
+                                      : Radius.circular(64),
+                                  topRight:
+                                      routingController.navigationStatus !=
+                                          NavigationStatus.navigating
+                                      ? Radius.circular(0)
+                                      : Radius.circular(64),
+                                  bottomLeft:
+                                      routingController.navigationStatus !=
+                                          NavigationStatus.navigating
+                                      ? Radius.circular(16)
+                                      : Radius.circular(64),
+                                  bottomRight:
+                                      routingController.navigationStatus !=
+                                          NavigationStatus.navigating
+                                      ? Radius.circular(16)
+                                      : Radius.circular(64),
                                 ),
-                                SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    widget.destinationPlace.id ==
-                                            Navi4AllValues.userLocation
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.origDestCurrentLocation
-                                        : widget.destinationPlace.name,
-                                    style: const TextStyle(fontSize: 16),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                                color: Theme.of(context).colorScheme.surface,
+                              ),
+                              child: Row(
+                                children: [
+                                  SizedBox(width: 16),
+                                  Icon(
+                                    Icons.place_rounded,
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.displayMedium?.color,
                                   ),
-                                ),
-                                SizedBox(width: 16),
-                              ],
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      widget.destinationPlace.id ==
+                                              Navi4AllValues.userLocation
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.origDestCurrentLocation
+                                          : widget.destinationPlace.name,
+                                      style: const TextStyle(fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  SizedBox(width: 16),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

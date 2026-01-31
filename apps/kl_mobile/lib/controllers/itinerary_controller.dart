@@ -66,6 +66,28 @@ class ItineraryController extends ChangeNotifier {
     _refresh(context);
   }
 
+  Future<List<ItinerarySummary>> fetchItinerariesOnce({
+    required BuildContext context,
+    required Place origin,
+    required Place destination,
+    required Mode primaryMode,
+    DateTime? time,
+    bool isArrivalTime = false,
+  }) async {
+    return await _fetchItinerarySummaries(
+      context,
+      origin,
+      destination,
+      primaryMode,
+      time,
+      isArrivalTime,
+      Provider.of<ProfileController>(
+        context,
+        listen: false,
+      ).routingRequestConfig,
+    );
+  }
+
   void reset(BuildContext context) {
     _originPlace = null;
     _destinationPlace = null;
@@ -130,29 +152,20 @@ class ItineraryController extends ChangeNotifier {
     }
 
     try {
-      // Fetch data
-      List<ItinerarySummary> results = await _routingService.getItineraries(
-        originLat: _originPlace!.coordinates.lat,
-        originLon: _originPlace!.coordinates.lon,
-        destinationLat: _destinationPlace!.coordinates.lat,
-        destinationLon: _destinationPlace!.coordinates.lon,
-        time: _time != null ? _time! : DateTime.now(),
-        transportModes: _primaryMode! == Mode.TRANSIT
-            ? _routingRequestConfig!.transitModes.map((e) => e.name).toList()
-            : [_primaryMode!.name],
-        timeIsArrival: _isArrivalTime!,
-        walkingSpeed: _routingRequestConfig!.walkingSpeed,
-        walkingAvoid: _routingRequestConfig!.walkingAvoid,
-        bicycleSpeed: _routingRequestConfig!.bicycleSpeed,
-        accessible: _routingRequestConfig!.accessible,
-        guidanceLanguage: Localizations.localeOf(context).toLanguageTag(),
+      // Fetch data and update results
+      List<ItinerarySummary> results = await _fetchItinerarySummaries(
+        context,
+        _originPlace!,
+        _destinationPlace!,
+        _primaryMode!,
+        _time,
+        _isArrivalTime!,
+        _routingRequestConfig!,
       );
-
-      // Update results
+      _itineraries.clear();
       _itineraries.addAll(results);
-
-      await Future.delayed(const Duration(milliseconds: 200));
     } catch (e) {
+      reset(context);
       _state = ItineraryControllerState.error;
       notifyListeners();
       return;
@@ -185,6 +198,40 @@ class ItineraryController extends ChangeNotifier {
 
     // Fetch user location
     return await Geolocator.getCurrentPosition();
+  }
+
+  Future<List<ItinerarySummary>> _fetchItinerarySummaries(
+    BuildContext context,
+    Place origin,
+    Place destination,
+    Mode primaryMode,
+    DateTime? time,
+    bool isArrivalTime,
+    RoutingRequestConfig routingRequestConfig,
+  ) async {
+    // Call routing service
+    List<ItinerarySummary> results = (await _routingService.getItineraries(
+      originLat: origin.coordinates.lat,
+      originLon: origin.coordinates.lon,
+      destinationLat: destination.coordinates.lat,
+      destinationLon: destination.coordinates.lon,
+      time: time ?? DateTime.now(),
+      transportModes: primaryMode == Mode.TRANSIT
+          ? routingRequestConfig.transitModes.map((e) => e.name).toList()
+          : [primaryMode.name],
+      timeIsArrival: isArrivalTime,
+      walkingSpeed: routingRequestConfig.walkingSpeed,
+      walkingAvoid: routingRequestConfig.walkingAvoid,
+      bicycleSpeed: routingRequestConfig.bicycleSpeed,
+      accessible: routingRequestConfig.accessible,
+      guidanceLanguage: Localizations.localeOf(context).toLanguageTag(),
+      summarized: true,
+    )).cast<ItinerarySummary>();
+
+    // For now, always reorder by duration ascending
+    results.sort((a, b) => a.duration.compareTo(b.duration));
+
+    return results;
   }
 }
 

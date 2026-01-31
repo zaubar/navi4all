@@ -1,24 +1,39 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter_notification_channel/flutter_notification_channel.dart';
+import 'package:flutter_notification_channel/notification_importance.dart';
+import 'package:flutter_notification_channel/notification_visibility.dart';
+import 'package:navi4all/controllers/profile_controller.dart';
+import 'package:navi4all/l10n/app_localizations.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:navi4all/core/config.dart';
 import 'package:navi4all/core/processing_status.dart';
+import 'package:navi4all/core/utils.dart';
 import 'package:navi4all/schemas/routing/audio_stage.dart';
+import 'package:navi4all/schemas/routing/coordinates.dart';
 import 'package:navi4all/schemas/routing/itinerary.dart';
 import 'package:navi4all/schemas/routing/leg.dart' as leg_schema;
 import 'package:navi4all/schemas/routing/mode.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as maps_toolkit;
+import 'package:navi4all/schemas/routing/request_config.dart';
+import 'package:navi4all/services/routing.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
+import 'package:vibration/vibration.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class RoutingController extends ChangeNotifier {
   // Constants
-  static const double densificationThreshold = 1.0;
-  static const double clippingThreshold = 2.0;
+  static const double densificationThreshold = 2.0;
+  static const double clippingThreshold = 5.0;
   static const double clippingThresholdTransit = 25.0;
-  static const double snappingThreshold = 10.0;
-  static const double snappingThresholdTransit = 50.0;
+  static const double snappingThreshold = 15.0;
+  static const double snappingThresholdTransit = 30.0;
   static const Map<Mode, double> digressionThresholds = {
     Mode.BICYCLE: 50.0,
     Mode.BUS: 100.0,
@@ -32,10 +47,12 @@ class RoutingController extends ChangeNotifier {
     Mode.SUBWAY: 100.0,
     Mode.TRAM: 100.0,
     Mode.TRANSIT: 100.0,
-    Mode.WALK: 25.0,
+    Mode.WALK: 20.0,
     Mode.TROLLEYBUS: 100.0,
     Mode.MONORAIL: 100.0,
   };
+
+  final RoutingService _routingService = RoutingService();
 
   // State tracking
   RoutingControllerState _state = RoutingControllerState.uninitialized;
@@ -44,10 +61,6 @@ class RoutingController extends ChangeNotifier {
   NavigationStatus get navigationStatus => _navigationStatus;
   AudioStatus _audioStatus = AudioStatus.unmuted;
   AudioStatus get audioStatus => _audioStatus;
-
-  // Routing parameters
-  ItineraryDetails? _itineraryDetails;
-  ItineraryDetails? get itineraryDetails => _itineraryDetails;
 
   // Navigation tracking
   final LinkedHashMap<
@@ -70,19 +83,21 @@ class RoutingController extends ChangeNotifier {
   bool _isCurrentPositionSnapped = false;
   bool get isCurrentPositionSnapped => _isCurrentPositionSnapped;
 
+  DateTime? lastVibrate;
+  double accuracyFactor = 1.0;
+
   void setParameters({required ItineraryDetails itineraryDetails}) {
     _reset();
 
-    _itineraryDetails = itineraryDetails;
-    _buildActionTrail();
+    _buildActionTrail(itineraryDetails);
     _state = RoutingControllerState.initialized;
     notifyListeners();
   }
 
-  void startNavigation() {
+  void startNavigation(BuildContext context) {
     _state = RoutingControllerState.navigating;
     _navigationStatus = NavigationStatus.navigating;
-    _subscribeToLocationStream();
+    _subscribeToLocationStream(context);
     notifyListeners();
   }
 
@@ -92,9 +107,9 @@ class RoutingController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void resumeNavigation() {
+  void resumeNavigation(BuildContext context) {
     _navigationStatus = NavigationStatus.navigating;
-    _subscribeToLocationStream();
+    _subscribeToLocationStream(context);
     notifyListeners();
   }
 
@@ -113,9 +128,9 @@ class RoutingController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _buildActionTrail() {
+  void _buildActionTrail(ItineraryDetails itineraryDetails) {
     // Iterate over legs in itinerary
-    for (leg_schema.LegDetailed leg in _itineraryDetails!.legs) {
+    for (leg_schema.LegDetailed leg in itineraryDetails.legs) {
       // Fetch leg geometry
       List<maps_toolkit.LatLng> legCoordinates =
           maps_toolkit.PolygonUtil.decode(leg.geometry);
@@ -164,11 +179,10 @@ class RoutingController extends ChangeNotifier {
         // This is a linear step
         // Clip densified leg coordinates to this step
         maps_toolkit.LatLng stepStart = maps_toolkit.LatLng(step.lat, step.lon);
-        int stepStartIndex = maps_toolkit.PolygonUtil.locationIndexOnPath(
+        int? stepStartIndex = GeographyUtils.getLocationIndexOnPath(
           stepStart,
           legCoordinates,
-          true,
-          tolerance: step.relativeDirection != RelativeDirection.TRANSIT_RIDE
+          step.relativeDirection != RelativeDirection.TRANSIT_RIDE
               ? clippingThreshold
               : clippingThresholdTransit,
         );
@@ -178,18 +192,17 @@ class RoutingController extends ChangeNotifier {
                 legCoordinates.last.latitude,
                 legCoordinates.last.longitude,
               );
-        int stepEndIndex = maps_toolkit.PolygonUtil.locationIndexOnPath(
+        int? stepEndIndex = GeographyUtils.getLocationIndexOnPath(
           stepEnd,
           legCoordinates,
-          true,
-          tolerance: step.relativeDirection != RelativeDirection.TRANSIT_RIDE
+          step.relativeDirection != RelativeDirection.TRANSIT_RIDE
               ? clippingThreshold
               : clippingThresholdTransit,
         );
 
         // Validate indices
-        if ((stepStartIndex == -1 ||
-            stepEndIndex == -1 ||
+        if ((stepStartIndex == null ||
+            stepEndIndex == null ||
             stepEndIndex < stepStartIndex)) {
           _flagError();
           return;
@@ -205,6 +218,49 @@ class RoutingController extends ChangeNotifier {
     }
   }
 
+  Future<void> _validateLocationServices() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _flagError();
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission != LocationPermission.whileInUse &&
+        permission != LocationPermission.always) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        _flagError();
+        return;
+      }
+    }
+
+    LocationAccuracyStatus accuracyStatus =
+        await Geolocator.getLocationAccuracy();
+    if (accuracyStatus != LocationAccuracyStatus.precise) {
+      _flagError();
+      return;
+    }
+
+    PermissionStatus notificationStatus = await Permission.notification.status;
+    if (notificationStatus != PermissionStatus.granted) {
+      await Permission.notification.request();
+    }
+
+    await FlutterNotificationChannel().registerNotificationChannel(
+      description: 'Step-by-step navigation in the background.',
+      id: 'geolocator_channel_01',
+      importance: NotificationImportance.IMPORTANCE_HIGH,
+      name: 'Navi4All - Navigation',
+      visibility: NotificationVisibility.VISIBILITY_PUBLIC,
+      allowBubbles: true,
+      enableVibration: true,
+      enableSound: false,
+      showBadge: false,
+    );
+  }
+
   void _flagError() {
     _state = RoutingControllerState.error;
     _navigationStatus = NavigationStatus.idle;
@@ -218,9 +274,6 @@ class RoutingController extends ChangeNotifier {
     _navigationStatus = NavigationStatus.idle;
     _audioStatus = AudioStatus.unmuted;
 
-    // Reset routing parameters
-    _itineraryDetails = null;
-
     // Reset navigation tracking
     _unsubscribeFromLocationStream();
     _actionTrail.clear();
@@ -230,7 +283,10 @@ class RoutingController extends ChangeNotifier {
     _isCurrentPositionSnapped = false;
   }
 
-  void _subscribeToLocationStream() {
+  Future<void> _subscribeToLocationStream(BuildContext context) async {
+    // Ensure location services are available
+    await _validateLocationServices();
+
     WakelockPlus.enable();
 
     // Initialize location settings based on platform
@@ -241,6 +297,14 @@ class RoutingController extends ChangeNotifier {
       locationSettings = AndroidSettings(
         accuracy: LocationAccuracy.bestForNavigation,
         intervalDuration: const Duration(seconds: 1),
+        distanceFilter: 1,
+        foregroundNotificationConfig: ForegroundNotificationConfig(
+          notificationTitle: AppLocalizations.of(context)!.appTitle,
+          notificationText: AppLocalizations.of(
+            context,
+          )!.routingScreenNotificationDescription,
+          notificationChannelName: 'Navi4All - Navigation',
+        ),
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS) {
@@ -253,7 +317,7 @@ class RoutingController extends ChangeNotifier {
     // Register location stream subscription
     _positionSubscription = Geolocator.getPositionStream(
       locationSettings: locationSettings,
-    ).listen(_onLocationChanged);
+    ).listen((Position position) => _onLocationChanged(context, position));
   }
 
   void _unsubscribeFromLocationStream() {
@@ -262,8 +326,23 @@ class RoutingController extends ChangeNotifier {
     WakelockPlus.disable();
   }
 
-  void _onLocationChanged(Position position) {
+  void _onLocationChanged(BuildContext context, Position position) {
     _currentPosition = position;
+
+    if (_state != RoutingControllerState.navigating &&
+        _state != RoutingControllerState.digressing) {
+      return;
+    }
+
+    // Dynamically scale the snapping threshold based on position accuracy
+    accuracyFactor = max(1.0, position.accuracy / 10.0);
+
+    // Haptic feedback to indicate navigation is ongoing
+    if (lastVibrate == null ||
+        lastVibrate!.difference(position.timestamp).inSeconds.abs() >= 5) {
+      lastVibrate = position.timestamp;
+      Vibration.hasVibrator().then((_) => Vibration.vibrate(duration: 100));
+    }
 
     // Perform leg and step tracking
     for (leg_schema.LegDetailed leg in _actionTrail.keys) {
@@ -271,30 +350,28 @@ class RoutingController extends ChangeNotifier {
       if (_activeLeg != null) {
         int legIndex = _actionTrail.keys.toList().indexOf(leg);
         int activeLegIndex = _actionTrail.keys.toList().indexOf(_activeLeg!);
-        if (legIndex < activeLegIndex || legIndex > activeLegIndex + 1) {
+        if (legIndex < activeLegIndex || legIndex > (activeLegIndex + 1)) {
           continue;
         }
       }
 
       for (leg_schema.Step step in _actionTrail[leg]!.keys) {
-        // Ensure step is active or immediately after active step
+        // If step tracking was already active, limit checks to a small window
+        int stepIndex = _actionTrail[leg]!.keys.toList().indexOf(step);
         if (activeStep != null) {
           if (_activeLeg == leg) {
             // Checking the current active leg
-            int stepIndex = _actionTrail[leg]!.keys.toList().indexOf(step);
             int activeStepIndex = _actionTrail[leg]!.keys.toList().indexOf(
               _activeStep!,
             );
-            if (stepIndex < activeStepIndex ||
-                stepIndex > activeStepIndex + 1) {
-              // Only the active step and the one after are relevant
+            if (stepIndex < (activeStepIndex - 1) ||
+                stepIndex > (activeStepIndex + 2)) {
               continue;
             }
           } else {
-            // Checking the leg immediately after the active leg
-            int stepIndex = _actionTrail[leg]!.keys.toList().indexOf(step);
+            // Checking a leg not currently active
             if (stepIndex > 0) {
-              // Only the first step of the next leg is relevant
+              // Only the first step of an inactive leg should be checked
               continue;
             }
           }
@@ -313,10 +390,10 @@ class RoutingController extends ChangeNotifier {
             maps_toolkit.LatLng(step.lat, step.lon),
           );
           if (distance <=
-              (step.relativeDirection != RelativeDirection.TRANSIT_BOARD ||
+              (step.relativeDirection != RelativeDirection.TRANSIT_BOARD &&
                       step.relativeDirection != RelativeDirection.TRANSIT_ALIGHT
-                  ? snappingThreshold
-                  : snappingThresholdTransit)) {
+                  ? (snappingThreshold * accuracyFactor)
+                  : (snappingThresholdTransit * accuracyFactor))) {
             _activeLeg = leg;
             _activeStep = step;
             break;
@@ -326,13 +403,14 @@ class RoutingController extends ChangeNotifier {
         }
 
         // This is a linear step
-        int indexOnPath = maps_toolkit.PolygonUtil.locationIndexOnPath(
+        int? indexOnPath = GeographyUtils.getLocationIndexOnPath(
           maps_toolkit.LatLng(position.latitude, position.longitude),
           stepCoordinates,
-          true,
-          tolerance: snappingThreshold,
+          step.relativeDirection != RelativeDirection.TRANSIT_RIDE
+              ? snappingThreshold * accuracyFactor
+              : snappingThresholdTransit * accuracyFactor,
         );
-        if (indexOnPath > -1) {
+        if (indexOnPath != null && indexOnPath < stepCoordinates.length - 1) {
           _activeLeg = leg;
           _activeStep = step;
           break;
@@ -342,21 +420,118 @@ class RoutingController extends ChangeNotifier {
 
     // Perform snapping to step for non-positional legs
     _isCurrentPositionSnapped = false;
-    Position? snappedPosition = _attemptSnapToStep(position);
+    Position? snappedPosition = _attemptSnapToStep(position, accuracyFactor);
     if (snappedPosition != null) {
       _isCurrentPositionSnapped = true;
       _currentPosition = snappedPosition;
     }
 
     // Check if user is digressing
-    if (_checkDigressing()) {
-      _state = RoutingControllerState.digressing;
+    if (_checkDigressing(position)) {
+      // Attempt to fetch alternative route
+      if (_activeLeg!.mode == Mode.WALK) {
+        _state = RoutingControllerState.rerouting;
+
+        // Compute alternative walking route from current position to end of
+        // last step in active leg
+        maps_toolkit.LatLng origin = maps_toolkit.LatLng(
+          position.latitude,
+          position.longitude,
+        );
+        maps_toolkit.LatLng destination =
+            _actionTrail[_activeLeg!]![_actionTrail[_activeLeg!]!.keys.last]!
+                .last;
+
+        _fetchAlternative(
+          context,
+          origin,
+          destination,
+          Provider.of<ProfileController>(
+            context,
+            listen: false,
+          ).routingRequestConfig,
+        ).then(
+          (alternativeItinerary) {
+            if (alternativeItinerary != null) {
+              // Replace leg in original itinerary with alternative leg
+              // appending any additional legs and rebuild action trail
+              List<leg_schema.LegDetailed> updatedLegs = _actionTrail.keys
+                  .toList();
+              int activeLegIndex = updatedLegs.indexOf(_activeLeg!);
+              updatedLegs.removeAt(activeLegIndex);
+              updatedLegs.insertAll(activeLegIndex, alternativeItinerary.legs);
+
+              // Modify the final step of all pre-transit legs to indicate a transfer
+              for (int i = 0; i < updatedLegs.length - 1; i++) {
+                leg_schema.LegDetailed leg = updatedLegs[i];
+                leg_schema.LegDetailed nextLeg = updatedLegs[i + 1];
+
+                if (nextLeg.mode != Mode.WALK &&
+                    nextLeg.mode != Mode.BICYCLE &&
+                    nextLeg.mode != Mode.CAR) {
+                  if (leg.steps.last.relativeDirection ==
+                      RelativeDirection.ARRIVE) {
+                    List<leg_schema.Step> updatedSteps = List.from(leg.steps);
+                    leg_schema.Step finalStep = updatedSteps.removeLast();
+                    finalStep = finalStep.copyWith(
+                      relativeDirection: RelativeDirection.TRANSIT_TRANSFER,
+                      streetName: nextLeg.steps.first.streetName,
+                      bogusName: false,
+                      voiceInstruction: null,
+                      textInstruction: null,
+                    );
+                    updatedSteps.add(finalStep);
+                    updatedLegs[i] = leg.copyWith(steps: updatedSteps);
+                  }
+                }
+              }
+
+              int updatedItineraryDuration = updatedLegs
+                  .map((leg) => leg.duration)
+                  .reduce((a, b) => a + b);
+              ItineraryDetails updatedItinerary = ItineraryDetails(
+                itineraryId: Uuid().v4(),
+                duration: updatedItineraryDuration,
+                startTime: DateTime.now(),
+                endTime: DateTime.now().add(
+                  Duration(seconds: updatedItineraryDuration),
+                ),
+                origin: Coordinates(
+                  lat: updatedLegs.first.steps.first.lat,
+                  lon: updatedLegs.first.steps.first.lon,
+                ),
+                destination: Coordinates(
+                  lat: updatedLegs.last.steps.last.lat,
+                  lon: updatedLegs.last.steps.last.lon,
+                ),
+                legs: updatedLegs,
+              );
+              _activeLeg = null;
+              _activeStep = null;
+              _isCurrentPositionSnapped = false;
+              _actionTrail.clear();
+              _buildActionTrail(updatedItinerary);
+
+              _state = RoutingControllerState.navigating;
+            } else {
+              _state = RoutingControllerState.digressing;
+            }
+          },
+          onError: (_) {
+            _state = RoutingControllerState.digressing;
+          },
+        );
+      } else {
+        _state = RoutingControllerState.digressing;
+      }
     } else {
       _state = RoutingControllerState.navigating;
     }
 
     // Check if user has arrived
-    if (_checkArrived()) {
+    if (_checkArrived(position)) {
+      _activeLeg = _actionTrail.keys.last;
+      _activeStep = _actionTrail[_activeLeg!]!.keys.last;
       _state = RoutingControllerState.arrived;
       _navigationStatus = NavigationStatus.arrived;
       _unsubscribeFromLocationStream();
@@ -365,7 +540,7 @@ class RoutingController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Position? _attemptSnapToStep(Position position) {
+  Position? _attemptSnapToStep(Position position, double accuracyFactor) {
     // Ensure an active leg exists
     if (_activeLeg == null || _activeStep == null) {
       return null;
@@ -383,14 +558,15 @@ class RoutingController extends ChangeNotifier {
         _actionTrail[_activeLeg!]![_activeStep!]!;
 
     // Fetch index of position on active step
-    int positionIndex = maps_toolkit.PolygonUtil.locationIndexOnPath(
+    int? positionIndex = GeographyUtils.getLocationIndexOnPath(
       maps_toolkit.LatLng(position.latitude, position.longitude),
       stepPoints,
-      true,
-      tolerance: snappingThreshold,
+      _activeStep!.relativeDirection != RelativeDirection.TRANSIT_RIDE
+          ? snappingThreshold * accuracyFactor
+          : snappingThresholdTransit * accuracyFactor,
     );
 
-    if (positionIndex > -1 && positionIndex < stepPoints.length - 1) {
+    if (positionIndex != null) {
       maps_toolkit.LatLng snappedPoint = stepPoints[positionIndex];
       maps_toolkit.LatLng nextPoint = stepPoints[positionIndex + 1];
 
@@ -417,68 +593,75 @@ class RoutingController extends ChangeNotifier {
     return null;
   }
 
-  bool _checkDigressing() {
+  bool _checkDigressing(Position currentPosition) {
     // User may digress only if current position is not snapped,
     // an active leg exists, and any active step is not a linear transit step
-    if (_currentPosition == null ||
-        _isCurrentPositionSnapped ||
+    if (_isCurrentPositionSnapped ||
         _activeLeg == null ||
         (_activeStep != null &&
             _activeStep!.relativeDirection == RelativeDirection.TRANSIT_RIDE)) {
       return false;
     }
 
-    // Active leg geometry
-    List<maps_toolkit.LatLng> legCoordinates = maps_toolkit.PolygonUtil.decode(
-      _activeLeg!.geometry,
-    );
-
     // Index of position on active leg
-    int positionIndex = maps_toolkit.PolygonUtil.locationIndexOnPath(
-      maps_toolkit.LatLng(
-        _currentPosition!.latitude,
-        _currentPosition!.longitude,
-      ),
-      legCoordinates,
-      true,
-      tolerance: digressionThresholds[_activeLeg!.mode]!,
+    int? positionIndex = GeographyUtils.getLocationIndexOnPath(
+      maps_toolkit.LatLng(currentPosition.latitude, currentPosition.longitude),
+      _actionTrail[_activeLeg!]!.values.expand((points) => points).toList(),
+      digressionThresholds[_activeLeg!.mode]! * accuracyFactor,
     );
 
     // If index is unavailable, user is digressing
-    return positionIndex == -1;
+    return positionIndex == null;
   }
 
-  bool _checkArrived() {
-    // Arrival checking can only be performed if leg and step tracking is active
-    if (_actionTrail.isEmpty || _activeLeg == null || _activeStep == null) {
-      return false;
-    }
-
-    // Ensure second-last step of last leg is active
-    leg_schema.Step secondLastStep = _actionTrail[_activeLeg!]!.keys.length > 1
-        ? _actionTrail[_activeLeg!]!.keys.elementAt(
-            _actionTrail[_activeLeg!]!.keys.length - 2,
-          )
-        : _actionTrail[_activeLeg!]!.keys.last;
-    if (_activeLeg != _actionTrail.keys.last || _activeStep != secondLastStep) {
-      return false;
-    }
+  bool _checkArrived(Position currentPosition) {
+    leg_schema.LegDetailed finalLeg = _actionTrail.keys
+        .toList()[_actionTrail.keys.length - 1];
+    leg_schema.Step finalStep = finalLeg.steps[finalLeg.steps.length - 1];
+    maps_toolkit.LatLng finalCoordinates =
+        _actionTrail[finalLeg]![finalStep]!.last;
 
     // Check if current position is within a certain threshold of destination
-    maps_toolkit.LatLng destinationCoordinates =
-        _actionTrail[_activeLeg!]![_activeStep!]!.last;
     if (maps_toolkit.SphericalUtil.computeDistanceBetween(
           maps_toolkit.LatLng(
-            _currentPosition!.latitude,
-            _currentPosition!.longitude,
+            currentPosition.latitude,
+            currentPosition.longitude,
           ),
-          destinationCoordinates,
-        ) >
-        Settings.navigationAudioStages[AudioStage.near]! / 2) {
-      return false;
+          finalCoordinates,
+        ) <=
+        snappingThreshold * accuracyFactor) {
+      return true;
     }
 
-    return true;
+    return false;
+  }
+
+  Future<ItineraryDetails?> _fetchAlternative(
+    BuildContext context,
+    maps_toolkit.LatLng origin,
+    maps_toolkit.LatLng destination,
+    RoutingRequestConfig routingRequestConfig,
+  ) async {
+    // Call routing service
+    List<ItineraryDetails> results = (await _routingService
+        .getItinerariesDetailed(
+          originLat: origin.latitude,
+          originLon: origin.longitude,
+          destinationLat: destination.latitude,
+          destinationLon: destination.longitude,
+          time: DateTime.now(),
+          transportModes: [Mode.WALK.name],
+          walkingSpeed: routingRequestConfig.walkingSpeed,
+          walkingAvoid: routingRequestConfig.walkingAvoid,
+          bicycleSpeed: routingRequestConfig.bicycleSpeed,
+          accessible: routingRequestConfig.accessible,
+          guidanceLanguage: Localizations.localeOf(context).toLanguageTag(),
+        ));
+
+    if (results.isEmpty) {
+      return null;
+    }
+    return results.first;
   }
 }
 
@@ -487,6 +670,7 @@ enum RoutingControllerState {
   initialized,
   error,
   navigating,
+  rerouting,
   digressing,
   arrived,
 }
@@ -730,14 +914,18 @@ class NavigationStatsController extends ChangeNotifier {
               );
 
               // Find closest point on step geometry
-              int closestIndex = maps_toolkit.PolygonUtil.locationIndexOnPath(
+              int? closestIndex = GeographyUtils.getLocationIndexOnPath(
                 currentLatLng,
                 stepGeometry,
-                true,
-                tolerance: RoutingController.snappingThreshold,
+                step.relativeDirection != RelativeDirection.TRANSIT_RIDE
+                    ? RoutingController.snappingThreshold *
+                          _routingController.accuracyFactor
+                    : RoutingController.snappingThresholdTransit *
+                          _routingController.accuracyFactor,
               );
 
-              if (closestIndex >= 0 && closestIndex < stepGeometry.length - 1) {
+              if (closestIndex != null &&
+                  closestIndex < stepGeometry.length - 1) {
                 // Remaining distance for this step
                 for (int i = closestIndex; i < stepGeometry.length - 1; i++) {
                   totalRemainingDistance +=
@@ -791,6 +979,7 @@ class NavigationStatsController extends ChangeNotifier {
 
 class NavigationInstructionsController extends ChangeNotifier {
   late RoutingController _routingController;
+  RoutingController get routingController => _routingController;
 
   NavigationStatus? _navigationStatus;
   NavigationStatus? get navigationStatus => _navigationStatus;
@@ -853,15 +1042,32 @@ class NavigationInstructionsController extends ChangeNotifier {
       List<leg_schema.Step> steps = actionTrail[leg]!.keys.toList();
       int activeStepIndex = 0;
       if (i == activeLegIndex && activeStep != null) {
+        int currentStepIndex = steps.indexOf(activeStep);
+
         // Skip to upcoming step only if active step is linear and non-transit
         if (activeStep.relativeDirection !=
                 RelativeDirection.TRANSIT_TRANSFER &&
             activeStep.relativeDirection != RelativeDirection.TRANSIT_BOARD &&
             activeStep.relativeDirection != RelativeDirection.TRANSIT_ALIGHT &&
             activeStep.relativeDirection != RelativeDirection.ARRIVE) {
-          activeStepIndex = steps.indexOf(activeStep) + 1;
+          double distanceFromStart = _computeDistanceFromStartOfStep(
+            _currentPosition!,
+            activeStep,
+            actionTrail[leg]![activeStep]!,
+          );
+          double startThreshold =
+              (activeStep.relativeDirection != RelativeDirection.TRANSIT_RIDE
+                  ? RoutingController.snappingThreshold
+                  : RoutingController.snappingThresholdTransit) *
+              _routingController.accuracyFactor;
+
+          if (distanceFromStart >= startThreshold) {
+            activeStepIndex = currentStepIndex + 1;
+          } else {
+            activeStepIndex = currentStepIndex;
+          }
         } else {
-          activeStepIndex = steps.indexOf(activeStep);
+          activeStepIndex = currentStepIndex;
         }
       }
 
@@ -872,6 +1078,7 @@ class NavigationInstructionsController extends ChangeNotifier {
         if (j > 0 && j == activeStepIndex) {
           stepDistance = _computeDistanceToEndOfStep(
             _currentPosition!,
+            steps[j - 1],
             actionTrail[leg]![steps[j - 1]]!,
           );
         } else if (j > 0) {
@@ -899,6 +1106,7 @@ class NavigationInstructionsController extends ChangeNotifier {
 
   double _computeDistanceToEndOfStep(
     Position currentPosition,
+    leg_schema.Step step,
     List<maps_toolkit.LatLng> stepGeometry,
   ) {
     double totalDistance = 0.0;
@@ -909,14 +1117,17 @@ class NavigationInstructionsController extends ChangeNotifier {
     );
 
     // Find closest point on step geometry
-    int closestIndex = maps_toolkit.PolygonUtil.locationIndexOnPath(
+    int? closestIndex = GeographyUtils.getLocationIndexOnPath(
       currentLatLng,
       stepGeometry,
-      true,
-      tolerance: RoutingController.snappingThreshold,
+      step.relativeDirection != RelativeDirection.TRANSIT_RIDE
+          ? RoutingController.snappingThreshold *
+                _routingController.accuracyFactor
+          : RoutingController.snappingThresholdTransit *
+                _routingController.accuracyFactor,
     );
 
-    if (closestIndex >= 0 && closestIndex < stepGeometry.length - 1) {
+    if (closestIndex != null) {
       // Remaining distance for this step
       for (int i = closestIndex; i < stepGeometry.length - 1; i++) {
         totalDistance += maps_toolkit.SphericalUtil.computeDistanceBetween(
@@ -926,16 +1137,45 @@ class NavigationInstructionsController extends ChangeNotifier {
       }
     } else {
       // Unable to snap, return full step distance
-      totalDistance = 0.0;
-      for (int i = 0; i < stepGeometry.length - 1; i++) {
-        totalDistance += maps_toolkit.SphericalUtil.computeDistanceBetween(
-          stepGeometry[i],
-          stepGeometry[i + 1],
-        );
-      }
+      totalDistance = step.distance;
     }
 
     return totalDistance;
+  }
+
+  double _computeDistanceFromStartOfStep(
+    Position currentPosition,
+    leg_schema.Step step,
+    List<maps_toolkit.LatLng> stepGeometry,
+  ) {
+    maps_toolkit.LatLng currentLatLng = maps_toolkit.LatLng(
+      currentPosition.latitude,
+      currentPosition.longitude,
+    );
+
+    int? closestIndex = GeographyUtils.getLocationIndexOnPath(
+      currentLatLng,
+      stepGeometry,
+      step.relativeDirection != RelativeDirection.TRANSIT_RIDE
+          ? RoutingController.snappingThreshold *
+                _routingController.accuracyFactor
+          : RoutingController.snappingThresholdTransit *
+                _routingController.accuracyFactor,
+    );
+
+    if (closestIndex == null || closestIndex <= 0) {
+      return 0.0;
+    }
+
+    double distanceFromStart = 0.0;
+    for (int i = 0; i < closestIndex; i++) {
+      distanceFromStart += maps_toolkit.SphericalUtil.computeDistanceBetween(
+        stepGeometry[i],
+        stepGeometry[i + 1],
+      );
+    }
+
+    return distanceFromStart;
   }
 
   @override
@@ -973,12 +1213,26 @@ class NavigationAudioController extends ChangeNotifier {
   void _refreshNavigationAudioControllerState() {
     _audioStatus = _navigationInstructionsController.audioStatus;
 
-    // Audio instructions only during navigation
+    // Audio instructions only during navigation and arrival
     if (_navigationInstructionsController.navigationStatus !=
-        NavigationStatus.navigating) {
+            NavigationStatus.navigating &&
+        _navigationInstructionsController.navigationStatus !=
+            NavigationStatus.arrived) {
       _instructionLeg = null;
       _instructionStep = null;
       _audioStage = AudioStage.newStage;
+      return;
+    }
+
+    // No audio cues if navigation is underway but position is not snapped
+    if (!_navigationInstructionsController
+            .routingController
+            .isCurrentPositionSnapped &&
+        (_navigationInstructionsController.instructionStep == null ||
+            _navigationInstructionsController
+                    .instructionStep!
+                    .relativeDirection !=
+                RelativeDirection.DEPART)) {
       return;
     }
 
@@ -994,7 +1248,9 @@ class NavigationAudioController extends ChangeNotifier {
         _navigationInstructionsController.instructionStep;
 
     final bool legStepChanged =
-        _instructionLeg != newLeg || _instructionStep != newStep;
+        _instructionLeg != newLeg ||
+        (_instructionStep!.lat != newStep!.lat &&
+            _instructionStep!.lon != newStep.lon);
 
     // Determine best audio stage for distance to next instruction
     AudioStage newAudioStage = _getBestAudioStageForDistance(

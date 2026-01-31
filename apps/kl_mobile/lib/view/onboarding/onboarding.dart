@@ -55,7 +55,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _requestLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
+    if (permission != LocationPermission.whileInUse &&
+        permission != LocationPermission.always) {
       permission = await Geolocator.requestPermission();
     }
   }

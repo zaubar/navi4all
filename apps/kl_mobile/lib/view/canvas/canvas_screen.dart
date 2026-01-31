@@ -24,7 +24,7 @@ class _CanvasScreenState extends State<CanvasScreen> {
   void initState() {
     _overlayWidgets = {
       CanvasControllerState.home: Container(),
-      CanvasControllerState.place: PlaceSearchBar(altMode: widget.altMode),
+      CanvasControllerState.place: Container(),
       CanvasControllerState.itinerary: OrigDestPicker(altMode: widget.altMode),
       CanvasControllerState.navigating: Container(),
     };

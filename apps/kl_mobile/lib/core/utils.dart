@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:navi4all/schemas/routing/itinerary.dart';
+import 'package:maps_toolkit/maps_toolkit.dart' as maps_toolkit;
 
 class TextFormatter {
   static String formatDistanceText(ItinerarySummary itinerary) {
@@ -75,4 +76,29 @@ class TextFormatter {
 
   static String formatTimeOfDay(DateTime dateTime) =>
       DateFormat.Hm().format(dateTime);
+}
+
+class GeographyUtils {
+  static int? getLocationIndexOnPath(
+    maps_toolkit.LatLng point,
+    List<maps_toolkit.LatLng> path,
+    double threshold,
+  ) {
+    // Find nearest point on path within snapping threshold
+    int? indexOnPath;
+    num nearestDistance = double.infinity;
+
+    for (int i = 0; i < path.length; i++) {
+      num distance = maps_toolkit.SphericalUtil.computeDistanceBetween(
+        point,
+        path[i],
+      );
+      if (distance <= threshold &&
+          (indexOnPath == null || distance < nearestDistance)) {
+        indexOnPath = i;
+        nearestDistance = distance;
+      }
+    }
+    return indexOnPath;
+  }
 }

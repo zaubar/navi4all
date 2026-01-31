@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:navi4all/controllers/canvas_controller.dart';
 import 'package:navi4all/view/canvas/sliding_bottom_sheet.dart';
 import 'package:navi4all/view/itinerary/itinerary.dart';
-import 'package:navi4all/view/place/place.dart';
 import 'package:provider/provider.dart';
 import 'package:navi4all/view/alt/place/place.dart' as alt_place;
 
@@ -18,15 +17,15 @@ class CanvasSheet extends StatefulWidget {
 class _CanvasSheetState extends State<CanvasSheet> {
   final Map<CanvasControllerState, Widget> _stickyWidgets = {
     CanvasControllerState.home: Container(),
-    CanvasControllerState.place: PlaceScreen(),
-    CanvasControllerState.itinerary: ItineraryScreen(),
+    CanvasControllerState.place: Container(),
+    CanvasControllerState.itinerary: Container(),
     CanvasControllerState.navigating: Container(),
   };
 
   final Map<CanvasControllerState, Widget> _stickyWidgetsAltMode = {
     CanvasControllerState.home: Container(),
-    CanvasControllerState.place: alt_place.PlaceScreen(),
-    CanvasControllerState.itinerary: ItineraryScreen(),
+    CanvasControllerState.place: Container(),
+    CanvasControllerState.itinerary: Container(),
     CanvasControllerState.navigating: Container(),
   };
 

@@ -4,9 +4,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:maplibre_gl/maplibre_gl.dart';
-import 'package:navi4all/controllers/canvas_controller.dart';
 import 'package:navi4all/controllers/itinerary_controller.dart';
-// import 'package:navi4all/controllers/place_controller.dart';
 import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/core/theme/profile_mode.dart';
 import 'package:navi4all/core/theme/values.dart';
@@ -19,17 +17,27 @@ import 'package:navi4all/controllers/theme_controller.dart';
 import 'package:navi4all/core/config.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as maps_toolkit;
 
-class CanvasMap extends StatefulWidget {
-  const CanvasMap({super.key});
+class ItineraryMap extends StatefulWidget {
+  const ItineraryMap({super.key});
 
   @override
-  State<StatefulWidget> createState() => _CanvasMapState();
+  State<StatefulWidget> createState() => _ItineraryMapState();
 }
 
-class _CanvasMapState extends State<CanvasMap> {
+class _ItineraryMapState extends State<ItineraryMap> {
   late MapLibreMapController _mapController;
+  late ItineraryController _itineraryController;
   bool _canInteractWithMap = false;
   final Map<String, ItinerarySummary> _lineIdToItinerary = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _itineraryController = Provider.of<ItineraryController>(
+      context,
+      listen: false,
+    );
+  }
 
   Future<void> _onStyleLoaded() async {
     // Load custom marker icons
@@ -95,10 +103,7 @@ class _CanvasMapState extends State<CanvasMap> {
     _mapController.onLineTapped.add(_onLineTapped);
 
     // Redraw layers when canvas state changes
-    Provider.of<CanvasController>(
-      context,
-      listen: false,
-    ).addListener(_drawLayers);
+    _itineraryController.addListener(_drawLayers);
   }
 
   Future<void> _drawLayers() async {
@@ -112,26 +117,10 @@ class _CanvasMapState extends State<CanvasMap> {
     await _mapController.clearSymbols();
     _lineIdToItinerary.clear();
 
-    switch (Provider.of<CanvasController>(context, listen: false).state) {
-      case CanvasControllerState.place:
-        // await _drawPlace();
-        break;
-      case CanvasControllerState.itinerary:
-        await _drawItineraries();
-        await _drawOrigin();
-        await _drawDestination();
-        Provider.of<ItineraryController>(
-          context,
-          listen: false,
-        ).removeListener(_drawLayers);
-        Provider.of<ItineraryController>(
-          context,
-          listen: false,
-        ).addListener(_drawLayers);
-        break;
-      default:
-        break;
-    }
+    // Draw layers
+    await _drawItineraries();
+    await _drawOrigin();
+    await _drawDestination();
   }
 
   Future<void> _drawOrigin() async {
@@ -172,28 +161,6 @@ class _CanvasMapState extends State<CanvasMap> {
       ),
     );
   }
-
-  /* Future<void> _drawPlace() async {
-    Place place = Provider.of<PlaceController>(context, listen: false).place!;
-
-    await _mapController.addSymbol(
-      SymbolOptions(
-        geometry: LatLng(place.coordinates.lat, place.coordinates.lon),
-        iconImage: 'assetMarkerPlace',
-        iconSize: 1.0,
-      ),
-    );
-
-    await _mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(place.coordinates.lat - 0.003, place.coordinates.lon),
-          zoom: 14,
-        ),
-      ),
-      duration: const Duration(seconds: 2),
-    );
-  } */
 
   Future<void> _drawItineraries() async {
     List<ItinerarySummary> itineraries = Provider.of<ItineraryController>(
@@ -306,11 +273,7 @@ class _CanvasMapState extends State<CanvasMap> {
 
   @override
   void dispose() {
-    // TODO: Does not work, fix this
-    Provider.of<CanvasController>(
-      context,
-      listen: false,
-    ).removeListener(_drawLayers);
+    _itineraryController.removeListener(_drawLayers);
     super.dispose();
   }
 
@@ -338,8 +301,13 @@ class _CanvasMapState extends State<CanvasMap> {
             ),
             initialCameraPosition: CameraPosition(
               target: LatLng(
-                Settings.defaultFocalPoint.lat - 0.003,
-                Settings.defaultFocalPoint.lon,
+                _itineraryController.hasParametersSet
+                    ? _itineraryController.destinationPlace!.coordinates.lat -
+                          0.003
+                    : Settings.defaultFocalPoint.lat - 0.003,
+                _itineraryController.hasParametersSet
+                    ? _itineraryController.destinationPlace!.coordinates.lon
+                    : Settings.defaultFocalPoint.lon,
               ),
               zoom: 14,
             ),

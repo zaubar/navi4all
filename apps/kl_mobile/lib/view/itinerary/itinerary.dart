@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:navi4all/controllers/itinerary_controller.dart';
-import 'package:navi4all/controllers/place_controller.dart';
 import 'package:navi4all/controllers/profile_controller.dart';
 import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/core/theme/icons.dart';
@@ -11,7 +10,9 @@ import 'package:navi4all/schemas/routing/mode.dart';
 import 'package:navi4all/schemas/routing/place.dart';
 import 'package:navi4all/view/common/accessible_icon_button.dart';
 import 'package:navi4all/view/common/sheet_button.dart';
+import 'package:navi4all/view/canvas/sliding_bottom_sheet.dart';
 import 'package:navi4all/view/itinerary/itinerary_options.dart';
+import 'package:navi4all/view/itinerary/map.dart';
 import 'package:navi4all/view/routing/routing.dart';
 import 'package:navi4all/view/common/itinerary_widget.dart';
 import 'package:navi4all/view/search/search.dart';
@@ -19,7 +20,13 @@ import 'package:provider/provider.dart';
 import 'package:navi4all/view/alt/routing/routing.dart' as routing_alt;
 
 class ItineraryScreen extends StatefulWidget {
-  const ItineraryScreen({super.key});
+  final Place origin;
+  final Place destination;
+  const ItineraryScreen({
+    super.key,
+    required this.origin,
+    required this.destination,
+  });
 
   @override
   State<ItineraryScreen> createState() => _ItineraryScreenState();
@@ -31,24 +38,35 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
     Mode.TRANSIT: ModeIcons.get(Mode.TRANSIT),
   };
 
-  Future<void> _showJourneyTimePicker() async {
-    final TimeOfDay? newJourneyTime = await showTimePicker(
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize itinerary controller
+    Provider.of<ItineraryController>(context, listen: false).setParameters(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(
-        Provider.of<ItineraryController>(context, listen: false).time ??
-            DateTime.now(),
-      ),
+      originPlace: widget.origin,
+      destinationPlace: widget.destination,
+      primaryMode: _modes.keys.first,
     );
+  }
 
-    if (newJourneyTime == null) {
-      return;
-    }
-
+  Future<void> _showJourneyTimePicker() async {
     final itineraryController = Provider.of<ItineraryController>(
       context,
       listen: false,
     );
     final DateTime currentDateTime = itineraryController.time ?? DateTime.now();
+
+    final TimeOfDay? newJourneyTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(currentDateTime),
+    );
+
+    if (newJourneyTime == null || !itineraryController.hasParametersSet) {
+      return;
+    }
+
     final DateTime updatedDateTime = DateTime(
       currentDateTime.year,
       currentDateTime.month,
@@ -67,26 +85,17 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
   }
 
   Future<void> _showItineraryOptions() async {
-    var _ = await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ItineraryOptions(
-          altMode: false,
-          routingMode: Provider.of<ItineraryController>(
-            context,
-            listen: false,
-          ).primaryMode!,
-        ),
-      ),
+    final ItineraryController itineraryController =
+        Provider.of<ItineraryController>(context, listen: false);
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => ItineraryOptions(altMode: false)),
     );
 
-    ItineraryController itineraryController = Provider.of<ItineraryController>(
-      context,
-      listen: false,
-    );
     if (!itineraryController.hasParametersSet) {
-      super.dispose();
       return;
     }
+
     itineraryController.setParameters(
       context: context,
       originPlace: itineraryController.originPlace!,
@@ -98,109 +107,145 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ItineraryController>(
-      builder: (context, itineraryController, _) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              children: [
-                SheetButton(
-                  icon: Icons.schedule_outlined,
-                  label: itineraryController.hasParametersSet
-                      ? itineraryController.time != null
-                            ? AppLocalizations.of(
-                                context,
-                              )!.itineraryDepartureTime(
-                                DateFormat(
-                                  DateFormat.HOUR24_MINUTE,
-                                ).format(itineraryController.time!),
-                              )
-                            : AppLocalizations.of(
-                                context,
-                              )!.itineraryDepartureNow
-                      : '...',
-                  onTap: _showJourneyTimePicker,
-                ),
-                Spacer(),
-                SizedBox(width: 8),
-                Consumer<ProfileController>(
-                  builder: (context, profileController, _) =>
-                      AccessibleIconButton(
-                        icon: Icons.tune_rounded,
-                        onTap: _showItineraryOptions,
-                        hasNotification:
-                            profileController.getAssociatedRoutingProfile() ==
-                            null,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) =>
+          Provider.of<ItineraryController>(
+            context,
+            listen: false,
+          ).reset(context),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            ItineraryMap(),
+            SlidingBottomSheet(
+              stickyHeader: Consumer<ItineraryController>(
+                builder: (context, itineraryController, _) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        children: [
+                          SheetButton(
+                            icon: Icons.schedule_outlined,
+                            label: itineraryController.hasParametersSet
+                                ? itineraryController.time != null
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.itineraryDepartureTime(
+                                          DateFormat(
+                                            DateFormat.HOUR24_MINUTE,
+                                          ).format(itineraryController.time!),
+                                        )
+                                      : AppLocalizations.of(
+                                          context,
+                                        )!.itineraryDepartureNow
+                                : '...',
+                            onTap: _showJourneyTimePicker,
+                          ),
+                          Spacer(),
+                          SizedBox(width: 8),
+                          Consumer<ProfileController>(
+                            builder: (context, profileController, _) =>
+                                AccessibleIconButton(
+                                  icon: Icons.tune_rounded,
+                                  onTap: _showItineraryOptions,
+                                  hasNotification:
+                                      profileController
+                                          .getAssociatedRoutingProfile() ==
+                                      null,
+                                ),
+                          ),
+                          SizedBox(width: 8),
+                          AccessibleIconButton(
+                            icon: Icons.close_rounded,
+                            onTap: () {
+                              itineraryController.reset(context);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
                       ),
+                    ),
+                    DefaultTabController(
+                      length: _modes.length,
+                      initialIndex: itineraryController.hasParametersSet
+                          ? _modes.keys.toList().indexOf(
+                              itineraryController.primaryMode!,
+                            )
+                          : 0,
+                      child: TabBar(
+                        onTap: (index) {
+                          itineraryController.setParameters(
+                            context: context,
+                            originPlace: itineraryController.originPlace!,
+                            destinationPlace:
+                                itineraryController.destinationPlace!,
+                            primaryMode: _modes.keys.toList()[index],
+                            time: itineraryController.time,
+                            isArrivalTime: itineraryController.isArrivalTime!,
+                          );
+                        },
+                        labelStyle: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        unselectedLabelColor: Theme.of(
+                          context,
+                        ).textTheme.displayMedium?.color,
+                        labelColor: Theme.of(
+                          context,
+                        ).textTheme.displayMedium?.color,
+                        indicatorColor: Theme.of(
+                          context,
+                        ).textTheme.displayMedium?.color,
+                        splashBorderRadius: BorderRadius.all(
+                          Radius.circular(16.0),
+                        ),
+                        dividerHeight: 0.0,
+                        tabs: [
+                          Tab(
+                            icon: Icon(
+                              Icons.directions_walk_rounded,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium?.color,
+                            ),
+                            text: AppLocalizations.of(
+                              context,
+                            )!.itineraryModeTabWalking,
+                          ),
+                          Tab(
+                            icon: Icon(
+                              Icons.directions_transit_rounded,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.displayMedium?.color,
+                            ),
+                            text: AppLocalizations.of(
+                              context,
+                            )!.itineraryModeTabPublicTransport,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      height: 0,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ],
                 ),
-                SizedBox(width: 8),
-                AccessibleIconButton(
-                  icon: Icons.close_rounded,
-                  onTap: () {
-                    itineraryController.reset(context);
-                    Provider.of<PlaceController>(
-                      context,
-                      listen: false,
-                    ).reset();
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
+              ),
+              listViewBuilder: (context, controller) =>
+                  ItineraryList(scrollController: controller),
+              initSize: 0.4,
+              maxSize: 0.75,
             ),
-          ),
-          SizedBox(height: 4),
-          DefaultTabController(
-            length: _modes.length,
-            initialIndex: itineraryController.hasParametersSet
-                ? _modes.keys.toList().indexOf(itineraryController.primaryMode!)
-                : 0,
-            child: TabBar(
-              onTap: (index) {
-                itineraryController.setParameters(
-                  context: context,
-                  originPlace: itineraryController.originPlace!,
-                  destinationPlace: itineraryController.destinationPlace!,
-                  primaryMode: _modes.keys.toList()[index],
-                  time: itineraryController.time,
-                  isArrivalTime: itineraryController.isArrivalTime!,
-                );
-              },
-              labelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              indicatorSize: TabBarIndicatorSize.tab,
-              unselectedLabelColor: Theme.of(
-                context,
-              ).textTheme.displayMedium?.color,
-              labelColor: Theme.of(context).textTheme.displayMedium?.color,
-              indicatorPadding: EdgeInsets.symmetric(vertical: 8.0),
-              indicatorColor: Theme.of(context).textTheme.displayMedium?.color,
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              splashBorderRadius: BorderRadius.all(Radius.circular(16.0)),
-              dividerHeight: 0.0,
-              tabs: [
-                Tab(
-                  icon: Icon(
-                    Icons.directions_walk_rounded,
-                    color: Theme.of(context).textTheme.displayMedium?.color,
-                  ),
-                  text: AppLocalizations.of(context)!.itineraryModeTabWalking,
-                ),
-                Tab(
-                  icon: Icon(
-                    Icons.directions_transit_rounded,
-                    color: Theme.of(context).textTheme.displayMedium?.color,
-                  ),
-                  text: AppLocalizations.of(
-                    context,
-                  )!.itineraryModeTabPublicTransport,
-                ),
-              ],
-            ),
-          ),
-          Divider(height: 0, color: Theme.of(context).colorScheme.secondary),
-        ],
+            SafeArea(child: OrigDestPicker(altMode: false)),
+          ],
+        ),
       ),
     );
   }
