@@ -329,8 +329,7 @@ class RoutingController extends ChangeNotifier {
   void _onLocationChanged(BuildContext context, Position position) {
     _currentPosition = position;
 
-    if (_state != RoutingControllerState.navigating &&
-        _state != RoutingControllerState.digressing) {
+    if (_state != RoutingControllerState.navigating) {
       return;
     }
 
@@ -365,7 +364,7 @@ class RoutingController extends ChangeNotifier {
               _activeStep!,
             );
             if (stepIndex < (activeStepIndex - 1) ||
-                stepIndex > (activeStepIndex + 2)) {
+                stepIndex > (activeStepIndex + 3)) {
               continue;
             }
           } else {
@@ -513,12 +512,15 @@ class RoutingController extends ChangeNotifier {
               _buildActionTrail(updatedItinerary);
 
               _state = RoutingControllerState.navigating;
+              notifyListeners();
             } else {
               _state = RoutingControllerState.digressing;
+              notifyListeners();
             }
           },
           onError: (_) {
             _state = RoutingControllerState.digressing;
+            notifyListeners();
           },
         );
       } else {
@@ -598,6 +600,7 @@ class RoutingController extends ChangeNotifier {
     // an active leg exists, and any active step is not a linear transit step
     if (_isCurrentPositionSnapped ||
         _activeLeg == null ||
+        _activeStep == null ||
         (_activeStep != null &&
             _activeStep!.relativeDirection == RelativeDirection.TRANSIT_RIDE)) {
       return false;
@@ -606,7 +609,7 @@ class RoutingController extends ChangeNotifier {
     // Index of position on active leg
     int? positionIndex = GeographyUtils.getLocationIndexOnPath(
       maps_toolkit.LatLng(currentPosition.latitude, currentPosition.longitude),
-      _actionTrail[_activeLeg!]!.values.expand((points) => points).toList(),
+      _actionTrail[_activeLeg!]![_activeStep!]!,
       digressionThresholds[_activeLeg!.mode]! * accuracyFactor,
     );
 

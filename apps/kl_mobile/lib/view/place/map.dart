@@ -206,7 +206,7 @@ class _PlaceMapState extends State<PlaceMap> with WidgetsBindingObserver {
               ),
               initialCameraPosition: CameraPosition(
                 target: LatLng(
-                  widget.place.coordinates.lat - 0.003,
+                  widget.place.coordinates.lat - 0.002,
                   widget.place.coordinates.lon,
                 ),
                 zoom: 14,

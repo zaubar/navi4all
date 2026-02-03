@@ -40,77 +40,90 @@ class ItineraryWidget extends StatelessWidget {
         ),
         child: Semantics(
           excludeSemantics: true,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  TextFormatter.formatDurationText(itinerary.duration),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                  ),
-                ),
-                Text('$_startTime - $_endTime'),
-                const SizedBox(height: 4),
-                Row(
-                  children: itinerary.legs.map((legSummary) {
-                    return Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.tertiary,
-                          borderRadius: BorderRadius.only(
-                            topLeft: legSummary == itinerary.legs.first
-                                ? Radius.circular(32)
-                                : Radius.circular(0),
-                            topRight: legSummary == itinerary.legs.last
-                                ? Radius.circular(32)
-                                : Radius.circular(0),
-                            bottomLeft: legSummary == itinerary.legs.first
-                                ? Radius.circular(32)
-                                : Radius.circular(0),
-                            bottomRight: legSummary == itinerary.legs.last
-                                ? Radius.circular(32)
-                                : Radius.circular(0),
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 4,
-                          horizontal: 8,
-                        ),
-                        margin: legSummary != itinerary.legs.last
-                            ? EdgeInsets.only(right: 4)
-                            : EdgeInsets.zero,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(
-                              ModeIcons.get(legSummary.mode),
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                TextFormatter.formatDurationText(
-                                  legSummary.duration,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      TextFormatter.formatDurationText(itinerary.duration),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                      ),
+                    ),
+                    Text('$_startTime - $_endTime'),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: itinerary.legs.map((legSummary) {
+                        return Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.tertiary,
+                              borderRadius: BorderRadius.only(
+                                topLeft: legSummary == itinerary.legs.first
+                                    ? Radius.circular(32)
+                                    : Radius.circular(0),
+                                topRight: legSummary == itinerary.legs.last
+                                    ? Radius.circular(32)
+                                    : Radius.circular(0),
+                                bottomLeft: legSummary == itinerary.legs.first
+                                    ? Radius.circular(32)
+                                    : Radius.circular(0),
+                                bottomRight: legSummary == itinerary.legs.last
+                                    ? Radius.circular(32)
+                                    : Radius.circular(0),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 8,
+                            ),
+                            margin: legSummary != itinerary.legs.last
+                                ? EdgeInsets.only(right: 4)
+                                : EdgeInsets.zero,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  ModeIcons.get(legSummary.mode),
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    TextFormatter.formatDurationText(
+                                      legSummary.duration,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Divider(
+                  color: Theme.of(context).colorScheme.secondary,
+                  height: 0.0,
+                ),
+              ),
+            ],
           ),
         ),
       ),

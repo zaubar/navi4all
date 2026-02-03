@@ -272,7 +272,7 @@ class _ItineraryListState extends State<ItineraryList> {
       builder: (context, itineraryController, _) =>
           itineraryController.state == ItineraryControllerState.idle &&
               itineraryController.itineraries.isNotEmpty
-          ? ListView.separated(
+          ? ListView.builder(
               controller: widget.scrollController,
               padding: EdgeInsets.zero,
               shrinkWrap: true,
@@ -302,10 +302,6 @@ class _ItineraryListState extends State<ItineraryList> {
                     ),
                   );
                 },
-              ),
-              separatorBuilder: (_, __) => Divider(
-                height: 0,
-                color: Theme.of(context).colorScheme.secondary,
               ),
               itemCount: itineraryController.itineraries.length,
             )

@@ -629,101 +629,6 @@ class RoutingState extends State<RoutingScreen> {
                       children: [
                         Semantics(
                           label: AppLocalizations.of(context)!
-                              .origDestPickerOriginSemantic(
-                                widget.originPlace.id ==
-                                        Navi4AllValues.userLocation
-                                    ? AppLocalizations.of(
-                                        context,
-                                      )!.origDestCurrentLocation
-                                    : widget.originPlace.name,
-                              ),
-                          excludeSemantics: true,
-                          button: true,
-                          focused: true,
-                          child:
-                              routingController.navigationStatus !=
-                                  NavigationStatus.navigating
-                              ? Material(
-                                  elevation: 4,
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(16),
-                                      topRight: Radius.circular(16),
-                                    ),
-                                    onTap: null,
-                                    child: Container(
-                                      height: 56,
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.surface,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(28),
-                                          topRight: Radius.circular(28),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(width: 16),
-                                          Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: Material(
-                                              elevation: 2.0,
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                              child: Container(
-                                                width: 20.0,
-                                                height: 20.0,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Theme.of(context)
-                                                      .textTheme
-                                                      .displayMedium
-                                                      ?.color,
-                                                  border: Border.all(
-                                                    color:
-                                                        Navi4AllColors.klWhite,
-                                                    width: 3.0,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              widget.originPlace.id ==
-                                                      Navi4AllValues
-                                                          .userLocation
-                                                  ? AppLocalizations.of(
-                                                      context,
-                                                    )!.origDestCurrentLocation
-                                                  : widget.originPlace.name,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                            ),
-                                          ),
-                                          SizedBox(width: 16),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : SizedBox.shrink(),
-                        ),
-                        routingController.navigationStatus !=
-                                NavigationStatus.navigating
-                            ? Divider(
-                                height: 0,
-                                color: Theme.of(context).colorScheme.secondary,
-                              )
-                            : SizedBox.shrink(),
-                        Semantics(
-                          label: AppLocalizations.of(context)!
                               .origDestPickerDestinationSemantic(
                                 widget.destinationPlace.id ==
                                         Navi4AllValues.userLocation
@@ -736,46 +641,18 @@ class RoutingState extends State<RoutingScreen> {
                           button: false,
                           child: Material(
                             elevation: 4,
-                            borderRadius:
-                                routingController.navigationStatus !=
-                                    NavigationStatus.navigating
-                                ? BorderRadius.only(
-                                    bottomLeft: Radius.circular(16),
-                                    bottomRight: Radius.circular(16),
-                                  )
-                                : BorderRadius.circular(64),
+                            borderRadius: BorderRadius.circular(64),
                             child: Container(
                               height: 56,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                  topLeft:
-                                      routingController.navigationStatus !=
-                                          NavigationStatus.navigating
-                                      ? Radius.circular(0)
-                                      : Radius.circular(64),
-                                  topRight:
-                                      routingController.navigationStatus !=
-                                          NavigationStatus.navigating
-                                      ? Radius.circular(0)
-                                      : Radius.circular(64),
-                                  bottomLeft:
-                                      routingController.navigationStatus !=
-                                          NavigationStatus.navigating
-                                      ? Radius.circular(16)
-                                      : Radius.circular(64),
-                                  bottomRight:
-                                      routingController.navigationStatus !=
-                                          NavigationStatus.navigating
-                                      ? Radius.circular(16)
-                                      : Radius.circular(64),
-                                ),
+                                borderRadius: BorderRadius.circular(64),
                                 color: Theme.of(context).colorScheme.surface,
                               ),
                               child: Row(
                                 children: [
                                   SizedBox(width: 16),
                                   Icon(
-                                    Icons.place_rounded,
+                                    Icons.directions,
                                     color: Theme.of(
                                       context,
                                     ).textTheme.displayMedium?.color,

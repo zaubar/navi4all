@@ -267,7 +267,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
               ],
             ),
             listViewBuilder: (context, controller) => Container(),
-            initSize: 0.35,
+            initSize: 0.3,
             maxSize: 0.4,
           ),
           SafeArea(child: PlaceSearchBar(place: widget.place, altMode: false)),

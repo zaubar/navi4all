@@ -334,6 +334,7 @@ class _RoutingMapState extends State<RoutingMap> {
         geometry: LatLng(currentPosition.latitude, currentPosition.longitude),
         iconImage: 'assetMarkerUserPosition',
         iconSize: 0.7,
+        zIndex: -1000,
       );
 
       if (_currentPositionSymbol != null) {
@@ -392,9 +393,9 @@ class _RoutingMapState extends State<RoutingMap> {
             southwest: LatLng(minLat, minLng),
             northeast: LatLng(maxLat, maxLng),
           ),
-          left: 48,
-          top: 224,
-          right: 48,
+          left: 32,
+          top: 176,
+          right: 32,
           bottom: 352,
         ),
         duration: const Duration(seconds: 2),
@@ -413,7 +414,7 @@ class _RoutingMapState extends State<RoutingMap> {
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: LatLng(currentPosition.latitude, currentPosition.longitude),
-            zoom: 17.0,
+            zoom: 17.5,
             bearing: currentPosition.heading,
           ),
         ),
