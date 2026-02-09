@@ -5,7 +5,7 @@ import 'package:smartroots/schemas/routing/itinerary.dart';
 import 'package:smartroots/services/api.dart';
 
 class RoutingService extends APIService {
-  Future<List<ItinerarySummary>> getItineraries({
+  Future<List<Object>> getItineraries({
     required double originLat,
     required double originLon,
     required double destinationLat,
@@ -18,6 +18,8 @@ class RoutingService extends APIService {
     double? bicycleSpeed,
     bool? accessible,
     int numItineraries = 3,
+    required String guidanceLanguage,
+    bool summarized = true,
   }) async {
     // Build request body
     Map<String, dynamic> data = {
@@ -28,6 +30,8 @@ class RoutingService extends APIService {
       'time_is_arrival': timeIsArrival,
       'transport_modes': transportModes,
       'num_itineraries': numItineraries,
+      'guidance_language': guidanceLanguage,
+      'summarized': summarized,
     };
     if (walkingSpeed != null && walkingAvoid != null) {
       data['walk'] = {'speed': walkingSpeed, 'avoid': walkingAvoid};
@@ -50,7 +54,62 @@ class RoutingService extends APIService {
       throw Exception(response.statusMessage);
     }
     return (response.data['itineraries'] as List)
-        .map((item) => ItinerarySummary.fromJson(item))
+        .map(
+          (item) => summarized
+              ? ItinerarySummary.fromJson(item)
+              : ItineraryDetails.fromJson(item),
+        )
+        .toList();
+  }
+
+  Future<List<ItineraryDetails>> getItinerariesDetailed({
+    required double originLat,
+    required double originLon,
+    required double destinationLat,
+    required double destinationLon,
+    required DateTime time,
+    bool timeIsArrival = false,
+    required List<String> transportModes,
+    double? walkingSpeed,
+    bool? walkingAvoid,
+    double? bicycleSpeed,
+    bool? accessible,
+    int numItineraries = 3,
+    required String guidanceLanguage,
+  }) async {
+    // Build request body
+    Map<String, dynamic> data = {
+      'origin': {'lat': originLat, 'lon': originLon},
+      'destination': {'lat': destinationLat, 'lon': destinationLon},
+      'date': DateFormat('yyyy-MM-dd').format(time),
+      'time': DateFormat('HH:mm:ss').format(time),
+      'time_is_arrival': timeIsArrival,
+      'transport_modes': transportModes,
+      'num_itineraries': numItineraries,
+      'guidance_language': guidanceLanguage,
+    };
+    if (walkingSpeed != null && walkingAvoid != null) {
+      data['walk'] = {'speed': walkingSpeed, 'avoid': walkingAvoid};
+    }
+    if (bicycleSpeed != null) {
+      data['bicycle'] = {'speed': bicycleSpeed};
+    }
+    if (accessible != null) {
+      data['accessible'] = accessible;
+    }
+
+    // Make request
+    Response response = await apiClient.post(
+      '/routing/itinerary-detailed',
+      queryParameters: {'engine': Settings.apiRoutingEngine},
+      data: data,
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(response.statusMessage);
+    }
+    return (response.data['itineraries'] as List)
+        .map((item) => ItineraryDetails.fromJson(item))
         .toList();
   }
 

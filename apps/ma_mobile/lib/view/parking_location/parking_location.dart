@@ -146,9 +146,9 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
     final userLatLng = await Geolocator.getCurrentPosition();
 
     try {
-      // Fetch data
+      // Call routing service
       RoutingService routingService = RoutingService();
-      List<ItinerarySummary> results = await routingService.getItineraries(
+      List<ItinerarySummary> results = (await routingService.getItineraries(
         originLat: userLatLng.latitude,
         originLon: userLatLng.longitude,
         destinationLat: _parkingLocation.coordinates.lat,
@@ -156,7 +156,12 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
         time: DateTime.now(),
         transportModes: [Mode.CAR.name],
         timeIsArrival: false,
-      );
+        guidanceLanguage: Localizations.localeOf(context).toLanguageTag(),
+        summarized: true,
+      )).cast<ItinerarySummary>();
+
+      // For now, always reorder by duration ascending
+      results.sort((a, b) => a.duration.compareTo(b.duration));
 
       setState(() {
         _itineraries = results;

@@ -402,9 +402,9 @@ class RoutingState extends State<RoutingScreen> {
     }
 
     try {
-      // Fetch data
+      // Call routing service
       RoutingService routingService = RoutingService();
-      List<ItinerarySummary> results = await routingService.getItineraries(
+      List<ItinerarySummary> results = (await routingService.getItineraries(
         originLat: _origin.coordinates.lat,
         originLon: _origin.coordinates.lon,
         destinationLat: _destination.coordinates.lat,
@@ -412,7 +412,12 @@ class RoutingState extends State<RoutingScreen> {
         time: DateTime.now(),
         transportModes: [Mode.CAR.name],
         timeIsArrival: false,
-      );
+        guidanceLanguage: Localizations.localeOf(context).toLanguageTag(),
+        summarized: true,
+      )).cast<ItinerarySummary>();
+
+      // For now, always reorder by duration ascending
+      results.sort((a, b) => a.duration.compareTo(b.duration));
 
       if (results.isNotEmpty) {
         await _fetchItineraryDetails(results.first.itineraryId);
