@@ -22,56 +22,61 @@ class RouteExternalDialog extends StatelessWidget {
       builder: (context, setStateDialog) => Dialog(
         backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  AppLocalizations.of(
-                    context,
-                  )!.parkingLocationButtonRouteExternal,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(height: 16),
-              Flexible(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    final map = availableMaps[index];
-                    return SelectionTile(
-                      leadingSvg: map.icon,
-                      title: map.mapName,
-                      isSelected: false,
-                      onTap: () {
-                        onConfirm(map);
-                        Navigator.of(context).pop();
-                      },
-                    );
-                  },
-                  separatorBuilder: (context, index) => SizedBox(height: 8),
-                  itemCount: availableMaps.length,
-                ),
-              ),
-              SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: SheetButton(
-                      label: AppLocalizations.of(
-                        context,
-                      )!.routingScreenReroutingDialogCancelButton,
-                      onTap: onCancel,
-                    ),
+        child: OrientationBuilder(
+          builder: (context, orientation) => Container(
+            width: orientation == Orientation.portrait
+                ? double.infinity
+                : MediaQuery.of(context).size.width * 0.5,
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    AppLocalizations.of(
+                      context,
+                    )!.parkingLocationButtonRouteExternal,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                ],
-              ),
-            ],
+                ),
+                SizedBox(height: 16),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      final map = availableMaps[index];
+                      return SelectionTile(
+                        leadingSvg: map.icon,
+                        title: map.mapName,
+                        isSelected: false,
+                        onTap: () {
+                          onConfirm(map);
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    },
+                    separatorBuilder: (context, index) => SizedBox(height: 8),
+                    itemCount: availableMaps.length,
+                  ),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SheetButton(
+                        label: AppLocalizations.of(
+                          context,
+                        )!.routingScreenReroutingDialogCancelButton,
+                        onTap: onCancel,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

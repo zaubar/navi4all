@@ -258,273 +258,298 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
             parkingLocation: _parkingLocation,
             showAlternatives: widget.showAlternatives,
           ),
-          SlidingBottomSheet(
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16.0,
-                      horizontal: 24.0,
-                    ),
-                    child: Column(
+          OrientationBuilder(
+            builder: (context, orientation) => SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: orientation == Orientation.portrait ? 0 : 16.0,
+                ),
+                child: SizedBox(
+                  width: orientation == Orientation.portrait
+                      ? double.infinity
+                      : MediaQuery.of(context).size.width * 0.5,
+                  child: SlidingBottomSheet(
+                    stickyHeader: Row(
                       children: <Widget>[
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ExcludeSemantics(
-                                    child: Text(
-                                      _parkingLocation.name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  ExcludeSemantics(
-                                    child: Text(
-                                      _parkingLocation.address,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16.0,
+                              horizontal: 24.0,
                             ),
-                            SizedBox(width: 16),
-                            AccessibleIconButton(
-                              onTap: () => _toggleFavorite(),
-                              icon: _isFavorite
-                                  ? Icons.star
-                                  : Icons.star_border,
-                              semanticLabel: _isFavorite
-                                  ? AppLocalizations.of(
-                                      context,
-                                    )!.parkingLocationScreenRemoveFromFavoritesButtonSemantic
-                                  : AppLocalizations.of(
-                                      context,
-                                    )!.parkingLocationScreenAddToFavoritesButtonSemantic,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Flexible(
-                              flex: 1,
-                              child: SheetButton(
-                                icon: Icons.directions_outlined,
-                                label: AppLocalizations.of(
-                                  context,
-                                )!.parkingLocationButtonRouteExternal,
-                                semanticLabel: AppLocalizations.of(
-                                  context,
-                                )!.parkingLocationScreenRouteExternalButtonSemantic,
-                                onTap: () {
-                                  _showRouteExternalDialog();
-
-                                  // Analytics event
-                                  MatomoTracker.instance.trackEvent(
-                                    eventInfo: EventInfo(
-                                      category: EventCategory
-                                          .parkingLocationScreen
-                                          .toString(),
-                                      action: EventAction
-                                          .parkingLocationScreenRouteExternalClicked
-                                          .toString(),
-                                    ),
-                                  );
-                                },
-                                shrinkWrap: false,
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Flexible(
-                              flex: 1,
-                              child: SheetButton(
-                                icon: Icons.directions_car_outlined,
-                                label: AppLocalizations.of(
-                                  context,
-                                )!.parkingLocationButtonStart,
-                                semanticLabel: AppLocalizations.of(
-                                  context,
-                                )!.parkingLocationScreenRouteInternalButtonSemantic,
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => RoutingScreen(
-                                        parkingLocation: _parkingLocation,
-                                      ),
-                                    ),
-                                  );
-
-                                  // Analytics event
-                                  MatomoTracker.instance.trackEvent(
-                                    eventInfo: EventInfo(
-                                      category: EventCategory
-                                          .parkingLocationScreen
-                                          .toString(),
-                                      action: EventAction
-                                          .parkingLocationScreenRouteInternalClicked
-                                          .toString(),
-                                    ),
-                                  );
-                                },
-                                shrinkWrap: false,
-                              ),
-                            ),
-                            /*SizedBox(width: 8),
-                            Flexible(
-                              flex: 2,
-                              child: SheetButton(
-                                icon: _isFavorite
-                                    ? Icons.star
-                                    : Icons.star_border,
-                                label: AppLocalizations.of(
-                                  context,
-                                )!.parkingLocationButtonFavourite,
-                                onTap: () => _toggleFavorite(),
-                                shrinkWrap: false,
-                              ),
-                            ),*/
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        _itineraries.isNotEmpty
-                            ? Semantics(
-                                excludeSemantics: true,
-                                label: AppLocalizations.of(context)!
-                                    .parkingLocationScreenEstimatedDrivingTimeSemantic(
-                                      TextFormatter.formatDurationText(
-                                        _itineraries.first.duration,
-                                      ),
-                                    ),
-                                child: Row(
+                            child: Column(
+                              children: <Widget>[
+                                Row(
                                   children: [
-                                    Icon(
-                                      Icons.directions_car_outlined,
-                                      color: Theme.of(
-                                        context,
-                                      ).textTheme.displayMedium!.color,
-                                    ),
-                                    SizedBox(width: 8.0),
-                                    Text(
-                                      TextFormatter.formatDurationText(
-                                        _itineraries.first.duration,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ExcludeSemantics(
+                                            child: Text(
+                                              _parkingLocation.name,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          ExcludeSemantics(
+                                            child: Text(
+                                              _parkingLocation.address,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 16),
                                     ),
-                                    SizedBox(width: 6.0),
-                                    Icon(
-                                      Icons.circle,
-                                      size: 6,
-                                      color: Theme.of(
-                                        context,
-                                      ).textTheme.displayMedium!.color,
-                                    ),
-                                    SizedBox(width: 6.0),
-                                    Text(
-                                      TextFormatter.formatDistanceText(
-                                        _itineraries.first,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 16),
+                                    SizedBox(width: 16),
+                                    AccessibleIconButton(
+                                      onTap: () => _toggleFavorite(),
+                                      icon: _isFavorite
+                                          ? Icons.star
+                                          : Icons.star_border,
+                                      semanticLabel: _isFavorite
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.parkingLocationScreenRemoveFromFavoritesButtonSemantic
+                                          : AppLocalizations.of(
+                                              context,
+                                            )!.parkingLocationScreenAddToFavoritesButtonSemantic,
                                     ),
                                   ],
                                 ),
-                              )
-                            : SizedBox.shrink(),
-                        SizedBox(height: 8.0),
-                        Semantics(
-                          excludeSemantics: true,
-                          label: AppLocalizations.of(context)!
-                              .parkingLocationScreenOccupancyStatusSemantic(
-                                TextFormatter.getOccupancyText(
-                                  context,
-                                  _parkingLocation,
+                                SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      flex: 1,
+                                      child: SheetButton(
+                                        icon: Icons.directions_outlined,
+                                        label: AppLocalizations.of(
+                                          context,
+                                        )!.parkingLocationButtonRouteExternal,
+                                        semanticLabel: AppLocalizations.of(
+                                          context,
+                                        )!.parkingLocationScreenRouteExternalButtonSemantic,
+                                        onTap: () {
+                                          _showRouteExternalDialog();
+
+                                          // Analytics event
+                                          MatomoTracker.instance.trackEvent(
+                                            eventInfo: EventInfo(
+                                              category: EventCategory
+                                                  .parkingLocationScreen
+                                                  .toString(),
+                                              action: EventAction
+                                                  .parkingLocationScreenRouteExternalClicked
+                                                  .toString(),
+                                            ),
+                                          );
+                                        },
+                                        shrinkWrap: false,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Flexible(
+                                      flex: 1,
+                                      child: SheetButton(
+                                        icon: Icons.directions_car_outlined,
+                                        label: AppLocalizations.of(
+                                          context,
+                                        )!.parkingLocationButtonStart,
+                                        semanticLabel: AppLocalizations.of(
+                                          context,
+                                        )!.parkingLocationScreenRouteInternalButtonSemantic,
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  RoutingScreen(
+                                                    parkingLocation:
+                                                        _parkingLocation,
+                                                  ),
+                                            ),
+                                          );
+
+                                          // Analytics event
+                                          MatomoTracker.instance.trackEvent(
+                                            eventInfo: EventInfo(
+                                              category: EventCategory
+                                                  .parkingLocationScreen
+                                                  .toString(),
+                                              action: EventAction
+                                                  .parkingLocationScreenRouteInternalClicked
+                                                  .toString(),
+                                            ),
+                                          );
+                                        },
+                                        shrinkWrap: false,
+                                      ),
+                                    ),
+                                    /*SizedBox(width: 8),
+                                    Flexible(
+                                      flex: 2,
+                                      child: SheetButton(
+                                        icon: _isFavorite
+                                            ? Icons.star
+                                            : Icons.star_border,
+                                        label: AppLocalizations.of(
+                                          context,
+                                        )!.parkingLocationButtonFavourite,
+                                        onTap: () => _toggleFavorite(),
+                                        shrinkWrap: false,
+                                      ),
+                                    ),*/
+                                  ],
                                 ),
-                              ),
-                          child: Row(
-                            children: [
-                              WidgetGenerator.getParkingPlaceIcon(
-                                _parkingLocation,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                TextFormatter.getOccupancyText(
-                                  context,
-                                  _parkingLocation,
+                                SizedBox(height: 16),
+                                _itineraries.isNotEmpty
+                                    ? Semantics(
+                                        excludeSemantics: true,
+                                        label: AppLocalizations.of(context)!
+                                            .parkingLocationScreenEstimatedDrivingTimeSemantic(
+                                              TextFormatter.formatDurationText(
+                                                _itineraries.first.duration,
+                                              ),
+                                            ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.directions_car_outlined,
+                                              color: Theme.of(
+                                                context,
+                                              ).textTheme.displayMedium!.color,
+                                            ),
+                                            SizedBox(width: 8.0),
+                                            Text(
+                                              TextFormatter.formatDurationText(
+                                                _itineraries.first.duration,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            SizedBox(width: 6.0),
+                                            Icon(
+                                              Icons.circle,
+                                              size: 6,
+                                              color: Theme.of(
+                                                context,
+                                              ).textTheme.displayMedium!.color,
+                                            ),
+                                            SizedBox(width: 6.0),
+                                            Text(
+                                              TextFormatter.formatDistanceText(
+                                                _itineraries.first,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : SizedBox.shrink(),
+                                SizedBox(height: 8.0),
+                                Semantics(
+                                  excludeSemantics: true,
+                                  label: AppLocalizations.of(context)!
+                                      .parkingLocationScreenOccupancyStatusSemantic(
+                                        TextFormatter.getOccupancyText(
+                                          context,
+                                          _parkingLocation,
+                                        ),
+                                      ),
+                                  child: Row(
+                                    children: [
+                                      WidgetGenerator.getParkingPlaceIcon(
+                                        _parkingLocation,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        TextFormatter.getOccupancyText(
+                                          context,
+                                          _parkingLocation,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
+                    listItems: [],
+                    initSize: orientation == Orientation.portrait ? 0.35 : 0.75,
+                    maxSize: orientation == Orientation.portrait ? 0.35 : 0.75,
                   ),
                 ),
-              ],
+              ),
             ),
-            listItems: [],
-            initSize: 0.35,
-            maxSize: 0.35,
           ),
           SafeArea(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 32, left: 16, right: 16),
-                child: Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(28),
-                  child: Semantics(
-                    label: AppLocalizations.of(
-                      context,
-                    )!.placeScreenSearchBarSemantic(_parkingLocation.name),
-                    excludeSemantics: true,
-                    button: true,
-                    focused: true,
-                    child: InkWell(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Container(
-                        height: 56,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.arrow_back,
-                                color: Theme.of(
-                                  context,
-                                ).textTheme.displayMedium!.color,
+            child: OrientationBuilder(
+              builder: (context, orientation) => Align(
+                alignment: orientation == Orientation.portrait
+                    ? Alignment.topCenter
+                    : Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                  child: Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(28),
+                    child: Semantics(
+                      label: AppLocalizations.of(
+                        context,
+                      )!.placeScreenSearchBarSemantic(_parkingLocation.name),
+                      excludeSemantics: true,
+                      button: true,
+                      focused: true,
+                      child: InkWell(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          height: 56,
+                          width: orientation == Orientation.portrait
+                              ? double.infinity
+                              : MediaQuery.of(context).size.width * 0.5,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.displayMedium!.color,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                               ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            Expanded(
-                              child: Text(
-                                _parkingLocation.name,
-                                style: const TextStyle(fontSize: 16),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
+                              Expanded(
+                                child: Text(
+                                  _parkingLocation.name,
+                                  style: const TextStyle(fontSize: 16),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 16),
-                          ],
+                              SizedBox(width: 16),
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -84,69 +84,77 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           _pageIndex <= 1
-              ? SafeArea(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 32,
-                        left: 16,
-                        right: 16,
-                      ),
-                      child: Semantics(
-                        excludeSemantics: true,
-                        label: AppLocalizations.of(
-                          context,
-                        )!.searchTextFieldHintSemantic,
-                        child: Material(
-                          elevation: _pageIndex == 0 ? 4 : 0,
-                          borderRadius: BorderRadius.circular(28),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const SearchScreen(),
-                                ),
-                              );
+              ? OrientationBuilder(
+                  builder: (context, orientation) => SafeArea(
+                    child: Align(
+                      alignment: orientation == Orientation.portrait
+                          ? Alignment.topCenter
+                          : Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 16,
+                          left: 16,
+                          right: 16,
+                        ),
+                        child: Semantics(
+                          excludeSemantics: true,
+                          label: AppLocalizations.of(
+                            context,
+                          )!.searchTextFieldHintSemantic,
+                          child: Material(
+                            elevation: _pageIndex == 0 ? 4 : 0,
+                            borderRadius: BorderRadius.circular(28),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const SearchScreen(),
+                                  ),
+                                );
 
-                              // Analytics event
-                              MatomoTracker.instance.trackEvent(
-                                eventInfo: EventInfo(
-                                  category: EventCategory.homeMapScreen
-                                      .toString(),
-                                  action: EventAction.homeMapScreenSearchClicked
-                                      .toString(),
+                                // Analytics event
+                                MatomoTracker.instance.trackEvent(
+                                  eventInfo: EventInfo(
+                                    category: EventCategory.homeMapScreen
+                                        .toString(),
+                                    action: EventAction
+                                        .homeMapScreenSearchClicked
+                                        .toString(),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                height: 56,
+                                width: orientation == Orientation.portrait
+                                    ? double.infinity
+                                    : MediaQuery.of(context).size.width * 0.5,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(32),
+                                  color: _pageIndex == 0
+                                      ? Theme.of(context).colorScheme.surface
+                                      : Theme.of(context).colorScheme.tertiary,
                                 ),
-                              );
-                            },
-                            child: Container(
-                              height: 56,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(32),
-                                color: _pageIndex == 0
-                                    ? Theme.of(context).colorScheme.surface
-                                    : Theme.of(context).colorScheme.tertiary,
-                              ),
-                              child: Row(
-                                children: [
-                                  SizedBox(width: 24),
-                                  Icon(
-                                    Icons.search,
-                                    color: Theme.of(
-                                      context,
-                                    ).textTheme.displayMedium!.color,
-                                  ),
-                                  SizedBox(width: 16),
-                                  Expanded(
-                                    child: Text(
-                                      AppLocalizations.of(
+                                child: Row(
+                                  children: [
+                                    SizedBox(width: 24),
+                                    Icon(
+                                      Icons.search,
+                                      color: Theme.of(
                                         context,
-                                      )!.homeSearchButtonHint,
-                                      style: const TextStyle(fontSize: 16),
-                                      overflow: TextOverflow.ellipsis,
+                                      ).textTheme.displayMedium!.color,
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(width: 16),
+                                    Expanded(
+                                      child: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.homeSearchButtonHint,
+                                        style: const TextStyle(fontSize: 16),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -157,97 +165,108 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               : Container(),
           SafeArea(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
-                child: Material(
-                  elevation: _pageIndex == 0 ? 4 : 0,
-                  borderRadius: BorderRadius.circular(64),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(64)),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(64)),
-                      child: NavigationBar(
-                        labelTextStyle:
-                            WidgetStateProperty.resolveWith<TextStyle>((
-                              states,
-                            ) {
-                              if (states.contains(WidgetState.selected)) {
+            child: OrientationBuilder(
+              builder: (context, orientation) => Align(
+                alignment: orientation == Orientation.portrait
+                    ? Alignment.bottomCenter
+                    : Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 16,
+                    left: 16,
+                    right: 16,
+                  ),
+                  child: Material(
+                    elevation: _pageIndex == 0 ? 4 : 0,
+                    borderRadius: BorderRadius.circular(64),
+                    child: Container(
+                      width: orientation == Orientation.portrait
+                          ? double.infinity
+                          : MediaQuery.of(context).size.width * 0.5,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(64)),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(64)),
+                        child: NavigationBar(
+                          labelTextStyle:
+                              WidgetStateProperty.resolveWith<TextStyle>((
+                                states,
+                              ) {
+                                if (states.contains(WidgetState.selected)) {
+                                  return const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  );
+                                }
                                 return const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13,
                                 );
-                              }
-                              return const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              );
-                            }),
-                        backgroundColor: _pageIndex == 0
-                            ? Theme.of(context).colorScheme.surface
-                            : Theme.of(context).colorScheme.tertiary,
-                        selectedIndex: _pageIndex,
-                        onDestinationSelected: (index) => setState(() {
-                          _pageIndex = index;
-                        }),
-                        labelPadding: EdgeInsets.all(4),
-                        height: 72,
-                        destinations: [
-                          NavigationDestination(
-                            icon: Icon(
-                              Icons.place_outlined,
-                              color: Theme.of(
+                              }),
+                          backgroundColor: _pageIndex == 0
+                              ? Theme.of(context).colorScheme.surface
+                              : Theme.of(context).colorScheme.tertiary,
+                          selectedIndex: _pageIndex,
+                          onDestinationSelected: (index) => setState(() {
+                            _pageIndex = index;
+                          }),
+                          labelPadding: EdgeInsets.all(4),
+                          height: 72,
+                          destinations: [
+                            NavigationDestination(
+                              icon: Icon(
+                                Icons.place_outlined,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
+                              ),
+                              selectedIcon: Icon(
+                                Icons.place_rounded,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
+                              ),
+                              label: AppLocalizations.of(
                                 context,
-                              ).textTheme.displayMedium!.color,
+                              )!.homeNavigationMapTitle,
                             ),
-                            selectedIcon: Icon(
-                              Icons.place_rounded,
-                              color: Theme.of(
+                            NavigationDestination(
+                              icon: Icon(
+                                Icons.star_border,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
+                              ),
+                              selectedIcon: Icon(
+                                Icons.star,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
+                              ),
+                              label: AppLocalizations.of(
                                 context,
-                              ).textTheme.displayMedium!.color,
+                              )!.homeNavigationFavouritesTitle,
                             ),
-                            label: AppLocalizations.of(
-                              context,
-                            )!.homeNavigationMapTitle,
-                          ),
-                          NavigationDestination(
-                            icon: Icon(
-                              Icons.star_border,
-                              color: Theme.of(
+                            NavigationDestination(
+                              icon: Icon(
+                                Icons.settings_outlined,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
+                              ),
+                              selectedIcon: Icon(
+                                Icons.settings,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
+                              ),
+                              label: AppLocalizations.of(
                                 context,
-                              ).textTheme.displayMedium!.color,
+                              )!.homeNavigationSettingsTitle,
                             ),
-                            selectedIcon: Icon(
-                              Icons.star,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium!.color,
-                            ),
-                            label: AppLocalizations.of(
-                              context,
-                            )!.homeNavigationFavouritesTitle,
-                          ),
-                          NavigationDestination(
-                            icon: Icon(
-                              Icons.settings_outlined,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium!.color,
-                            ),
-                            selectedIcon: Icon(
-                              Icons.settings,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.displayMedium!.color,
-                            ),
-                            label: AppLocalizations.of(
-                              context,
-                            )!.homeNavigationSettingsTitle,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

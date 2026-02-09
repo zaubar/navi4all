@@ -79,7 +79,7 @@ class _FavoritesScreenState extends State<FavoritesScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 128),
+              SizedBox(height: 96),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Semantics(
@@ -105,9 +105,8 @@ class _FavoritesScreenState extends State<FavoritesScreen>
                                 favouritesController.favorites[index],
                           ),
                         )
-                      : Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
+                      : Center(
+                          child: SingleChildScrollView(
                             child: Semantics(
                               excludeSemantics: true,
                               child: Column(

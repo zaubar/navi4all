@@ -37,48 +37,53 @@ class UserEngagementDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                event.eventTitle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(height: 16),
-            Flexible(
-              child: SingleChildScrollView(
+      child: OrientationBuilder(
+        builder: (context, orientation) => Container(
+          width: orientation == Orientation.portrait
+              ? double.infinity
+              : MediaQuery.of(context).size.width * 0.5,
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.topLeft,
                 child: Text(
-                  event.eventDescription,
-                  style: TextStyle(fontSize: 14),
+                  event.eventTitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
-            SizedBox(height: 32),
-            Row(
-              children: [
-                Expanded(
-                  child: SheetButton(
-                    label: event.declineButtonText,
-                    onTap: () => _handleCancel(context),
+              SizedBox(height: 16),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Text(
+                    event.eventDescription,
+                    style: TextStyle(fontSize: 14),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: SheetButton(
-                    label: event.acceptButtonText,
-                    onTap: () => _handleConfirm(context),
+              ),
+              SizedBox(height: 32),
+              Row(
+                children: [
+                  Expanded(
+                    child: SheetButton(
+                      label: event.declineButtonText,
+                      onTap: () => _handleCancel(context),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: SheetButton(
+                      label: event.acceptButtonText,
+                      onTap: () => _handleConfirm(context),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

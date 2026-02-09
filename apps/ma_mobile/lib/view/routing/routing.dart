@@ -125,108 +125,115 @@ class RoutingState extends State<RoutingScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(32),
             ),
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Row(
-                      children: [
-                        _destination.type == PlaceType.parkingSpot ||
-                                _destination.type == PlaceType.parkingSite
-                            ? WidgetGenerator.getParkingPlaceIcon(_destination)
-                            : Icon(
-                                Icons.place_rounded,
-                                color: SmartRootsColors.maBlueExtraExtraDark,
+            child: OrientationBuilder(
+              builder: (context, orientation) => Container(
+                width: orientation == Orientation.portrait
+                    ? double.infinity
+                    : MediaQuery.of(context).size.width * 0.5,
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Row(
+                        children: [
+                          _destination.type == PlaceType.parkingSpot ||
+                                  _destination.type == PlaceType.parkingSite
+                              ? WidgetGenerator.getParkingPlaceIcon(
+                                  _destination,
+                                )
+                              : Icon(
+                                  Icons.place_rounded,
+                                  color: SmartRootsColors.maBlueExtraExtraDark,
+                                ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.availabilityChangeDialogTitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            AppLocalizations.of(
-                              context,
-                            )!.availabilityChangeDialogTitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        AppLocalizations.of(
+                          context,
+                        )!.availabilityChangeDialogMessage,
+                      ),
+                    ),
+                    SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SheetButton(
+                            label: AppLocalizations.of(
+                              context,
+                            )!.availabilityChangeDialogCancelButton,
+                            onTap: () {
+                              Navigator.of(context).pop();
+
+                              // Analytics event
+                              MatomoTracker.instance.trackEvent(
+                                eventInfo: EventInfo(
+                                  category: EventCategory.routingScreen
+                                      .toString(),
+                                  action: EventAction
+                                      .routingScreenAvailabilityChangeAlternativeSearchCancelled
+                                      .toString(),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: SheetButton(
+                            label: AppLocalizations.of(
+                              context,
+                            )!.availabilityChangeDialogConfirmButton,
+                            onTap: () {
+                              Provider.of<RoutingController>(
+                                context,
+                                listen: false,
+                              ).stopNavigation();
+
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PlaceScreen(place: _destination),
+                                ),
+                              );
+
+                              // Analytics event
+                              MatomoTracker.instance.trackEvent(
+                                eventInfo: EventInfo(
+                                  category: EventCategory.routingScreen
+                                      .toString(),
+                                  action: EventAction
+                                      .routingScreenAvailabilityChangeAlternativeSearchConfirmed
+                                      .toString(),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(height: 24),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      AppLocalizations.of(
-                        context,
-                      )!.availabilityChangeDialogMessage,
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SheetButton(
-                          label: AppLocalizations.of(
-                            context,
-                          )!.availabilityChangeDialogCancelButton,
-                          onTap: () {
-                            Navigator.of(context).pop();
-
-                            // Analytics event
-                            MatomoTracker.instance.trackEvent(
-                              eventInfo: EventInfo(
-                                category: EventCategory.routingScreen
-                                    .toString(),
-                                action: EventAction
-                                    .routingScreenAvailabilityChangeAlternativeSearchCancelled
-                                    .toString(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: SheetButton(
-                          label: AppLocalizations.of(
-                            context,
-                          )!.availabilityChangeDialogConfirmButton,
-                          onTap: () {
-                            Provider.of<RoutingController>(
-                              context,
-                              listen: false,
-                            ).stopNavigation();
-
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    PlaceScreen(place: _destination),
-                              ),
-                            );
-
-                            // Analytics event
-                            MatomoTracker.instance.trackEvent(
-                              eventInfo: EventInfo(
-                                category: EventCategory.routingScreen
-                                    .toString(),
-                                action: EventAction
-                                    .routingScreenAvailabilityChangeAlternativeSearchConfirmed
-                                    .toString(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -245,78 +252,88 @@ class RoutingState extends State<RoutingScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(32),
           ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    AppLocalizations.of(context)!.routingDisclaimerTitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    AppLocalizations.of(context)!.routingDisclaimerMessage,
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
-                SizedBox(height: 32),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SheetButton(
-                        label: AppLocalizations.of(
-                          context,
-                        )!.routingDisclaimerCancelButton,
-                        onTap: () {
-                          disclaimerAccepted = false;
-                          Navigator.of(context).pop();
-
-                          // Analytics event
-                          MatomoTracker.instance.trackEvent(
-                            eventInfo: EventInfo(
-                              category: EventCategory.routingScreen.toString(),
-                              action: EventAction
-                                  .routingScreenDisclaimerRejected
-                                  .toString(),
-                            ),
-                          );
-                        },
+          child: OrientationBuilder(
+            builder: (context, orientation) => Container(
+              width: orientation == Orientation.portrait
+                  ? double.infinity
+                  : MediaQuery.of(context).size.width * 0.5,
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      AppLocalizations.of(context)!.routingDisclaimerTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: SheetButton(
-                        label: AppLocalizations.of(
-                          context,
-                        )!.routingDisclaimerAcceptButton,
-                        onTap: () {
-                          disclaimerAccepted = true;
-                          _toggleNavigationState();
-                          Navigator.of(context).pop();
-
-                          // Analytics event
-                          MatomoTracker.instance.trackEvent(
-                            eventInfo: EventInfo(
-                              category: EventCategory.routingScreen.toString(),
-                              action: EventAction
-                                  .routingScreenDisclaimerAccepted
-                                  .toString(),
-                            ),
-                          );
-                        },
-                      ),
+                  ),
+                  SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      AppLocalizations.of(context)!.routingDisclaimerMessage,
+                      style: TextStyle(fontSize: 14),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SheetButton(
+                          label: AppLocalizations.of(
+                            context,
+                          )!.routingDisclaimerCancelButton,
+                          onTap: () {
+                            disclaimerAccepted = false;
+                            Navigator.of(context).pop();
+
+                            // Analytics event
+                            MatomoTracker.instance.trackEvent(
+                              eventInfo: EventInfo(
+                                category: EventCategory.routingScreen
+                                    .toString(),
+                                action: EventAction
+                                    .routingScreenDisclaimerRejected
+                                    .toString(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: SheetButton(
+                          label: AppLocalizations.of(
+                            context,
+                          )!.routingDisclaimerAcceptButton,
+                          onTap: () {
+                            disclaimerAccepted = true;
+                            _toggleNavigationState();
+                            Navigator.of(context).pop();
+
+                            // Analytics event
+                            MatomoTracker.instance.trackEvent(
+                              eventInfo: EventInfo(
+                                category: EventCategory.routingScreen
+                                    .toString(),
+                                action: EventAction
+                                    .routingScreenDisclaimerAccepted
+                                    .toString(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -623,53 +640,98 @@ class RoutingState extends State<RoutingScreen> {
             excludeSemantics: true,
             child: RoutingMap(destination: _destination),
           ),
-          Consumer<RoutingController>(
-            builder: (context, routingController, _) => Semantics(
-              sortKey: OrdinalSortKey(7),
-              child: SlidingBottomSheet(
-                SizedBox.shrink(),
-                listItems: _processingStatus == ProcessingStatus.completed
-                    ? _legTiles
-                    : null,
-                body:
-                    _processingStatus == ProcessingStatus.processing ||
-                        _processingStatus == ProcessingStatus.error
-                    ? NavigationProcessingTile(
-                        processingStatus: _processingStatus,
-                      )
-                    : SizedBox(height: 140.0),
-                initSize: 0.35,
-                maxSize: 0.7,
+          SafeArea(
+            bottom: false,
+            child: Consumer<RoutingController>(
+              builder: (context, routingController, _) => Semantics(
+                sortKey: OrdinalSortKey(7),
+                child: OrientationBuilder(
+                  builder: (context, orientation) => Align(
+                    alignment: orientation == Orientation.portrait
+                        ? Alignment.bottomCenter
+                        : Alignment.bottomLeft,
+                    child: SizedBox(
+                      width: orientation == Orientation.portrait
+                          ? double.infinity
+                          : MediaQuery.of(context).size.width * 0.5,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: orientation == Orientation.portrait
+                              ? 0.0
+                              : 16.0,
+                        ),
+                        child: SlidingBottomSheet(
+                          listItems:
+                              _processingStatus == ProcessingStatus.completed
+                              ? [
+                                  ..._legTiles,
+                                  orientation == Orientation.portrait
+                                      ? SizedBox(height: 140)
+                                      : SizedBox.shrink(),
+                                ]
+                              : null,
+                          body:
+                              _processingStatus ==
+                                      ProcessingStatus.processing ||
+                                  _processingStatus == ProcessingStatus.error
+                              ? NavigationProcessingTile(
+                                  processingStatus: _processingStatus,
+                                )
+                              : null,
+                          initSize: 0.35,
+                          maxSize:
+                              routingController.navigationStatus ==
+                                  NavigationStatus.navigating
+                              ? 0.75
+                              : 0.6,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Divider(height: 0.0, color: SmartRootsColors.maBlue),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    padding: const EdgeInsets.all(16.0),
-                    child: Material(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                            ),
-                            child: Consumer<NavigationStatsController>(
-                              builder:
-                                  (
-                                    context,
-                                    navigationStatsController,
-                                    _,
-                                  ) => Semantics(
+          OrientationBuilder(
+            builder: (context, orientation) => Align(
+              alignment: orientation == Orientation.portrait
+                  ? Alignment.bottomCenter
+                  : Alignment.bottomRight,
+              child: SafeArea(
+                bottom: orientation == Orientation.portrait ? false : true,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: orientation == Orientation.portrait
+                        ? 0.0
+                        : 16.0,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      orientation == Orientation.portrait
+                          ? Divider(height: 0.0, color: SmartRootsColors.maBlue)
+                          : SizedBox.shrink(),
+                      Container(
+                        width: orientation == Orientation.portrait
+                            ? double.infinity
+                            : MediaQuery.of(context).size.width * 0.4,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: orientation == Orientation.portrait
+                              ? null
+                              : BorderRadius.circular(16.0),
+                        ),
+                        padding: const EdgeInsets.all(16.0),
+                        child: Material(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                ),
+                                child: Consumer<NavigationStatsController>(
+                                  builder: (context, navigationStatsController, _) => Semantics(
                                     excludeSemantics: true,
                                     sortKey: OrdinalSortKey(3),
                                     label:
@@ -739,351 +801,382 @@ class RoutingState extends State<RoutingScreen> {
                                       ],
                                     ),
                                   ),
-                            ),
-                          ),
-                          SizedBox(height: 12.0),
-                          Consumer<RoutingController>(
-                            builder: (context, routingController, _) => Row(
-                              children: [
-                                Expanded(
-                                  child: Semantics(
-                                    sortKey: OrdinalSortKey(4),
-                                    child: SheetButton(
-                                      icon:
-                                          routingController.navigationStatus ==
-                                              NavigationStatus.idle
-                                          ? Icons.play_arrow
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.navigating
-                                          ? Icons.pause
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.arrived
-                                          ? Icons.check
-                                          : Icons.play_arrow,
-                                      label:
-                                          routingController.navigationStatus ==
-                                              NavigationStatus.idle
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationStartButton
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.navigating
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationPauseButton
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.arrived
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationDoneButton
-                                          : AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationResumeButton,
-                                      semanticLabel:
-                                          routingController.navigationStatus ==
-                                              NavigationStatus.idle
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationStartButton
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.navigating
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationPauseButton
-                                          : routingController
-                                                    .navigationStatus ==
-                                                NavigationStatus.arrived
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationDoneButton
-                                          : AppLocalizations.of(
-                                              context,
-                                            )!.routingScreenNavigationResumeButton,
-                                      onTap: () => _toggleNavigationState(),
-                                      shrinkWrap: false,
+                                ),
+                              ),
+                              SizedBox(height: 12.0),
+                              Consumer<RoutingController>(
+                                builder: (context, routingController, _) => Row(
+                                  children: [
+                                    Expanded(
+                                      child: Semantics(
+                                        sortKey: OrdinalSortKey(4),
+                                        child: SheetButton(
+                                          icon:
+                                              routingController
+                                                      .navigationStatus ==
+                                                  NavigationStatus.idle
+                                              ? Icons.play_arrow
+                                              : routingController
+                                                        .navigationStatus ==
+                                                    NavigationStatus.navigating
+                                              ? Icons.pause
+                                              : routingController
+                                                        .navigationStatus ==
+                                                    NavigationStatus.arrived
+                                              ? Icons.check
+                                              : Icons.play_arrow,
+                                          label:
+                                              routingController
+                                                      .navigationStatus ==
+                                                  NavigationStatus.idle
+                                              ? AppLocalizations.of(
+                                                  context,
+                                                )!.routingScreenNavigationStartButton
+                                              : routingController
+                                                        .navigationStatus ==
+                                                    NavigationStatus.navigating
+                                              ? AppLocalizations.of(
+                                                  context,
+                                                )!.routingScreenNavigationPauseButton
+                                              : routingController
+                                                        .navigationStatus ==
+                                                    NavigationStatus.arrived
+                                              ? AppLocalizations.of(
+                                                  context,
+                                                )!.routingScreenNavigationDoneButton
+                                              : AppLocalizations.of(
+                                                  context,
+                                                )!.routingScreenNavigationResumeButton,
+                                          semanticLabel:
+                                              routingController
+                                                      .navigationStatus ==
+                                                  NavigationStatus.idle
+                                              ? AppLocalizations.of(
+                                                  context,
+                                                )!.routingScreenNavigationStartButton
+                                              : routingController
+                                                        .navigationStatus ==
+                                                    NavigationStatus.navigating
+                                              ? AppLocalizations.of(
+                                                  context,
+                                                )!.routingScreenNavigationPauseButton
+                                              : routingController
+                                                        .navigationStatus ==
+                                                    NavigationStatus.arrived
+                                              ? AppLocalizations.of(
+                                                  context,
+                                                )!.routingScreenNavigationDoneButton
+                                              : AppLocalizations.of(
+                                                  context,
+                                                )!.routingScreenNavigationResumeButton,
+                                          onTap: () => _toggleNavigationState(),
+                                          shrinkWrap: false,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(width: 8),
+                                    Semantics(
+                                      sortKey: OrdinalSortKey(5),
+                                      child: AccessibleIconButton(
+                                        icon:
+                                            routingController.audioStatus ==
+                                                AudioStatus.muted
+                                            ? Icons.volume_off
+                                            : Icons.volume_up,
+                                        semanticLabel:
+                                            routingController.audioStatus ==
+                                                AudioStatus.muted
+                                            ? AppLocalizations.of(
+                                                context,
+                                              )!.routeNavigationMuteButtonUnmuteText
+                                            : AppLocalizations.of(
+                                                context,
+                                              )!.routeNavigationMuteButtonMuteText,
+                                        onTap: () => _toggleAudioStatus(),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Semantics(
+                                      sortKey: OrdinalSortKey(6),
+                                      child: AccessibleIconButton(
+                                        icon: Icons.close,
+                                        semanticLabel: AppLocalizations.of(
+                                          context,
+                                        )!.routingScreenExitRoutingButtonSemantic,
+                                        onTap: () {
+                                          routingController.stopNavigation();
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(width: 8),
-                                Semantics(
-                                  sortKey: OrdinalSortKey(5),
-                                  child: AccessibleIconButton(
-                                    icon:
-                                        routingController.audioStatus ==
-                                            AudioStatus.muted
-                                        ? Icons.volume_off
-                                        : Icons.volume_up,
-                                    semanticLabel:
-                                        routingController.audioStatus ==
-                                            AudioStatus.muted
-                                        ? AppLocalizations.of(
-                                            context,
-                                          )!.routeNavigationMuteButtonUnmuteText
-                                        : AppLocalizations.of(
-                                            context,
-                                          )!.routeNavigationMuteButtonMuteText,
-                                    onTap: () => _toggleAudioStatus(),
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                Semantics(
-                                  sortKey: OrdinalSortKey(6),
-                                  child: AccessibleIconButton(
-                                    icon: Icons.close,
-                                    semanticLabel: AppLocalizations.of(
-                                      context,
-                                    )!.routingScreenExitRoutingButtonSemantic,
-                                    onTap: () {
-                                      routingController.stopNavigation();
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                      orientation == Orientation.portrait
+                          ? Container(
+                              height: 32.0,
+                              color: Theme.of(context).colorScheme.surface,
+                            )
+                          : SizedBox.shrink(),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 32, left: 16, right: 16),
-                child: Consumer<RoutingController>(
-                  builder: (context, routingController, _) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Semantics(
-                        label: AppLocalizations.of(context)!
-                            .origDestPickerOriginSemantic(
-                              _origin.id == SmartRootsValues.userLocation
-                                  ? AppLocalizations.of(
-                                      context,
-                                    )!.origDestCurrentLocation
-                                  : _origin.name,
-                            ),
-                        excludeSemantics: true,
-                        button: true,
-                        sortKey: OrdinalSortKey(1),
-                        child:
-                            routingController.navigationStatus !=
-                                NavigationStatus.navigating
-                            ? Material(
-                                elevation: 4,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(16),
-                                  topRight: Radius.circular(16),
-                                ),
-                                child: InkWell(
+          OrientationBuilder(
+            builder: (context, orientation) => Align(
+              alignment: orientation == Orientation.portrait
+                  ? Alignment.topCenter
+                  : Alignment.topLeft,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                  child: Consumer<RoutingController>(
+                    builder: (context, routingController, _) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Semantics(
+                          label: AppLocalizations.of(context)!
+                              .origDestPickerOriginSemantic(
+                                _origin.id == SmartRootsValues.userLocation
+                                    ? AppLocalizations.of(
+                                        context,
+                                      )!.origDestCurrentLocation
+                                    : _origin.name,
+                              ),
+                          excludeSemantics: true,
+                          button: true,
+                          sortKey: OrdinalSortKey(1),
+                          child:
+                              routingController.navigationStatus !=
+                                  NavigationStatus.navigating
+                              ? Material(
+                                  elevation: 4,
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(16),
                                     topRight: Radius.circular(16),
                                   ),
-                                  onTap: () {
-                                    Navigator.of(context)
-                                        .push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const SearchScreen(
-                                                  isSecondarySearch: true,
-                                                  isOriginPlaceSearch: true,
-                                                ),
-                                          ),
-                                        )
-                                        .then((result) {
-                                          if (result is Place) {
-                                            setState(() {
-                                              _origin = result;
-                                              routingController
-                                                  .stopNavigation();
-                                            });
-                                            _fetchItineraries();
-                                          }
-                                        });
-                                  },
-                                  child: Container(
-                                    height: 56,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(16),
-                                        topRight: Radius.circular(16),
-                                      ),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(16),
+                                      topRight: Radius.circular(16),
                                     ),
-                                    child: Row(
-                                      children: [
-                                        SizedBox(width: 16),
-                                        Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: Material(
-                                            elevation: 2.0,
-                                            borderRadius: BorderRadius.circular(
-                                              12.0,
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const SearchScreen(
+                                                    isSecondarySearch: true,
+                                                    isOriginPlaceSearch: true,
+                                                  ),
                                             ),
-                                            child: Container(
-                                              width: 20.0,
-                                              height: 20.0,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: SmartRootsColors
-                                                    .maBlueExtraDark,
-                                                border: Border.all(
-                                                  color:
-                                                      SmartRootsColors.maWhite,
-                                                  width: 3.0,
+                                          )
+                                          .then((result) {
+                                            if (result is Place) {
+                                              setState(() {
+                                                _origin = result;
+                                                routingController
+                                                    .stopNavigation();
+                                              });
+                                              _fetchItineraries();
+                                            }
+                                          });
+                                    },
+                                    child: Container(
+                                      height: 56,
+                                      width: orientation == Orientation.portrait
+                                          ? double.infinity
+                                          : MediaQuery.of(context).size.width *
+                                                0.35,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(16),
+                                          topRight: Radius.circular(16),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(width: 16),
+                                          Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Material(
+                                              elevation: 2.0,
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: Container(
+                                                width: 20.0,
+                                                height: 20.0,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: SmartRootsColors
+                                                      .maBlueExtraDark,
+                                                  border: Border.all(
+                                                    color: SmartRootsColors
+                                                        .maWhite,
+                                                    width: 3.0,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(
-                                            _origin.id ==
-                                                    SmartRootsValues
-                                                        .userLocation
-                                                ? AppLocalizations.of(
-                                                    context,
-                                                  )!.origDestCurrentLocation
-                                                : _origin.name,
-                                            style: const TextStyle(
-                                              fontSize: 16,
+                                          SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              _origin.id ==
+                                                      SmartRootsValues
+                                                          .userLocation
+                                                  ? AppLocalizations.of(
+                                                      context,
+                                                    )!.origDestCurrentLocation
+                                                  : _origin.name,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
                                           ),
-                                        ),
-                                        SizedBox(width: 16),
-                                      ],
+                                          SizedBox(width: 16),
+                                        ],
+                                      ),
                                     ),
                                   ),
+                                )
+                              : SizedBox.shrink(),
+                        ),
+                        routingController.navigationStatus !=
+                                NavigationStatus.navigating
+                            ? SizedBox(
+                                width: orientation == Orientation.portrait
+                                    ? double.infinity
+                                    : MediaQuery.of(context).size.width * 0.35,
+                                child: Divider(
+                                  height: 0,
+                                  color: SmartRootsColors.maBlue,
                                 ),
                               )
                             : SizedBox.shrink(),
-                      ),
-                      routingController.navigationStatus !=
-                              NavigationStatus.navigating
-                          ? Divider(height: 0, color: SmartRootsColors.maBlue)
-                          : SizedBox.shrink(),
-                      Semantics(
-                        label: AppLocalizations.of(context)!
-                            .origDestPickerDestinationSemantic(
-                              _destination.id == SmartRootsValues.userLocation
-                                  ? AppLocalizations.of(
-                                      context,
-                                    )!.origDestCurrentLocation
-                                  : _destination.name,
-                            ),
-                        excludeSemantics: true,
-                        button: false,
-                        sortKey: OrdinalSortKey(2),
-                        child: Material(
-                          elevation: 4,
-                          borderRadius:
-                              routingController.navigationStatus !=
-                                  NavigationStatus.navigating
-                              ? BorderRadius.only(
-                                  bottomLeft: Radius.circular(16),
-                                  bottomRight: Radius.circular(16),
-                                )
-                              : BorderRadius.circular(64),
-                          child: InkWell(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(16),
-                              bottomRight: Radius.circular(16),
-                            ),
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const SearchScreen(
-                                        isSecondarySearch: true,
-                                        isOriginPlaceSearch: false,
+                        Semantics(
+                          label: AppLocalizations.of(context)!
+                              .origDestPickerDestinationSemantic(
+                                _destination.id == SmartRootsValues.userLocation
+                                    ? AppLocalizations.of(
+                                        context,
+                                      )!.origDestCurrentLocation
+                                    : _destination.name,
+                              ),
+                          excludeSemantics: true,
+                          button: false,
+                          sortKey: OrdinalSortKey(2),
+                          child: Material(
+                            elevation: 4,
+                            borderRadius:
+                                routingController.navigationStatus !=
+                                    NavigationStatus.navigating
+                                ? BorderRadius.only(
+                                    bottomLeft: Radius.circular(16),
+                                    bottomRight: Radius.circular(16),
+                                  )
+                                : BorderRadius.circular(64),
+                            child: InkWell(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(16),
+                                bottomRight: Radius.circular(16),
+                              ),
+                              onTap: () {
+                                Navigator.of(context)
+                                    .push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const SearchScreen(
+                                              isSecondarySearch: true,
+                                              isOriginPlaceSearch: false,
+                                            ),
+                                      ),
+                                    )
+                                    .then((result) {
+                                      if (result is Place) {
+                                        setState(() {
+                                          _destination = result;
+                                          routingController.stopNavigation();
+                                        });
+                                        _fetchItineraries();
+                                      }
+                                    });
+                              },
+                              child: Container(
+                                height: 56,
+                                width: orientation == Orientation.portrait
+                                    ? double.infinity
+                                    : MediaQuery.of(context).size.width * 0.35,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft:
+                                        routingController.navigationStatus !=
+                                            NavigationStatus.navigating
+                                        ? Radius.circular(0)
+                                        : Radius.circular(64),
+                                    topRight:
+                                        routingController.navigationStatus !=
+                                            NavigationStatus.navigating
+                                        ? Radius.circular(0)
+                                        : Radius.circular(64),
+                                    bottomLeft:
+                                        routingController.navigationStatus !=
+                                            NavigationStatus.navigating
+                                        ? Radius.circular(16)
+                                        : Radius.circular(64),
+                                    bottomRight:
+                                        routingController.navigationStatus !=
+                                            NavigationStatus.navigating
+                                        ? Radius.circular(16)
+                                        : Radius.circular(64),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    SizedBox(width: 16),
+                                    _destination.type ==
+                                                PlaceType.parkingSpot ||
+                                            _destination.type ==
+                                                PlaceType.parkingSite
+                                        ? WidgetGenerator.getParkingPlaceIcon(
+                                            _destination,
+                                          )
+                                        : Icon(
+                                            Icons.place_rounded,
+                                            color: SmartRootsColors
+                                                .maBlueExtraExtraDark,
+                                          ),
+                                    SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        _destination.id ==
+                                                SmartRootsValues.userLocation
+                                            ? AppLocalizations.of(
+                                                context,
+                                              )!.origDestCurrentLocation
+                                            : _destination.name,
+                                        style: const TextStyle(fontSize: 16),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                       ),
                                     ),
-                                  )
-                                  .then((result) {
-                                    if (result is Place) {
-                                      setState(() {
-                                        _destination = result;
-                                        routingController.stopNavigation();
-                                      });
-                                      _fetchItineraries();
-                                    }
-                                  });
-                            },
-                            child: Container(
-                              height: 56,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                  topLeft:
-                                      routingController.navigationStatus !=
-                                          NavigationStatus.navigating
-                                      ? Radius.circular(0)
-                                      : Radius.circular(64),
-                                  topRight:
-                                      routingController.navigationStatus !=
-                                          NavigationStatus.navigating
-                                      ? Radius.circular(0)
-                                      : Radius.circular(64),
-                                  bottomLeft:
-                                      routingController.navigationStatus !=
-                                          NavigationStatus.navigating
-                                      ? Radius.circular(16)
-                                      : Radius.circular(64),
-                                  bottomRight:
-                                      routingController.navigationStatus !=
-                                          NavigationStatus.navigating
-                                      ? Radius.circular(16)
-                                      : Radius.circular(64),
+                                    SizedBox(width: 16),
+                                  ],
                                 ),
-                              ),
-                              child: Row(
-                                children: [
-                                  SizedBox(width: 16),
-                                  _destination.type == PlaceType.parkingSpot ||
-                                          _destination.type ==
-                                              PlaceType.parkingSite
-                                      ? WidgetGenerator.getParkingPlaceIcon(
-                                          _destination,
-                                        )
-                                      : Icon(
-                                          Icons.place_rounded,
-                                          color: SmartRootsColors
-                                              .maBlueExtraExtraDark,
-                                        ),
-                                  SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      _destination.id ==
-                                              SmartRootsValues.userLocation
-                                          ? AppLocalizations.of(
-                                              context,
-                                            )!.origDestCurrentLocation
-                                          : _destination.name,
-                                      style: const TextStyle(fontSize: 16),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                  SizedBox(width: 16),
-                                ],
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

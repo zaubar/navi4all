@@ -5,6 +5,7 @@ import 'package:matomo_tracker/matomo_tracker.dart';
 import 'package:smartroots/core/analytics/events.dart';
 import 'package:smartroots/core/config.dart';
 import 'package:smartroots/core/persistence/preference_helper.dart';
+import 'package:smartroots/core/theme/colors.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 import 'package:smartroots/view/common/sliding_bottom_sheet.dart';
@@ -139,120 +140,150 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
             label: AppLocalizations.of(
               context,
             )!.placeScreenSemantic(_parkingLocations.length, _selectedRadius),
-            child: SlidingBottomSheet(
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 24.0,
-                      ),
-                      child: Column(
+            child: OrientationBuilder(
+              builder: (context, orientation) => SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: orientation == Orientation.portrait ? 0 : 16.0,
+                  ),
+                  child: SizedBox(
+                    width: orientation == Orientation.portrait
+                        ? double.infinity
+                        : MediaQuery.of(context).size.width * 0.5,
+                    child: SlidingBottomSheet(
+                      stickyHeader: Row(
                         children: <Widget>[
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Semantics(
-                              excludeSemantics: true,
-                              child: Text(
-                                widget.place.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16.0,
+                                horizontal: 24.0,
                               ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Semantics(
-                              excludeSemantics: true,
-                              child: Text(
-                                widget.place.description,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: SheetButton(
-                              label: AppLocalizations.of(
-                                context,
-                              )!.placeScreenChangeRadiusButton,
-                              semanticLabel: AppLocalizations.of(context)!
-                                  .placeScreenSearchRadiusButtonSemantic(
-                                    _selectedRadius,
+                              child: Column(
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Semantics(
+                                      excludeSemantics: true,
+                                      child: Text(
+                                        widget.place.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                              onTap: () => _changeRadiusOnTap(),
-                              shrinkWrap: true,
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Semantics(
+                                      excludeSemantics: true,
+                                      child: Text(
+                                        widget.place.description,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 16),
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: SheetButton(
+                                      label: AppLocalizations.of(
+                                        context,
+                                      )!.placeScreenChangeRadiusButton,
+                                      semanticLabel:
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.placeScreenSearchRadiusButtonSemantic(
+                                            _selectedRadius,
+                                          ),
+                                      onTap: () => _changeRadiusOnTap(),
+                                      shrinkWrap: true,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
+                      listItems: [
+                        for (Place parkingLocation in _parkingLocations)
+                          PlaceListItem(
+                            place: widget.place,
+                            parkingLocation: parkingLocation,
+                          ),
+                      ],
+                      initSize: orientation == Orientation.portrait
+                          ? 0.45
+                          : 0.75,
+                      maxSize: orientation == Orientation.portrait
+                          ? 0.85
+                          : 0.75,
                     ),
                   ),
-                ],
+                ),
               ),
-              listItems: [
-                for (Place parkingLocation in _parkingLocations)
-                  PlaceListItem(
-                    place: widget.place,
-                    parkingLocation: parkingLocation,
-                  ),
-              ],
             ),
           ),
-          SafeArea(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 32, left: 16, right: 16),
-                child: Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(28),
-                  child: Semantics(
-                    label: AppLocalizations.of(
-                      context,
-                    )!.placeScreenSearchBarSemantic(widget.place.name),
-                    excludeSemantics: true,
-                    button: true,
-                    focused: true,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        height: 56,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(32),
-                        ),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.arrow_back,
-                                color: Theme.of(
-                                  context,
-                                ).textTheme.displayMedium!.color,
+          OrientationBuilder(
+            builder: (context, orientation) => SafeArea(
+              child: Align(
+                alignment: orientation == Orientation.portrait
+                    ? Alignment.topCenter
+                    : Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+                  child: Material(
+                    elevation: 4,
+                    borderRadius: BorderRadius.circular(28),
+                    child: Semantics(
+                      label: AppLocalizations.of(
+                        context,
+                      )!.placeScreenSearchBarSemantic(widget.place.name),
+                      excludeSemantics: true,
+                      button: true,
+                      focused: true,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          height: 56,
+                          width: orientation == Orientation.portrait
+                              ? double.infinity
+                              : MediaQuery.of(context).size.width * 0.5,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.displayMedium!.color,
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                               ),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            Expanded(
-                              child: Text(
-                                widget.place.name,
-                                style: const TextStyle(fontSize: 16),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
+                              Expanded(
+                                child: Text(
+                                  widget.place.name,
+                                  style: const TextStyle(fontSize: 16),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 16),
-                          ],
+                              SizedBox(width: 16),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -294,54 +325,64 @@ class PlaceListItem extends StatelessWidget {
           TextFormatter.getOccupancyText(context, parkingLocation),
         ),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Row(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
                   children: [
-                    Text(
-                      parkingLocation.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.directions_car_outlined,
-                          color: Theme.of(
-                            context,
-                          ).textTheme.displayMedium!.color,
-                          size: 20,
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            '',
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            parkingLocation.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.directions_car_outlined,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.displayMedium!.color,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  '',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
+                    SizedBox(width: 16),
+                    Text(
+                      TextFormatter.getOccupancyText(context, parkingLocation),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(width: 8),
+                    WidgetGenerator.getParkingPlaceIcon(parkingLocation),
                   ],
                 ),
               ),
-              SizedBox(width: 16),
-              Text(
-                TextFormatter.getOccupancyText(context, parkingLocation),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 16),
-              ),
-              SizedBox(width: 8),
-              WidgetGenerator.getParkingPlaceIcon(parkingLocation),
+              SizedBox(height: 16),
+              Divider(color: SmartRootsColors.maBlue, height: 0.0),
             ],
           ),
         ),

@@ -16,11 +16,7 @@ import 'package:matomo_tracker/matomo_tracker.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Only portrait mode is currently supported
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]).then((_) => runApp(SmartRootsApp()));
+  runApp(SmartRootsApp());
 
   // Initialize Matomo analytics
   MatomoTracker.instance.initialize(

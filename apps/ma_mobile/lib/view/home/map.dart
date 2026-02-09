@@ -175,86 +175,101 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
             child: Semantics(
               label: AppLocalizations.of(context)!.homeChangeBaseMapTitle,
               focused: true,
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Semantics(
-                        excludeSemantics: true,
-                        child: Text(
-                          AppLocalizations.of(context)!.homeChangeBaseMapTitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+              child: OrientationBuilder(
+                builder: (context, orientation) => Container(
+                  width: orientation == Orientation.portrait
+                      ? double.infinity
+                      : MediaQuery.of(context).size.width * 0.5,
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Semantics(
+                          excludeSemantics: true,
+                          child: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.homeChangeBaseMapTitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 16),
-                    Column(
-                      children: [
-                        SelectionTile(
-                          title: getBaseMapStyleTitle(
-                            context,
-                            BaseMapStyle.light,
-                          ),
-                          isSelected:
-                              selectedBaseMapStyle == BaseMapStyle.light,
-                          leadingImage: 'assets/base_map_light_thumbnail.png',
-                          onTap: () {
-                            _setNewBaseMapStyle(BaseMapStyle.light);
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        SizedBox(height: 8),
-                        SelectionTile(
-                          title: getBaseMapStyleTitle(
-                            context,
-                            BaseMapStyle.dark,
-                          ),
-                          isSelected: selectedBaseMapStyle == BaseMapStyle.dark,
-                          leadingImage: 'assets/base_map_dark_thumbnail.png',
-                          onTap: () {
-                            _setNewBaseMapStyle(BaseMapStyle.dark);
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        SizedBox(height: 8),
-                        SelectionTile(
-                          title: getBaseMapStyleTitle(
-                            context,
-                            BaseMapStyle.satellite,
-                          ),
-                          isSelected:
-                              selectedBaseMapStyle == BaseMapStyle.satellite,
-                          leadingImage:
-                              'assets/base_map_satellite_thumbnail.png',
-                          onTap: () {
-                            _setNewBaseMapStyle(BaseMapStyle.satellite);
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SheetButton(
-                            label: AppLocalizations.of(
-                              context,
-                            )!.placeScreenChangeRadiusCancel,
-                            onTap: () => Navigator.of(context).pop(),
+                      SizedBox(height: 16),
+                      Flexible(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SelectionTile(
+                                title: getBaseMapStyleTitle(
+                                  context,
+                                  BaseMapStyle.light,
+                                ),
+                                isSelected:
+                                    selectedBaseMapStyle == BaseMapStyle.light,
+                                leadingImage:
+                                    'assets/base_map_light_thumbnail.png',
+                                onTap: () {
+                                  _setNewBaseMapStyle(BaseMapStyle.light);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              SizedBox(height: 8),
+                              SelectionTile(
+                                title: getBaseMapStyleTitle(
+                                  context,
+                                  BaseMapStyle.dark,
+                                ),
+                                isSelected:
+                                    selectedBaseMapStyle == BaseMapStyle.dark,
+                                leadingImage:
+                                    'assets/base_map_dark_thumbnail.png',
+                                onTap: () {
+                                  _setNewBaseMapStyle(BaseMapStyle.dark);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              SizedBox(height: 8),
+                              SelectionTile(
+                                title: getBaseMapStyleTitle(
+                                  context,
+                                  BaseMapStyle.satellite,
+                                ),
+                                isSelected:
+                                    selectedBaseMapStyle ==
+                                    BaseMapStyle.satellite,
+                                leadingImage:
+                                    'assets/base_map_satellite_thumbnail.png',
+                                onTap: () {
+                                  _setNewBaseMapStyle(BaseMapStyle.satellite);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SheetButton(
+                              label: AppLocalizations.of(
+                                context,
+                              )!.placeScreenChangeRadiusCancel,
+                              onTap: () => Navigator.of(context).pop(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
