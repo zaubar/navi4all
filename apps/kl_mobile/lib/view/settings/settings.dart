@@ -161,7 +161,10 @@ class SettingsScreen extends StatelessWidget {
           focused: true,
           label: AppLocalizations.of(context)!.settingsScreenSemantic,
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

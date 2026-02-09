@@ -6,11 +6,9 @@ import 'package:navi4all/core/theme/icons.dart';
 import 'package:navi4all/view/routing/rerouting_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:navi4all/controllers/routing_controller.dart';
-import 'package:navi4all/core/theme/colors.dart';
 import 'package:navi4all/core/theme/values.dart';
 import 'package:navi4all/l10n/app_localizations.dart';
 import 'package:navi4all/schemas/routing/audio_stage.dart';
-import 'package:navi4all/schemas/routing/coordinates.dart';
 import 'package:navi4all/view/common/accessible_icon_button.dart';
 import 'package:navi4all/view/routing/leg_tile.dart';
 import 'package:navi4all/view/routing/map.dart';
@@ -24,6 +22,7 @@ import 'package:navi4all/schemas/routing/place.dart';
 import 'package:navi4all/core/utils.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:navi4all/schemas/routing/leg.dart' as leg_schema;
+import 'package:vibration/vibration.dart';
 
 class RoutingScreen extends StatefulWidget {
   final Place originPlace;
@@ -379,6 +378,9 @@ class RoutingState extends State<RoutingScreen> {
         stepAnnouncement +=
             '${AppLocalizations.of(context)!.navigationStepDistanceToActionMetres(TextFormatter.formatMetersDistanceFromMeters(_navigationAudioController.instructionStep!.distance).toString())}. ';
       }
+    } else {
+      // Haptic feedback to indicate action
+      Vibration.hasVibrator().then((_) => Vibration.vibrate(duration: 1000));
     }
     stepAnnouncement += _getStepVoiceInstruction(
       _navigationAudioController.instructionStep!,
@@ -652,7 +654,7 @@ class RoutingState extends State<RoutingScreen> {
                                 children: [
                                   SizedBox(width: 16),
                                   Icon(
-                                    Icons.directions,
+                                    Icons.navigation,
                                     color: Theme.of(
                                       context,
                                     ).textTheme.displayMedium?.color,
@@ -699,6 +701,7 @@ class NavigationProcessingTile extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
     child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
           processingStatus == ProcessingStatus.error

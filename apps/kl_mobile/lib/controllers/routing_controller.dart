@@ -336,13 +336,6 @@ class RoutingController extends ChangeNotifier {
     // Dynamically scale the snapping threshold based on position accuracy
     accuracyFactor = max(1.0, position.accuracy / 10.0);
 
-    // Haptic feedback to indicate navigation is ongoing
-    if (lastVibrate == null ||
-        lastVibrate!.difference(position.timestamp).inSeconds.abs() >= 5) {
-      lastVibrate = position.timestamp;
-      Vibration.hasVibrator().then((_) => Vibration.vibrate(duration: 100));
-    }
-
     // Perform leg and step tracking
     for (leg_schema.LegDetailed leg in _actionTrail.keys) {
       // Ensure leg is active or immediately after active leg
@@ -423,6 +416,13 @@ class RoutingController extends ChangeNotifier {
     if (snappedPosition != null) {
       _isCurrentPositionSnapped = true;
       _currentPosition = snappedPosition;
+
+      // Haptic feedback to indicate user is on path
+      if (lastVibrate == null ||
+          lastVibrate!.difference(position.timestamp).inSeconds.abs() >= 5) {
+        lastVibrate = position.timestamp;
+        Vibration.hasVibrator().then((_) => Vibration.vibrate(duration: 100));
+      }
     }
 
     // Check if user is digressing
@@ -513,18 +513,41 @@ class RoutingController extends ChangeNotifier {
 
               _state = RoutingControllerState.navigating;
               notifyListeners();
+
+              // Haptic feedback to indicate resolved rerouting
+              Vibration.hasVibrator().then(
+                (_) => Vibration.vibrate(pattern: [1000, 500, 1000, 500]),
+              );
             } else {
               _state = RoutingControllerState.digressing;
               notifyListeners();
+
+              // Haptic feedback to indicate unresolved rerouting
+              Vibration.hasVibrator().then(
+                (_) => Vibration.vibrate(
+                  pattern: [1000, 500, 1000, 500, 1000, 500],
+                ),
+              );
             }
           },
           onError: (_) {
             _state = RoutingControllerState.digressing;
             notifyListeners();
+
+            // Haptic feedback to indicate unresolved rerouting
+            Vibration.hasVibrator().then(
+              (_) =>
+                  Vibration.vibrate(pattern: [1000, 500, 1000, 500, 1000, 500]),
+            );
           },
         );
       } else {
         _state = RoutingControllerState.digressing;
+
+        // Haptic feedback to indicate unresolved rerouting
+        Vibration.hasVibrator().then(
+          (_) => Vibration.vibrate(pattern: [1000, 500, 1000, 500, 1000, 500]),
+        );
       }
     } else {
       _state = RoutingControllerState.navigating;
@@ -537,6 +560,9 @@ class RoutingController extends ChangeNotifier {
       _state = RoutingControllerState.arrived;
       _navigationStatus = NavigationStatus.arrived;
       _unsubscribeFromLocationStream();
+
+      // Haptic feedback to indicate arrival
+      Vibration.hasVibrator().then((_) => Vibration.vibrate(duration: 1000));
     }
 
     notifyListeners();
