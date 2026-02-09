@@ -46,7 +46,7 @@ class SettingsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 32),
+              SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Semantics(
@@ -59,7 +59,6 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 16),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.all(16),
