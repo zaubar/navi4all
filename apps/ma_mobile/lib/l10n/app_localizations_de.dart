@@ -93,7 +93,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingNavigationGuidanceTitle => 'Navigationsanleitung';
 
   @override
-  String get onboardingNavigationGuidanceSubtitle => 'Die Navigationsanleitung wird pausiert, wenn Sie Ihr Gerät sperren. Um die Anleitung weiterhin zu erhalten, halten Sie Ihr Gerät entsperrt.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
+  String get onboardingNavigationGuidanceSubtitleAndroid => 'Um weiterhin Navigationsanweisungen zu erhalten, wenn Ihr Gerät gesperrt ist, erlauben Sie Benachrichtigungen von Park-Stark.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
+
+  @override
+  String get onboardingNavigationGuidanceSubtitleIos => 'Die Navigationsanleitung wird pausiert, wenn Sie Ihr Gerät sperren. Um die Anleitung weiterhin zu erhalten, halten Sie Ihr Gerät entsperrt.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
 
   @override
   String get onboardingFinishTitle => 'Perfekt! Sie sind startbereit.';

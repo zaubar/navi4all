@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:navi4all/controllers/theme_controller.dart';
 import 'package:navi4all/core/persistence/preference_helper.dart';
@@ -9,6 +10,7 @@ import 'package:navi4all/view/common/accessible_button.dart';
 import 'package:navi4all/view/home/home.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:navi4all/core/theme/profile_mode.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -20,6 +22,13 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
+  final List<Widget> _pages = const [
+    _WelcomeScreen(),
+    _ProfileSelectionScreen(),
+    _UserLocationScreen(),
+    _NavigationGuidanceScreen(),
+    _FinishScreen(),
+  ];
   int _currentPage = 0;
 
   @override
@@ -29,9 +38,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _nextPage() async {
-    if (_currentPage == 2) {
+    if (_pages[_currentPage] is _UserLocationScreen) {
       await _requestLocationPermission();
-    } else if (_currentPage >= 3) {
+    } else if (_pages[_currentPage] is _NavigationGuidanceScreen &&
+        defaultTargetPlatform == TargetPlatform.android) {
+      PermissionStatus notificationStatus =
+          await Permission.notification.status;
+      if (notificationStatus != PermissionStatus.granted) {
+        await Permission.notification.request();
+      }
+    } else if (_pages[_currentPage] is _FinishScreen) {
       PreferenceHelper.setOnboardingComplete(true);
       switch (await PreferenceHelper.getProfileMode()) {
         case ProfileMode.blind:
@@ -75,12 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               onPageChanged: (index) {
                 setState(() => _currentPage = index);
               },
-              children: const [
-                _WelcomeScreen(),
-                _ProfileSelectionScreen(),
-                _UserLocationScreen(),
-                _FinishScreen(),
-              ],
+              children: _pages,
             ),
           ),
           Row(
@@ -220,6 +231,46 @@ class _ProfileSelectionScreenState extends State<_ProfileSelectionScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavigationGuidanceScreen extends StatelessWidget {
+  const _NavigationGuidanceScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.onboardingNavigationGuidanceTitle,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                defaultTargetPlatform == TargetPlatform.android
+                    ? AppLocalizations.of(
+                        context,
+                      )!.onboardingNavigationGuidanceSubtitleAndroid
+                    : AppLocalizations.of(
+                        context,
+                      )!.onboardingNavigationGuidanceSubtitleIos,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+            ],
+          ),
         ),
       ),
     );

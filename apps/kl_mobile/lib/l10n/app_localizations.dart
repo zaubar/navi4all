@@ -215,6 +215,24 @@ abstract class AppLocalizations {
   /// **'This is necessary for search and navigation to work correctly.'**
   String get onboardingUserLocationSubtitle;
 
+  /// No description provided for @onboardingNavigationGuidanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation guidance'**
+  String get onboardingNavigationGuidanceTitle;
+
+  /// No description provided for @onboardingNavigationGuidanceSubtitleAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'In order to continue receiving navigation guidance when your device is locked, allow notifications from Park-Stark.\n\nTo customise navigation voice settings, visit your device\'s sound or accessibility settings.'**
+  String get onboardingNavigationGuidanceSubtitleAndroid;
+
+  /// No description provided for @onboardingNavigationGuidanceSubtitleIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation guidance will pause if you lock your device. To continue receiving guidance, keep your device unlocked.\n\nTo customise navigation voice settings, visit your device\'s sound or accessibility settings.'**
+  String get onboardingNavigationGuidanceSubtitleIos;
+
   /// No description provided for @onboardingFinishTitle.
   ///
   /// In en, this message translates to:

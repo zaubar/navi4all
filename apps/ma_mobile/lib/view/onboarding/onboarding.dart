@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:smartroots/core/persistence/preference_helper.dart';
 import 'package:smartroots/core/theme/values.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
@@ -36,7 +38,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _nextPage() async {
     if (_pages[_currentPage] is _UserLocationScreen) {
       await _requestLocationPermission();
-    } else if (_currentPage >= _pages.length - 1) {
+    } else if (_pages[_currentPage] is _NavigationGuidanceScreen &&
+        defaultTargetPlatform == TargetPlatform.android) {
+      PermissionStatus notificationStatus =
+          await Permission.notification.status;
+      if (notificationStatus != PermissionStatus.granted) {
+        await Permission.notification.request();
+      }
+    } else if (_pages[_currentPage] is _FinishScreen) {
       PreferenceHelper.setOnboardingComplete(true);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const HomeScreen()),
@@ -376,9 +385,13 @@ class _NavigationGuidanceScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                AppLocalizations.of(
-                  context,
-                )!.onboardingNavigationGuidanceSubtitle,
+                defaultTargetPlatform == TargetPlatform.android
+                    ? AppLocalizations.of(
+                        context,
+                      )!.onboardingNavigationGuidanceSubtitleAndroid
+                    : AppLocalizations.of(
+                        context,
+                      )!.onboardingNavigationGuidanceSubtitleIos,
                 style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ],
