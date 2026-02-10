@@ -704,4 +704,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String routingScreenLegTransitDirection(String direction) {
     return 'towards\n$direction';
   }
+
+  @override
+  String get routingScreenNotificationChannel => 'Park-Stark Navigation';
+
+  @override
+  String get routingScreenNotificationDescription => 'Navigating to your destination.';
 }

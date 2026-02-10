@@ -1301,6 +1301,12 @@ abstract class AppLocalizations {
   /// **'towards\n{direction}'**
   String routingScreenLegTransitDirection(String direction);
 
+  /// No description provided for @routingScreenNotificationChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Navi4All Navigation'**
+  String get routingScreenNotificationChannel;
+
   /// No description provided for @routingScreenNotificationDescription.
   ///
   /// In en, this message translates to:

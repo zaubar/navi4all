@@ -222,9 +222,13 @@ class POIParkingService {
     if (item["has_realtime_data"] == true) {
       if (item.containsKey('realtime_capacity_disabled')) {
         capacityDisabled = item['realtime_capacity_disabled'];
-      }
-      if (item.containsKey('realtime_free_capacity_disabled')) {
-        freeCapacityDisabled = item['realtime_free_capacity_disabled'];
+
+        if (item.containsKey('realtime_free_capacity_disabled')) {
+          freeCapacityDisabled = item['realtime_free_capacity_disabled'];
+        }
+      } else if (item.containsKey('capacity_disabled')) {
+        capacityDisabled = item['capacity_disabled'];
+        attributes["has_realtime_data"] = false;
       }
     } else {
       if (item.containsKey('capacity_disabled')) {

@@ -171,13 +171,6 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
       setState(() {
         _processingStatus = ProcessingStatus.error;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.errorUnableToFetchDrivingTime,
-          ),
-        ),
-      );
     }
   }
 

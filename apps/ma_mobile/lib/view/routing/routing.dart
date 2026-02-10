@@ -18,6 +18,7 @@ import 'package:smartroots/view/routing/leg_tile.dart';
 import 'package:smartroots/view/routing/map.dart';
 import 'package:smartroots/view/common/sliding_bottom_sheet.dart';
 import 'package:smartroots/view/common/sheet_button.dart';
+import 'package:smartroots/view/routing/rerouting_dialog.dart';
 import 'package:smartroots/view/search/search.dart';
 import 'package:smartroots/schemas/routing/itinerary.dart';
 import 'package:smartroots/core/processing_status.dart';
@@ -447,13 +448,6 @@ class RoutingState extends State<RoutingScreen> {
       setState(() {
         _processingStatus = ProcessingStatus.error;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.errorUnableToFetchItineraries,
-          ),
-        ),
-      );
     }
   }
 
@@ -477,13 +471,6 @@ class RoutingState extends State<RoutingScreen> {
       setState(() {
         _processingStatus = ProcessingStatus.error;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.errorUnableToFetchItineraries,
-          ),
-        ),
-      );
     }
   }
 
@@ -502,13 +489,13 @@ class RoutingState extends State<RoutingScreen> {
         Provider.of<RoutingController>(
           context,
           listen: false,
-        ).startNavigation();
+        ).startNavigation(context);
         break;
       case NavigationStatus.paused:
         Provider.of<RoutingController>(
           context,
           listen: false,
-        ).resumeNavigation();
+        ).resumeNavigation(context);
         break;
       case NavigationStatus.navigating:
         Provider.of<RoutingController>(
@@ -535,7 +522,7 @@ class RoutingState extends State<RoutingScreen> {
     }
   }
 
-  Future<void> _watchNavigationDigressingState() async {
+  void _watchNavigationDigressingState() {
     // Check if user is digressing
     if (_navigationDigressingController.routingControllerState ==
         RoutingControllerState.digressing) {
@@ -544,7 +531,6 @@ class RoutingState extends State<RoutingScreen> {
         AppLocalizations.of(context)!.routingScreenReroutingDialogTitle,
       );
 
-      // Attempt to reroute automatically
       // Stop navigation
       RoutingController routingController = Provider.of<RoutingController>(
         context,
@@ -552,11 +538,26 @@ class RoutingState extends State<RoutingScreen> {
       );
       routingController.stopNavigation();
 
-      // Prepare navigation with new itinerary
-      await _fetchItineraries();
+      // Show rerouting dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return ReroutingDialog(
+            onCancel: () {
+              Navigator.of(context).pop();
+            },
+            onConfirm: () {
+              Navigator.of(context).pop();
 
-      // Restart navigation
-      routingController.startNavigation();
+              // Attempt to fetch new itineraries
+              _fetchItineraries();
+
+              Navigator.of(context).pop();
+            },
+          );
+        },
+      );
     }
   }
 
@@ -666,7 +667,7 @@ class RoutingState extends State<RoutingScreen> {
                               ? [
                                   ..._legTiles,
                                   orientation == Orientation.portrait
-                                      ? SizedBox(height: 140)
+                                      ? SizedBox(height: 132)
                                       : SizedBox.shrink(),
                                 ]
                               : null,
@@ -683,7 +684,9 @@ class RoutingState extends State<RoutingScreen> {
                               routingController.navigationStatus ==
                                   NavigationStatus.navigating
                               ? 0.75
-                              : 0.6,
+                              : orientation == Orientation.portrait
+                              ? 0.75
+                              : 0.55,
                         ),
                       ),
                     ),
@@ -714,14 +717,17 @@ class RoutingState extends State<RoutingScreen> {
                       Container(
                         width: orientation == Orientation.portrait
                             ? double.infinity
-                            : MediaQuery.of(context).size.width * 0.4,
+                            : MediaQuery.of(context).size.width * 0.35,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: orientation == Orientation.portrait
                               ? null
                               : BorderRadius.circular(16.0),
                         ),
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12.0,
+                          horizontal: 16.0,
+                        ),
                         child: Material(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -918,7 +924,7 @@ class RoutingState extends State<RoutingScreen> {
                       ),
                       orientation == Orientation.portrait
                           ? Container(
-                              height: 32.0,
+                              height: 16.0,
                               color: Theme.of(context).colorScheme.surface,
                             )
                           : SizedBox.shrink(),
@@ -1195,7 +1201,7 @@ class NavigationProcessingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
     child: Column(
       children: [
         Icon(
@@ -1212,7 +1218,7 @@ class NavigationProcessingTile extends StatelessWidget {
               : AppLocalizations.of(
                   context,
                 )!.navigationGettingDrivingDirections,
-          style: const TextStyle(fontSize: 18, color: SmartRootsColors.maBlue),
+          style: const TextStyle(fontSize: 16, color: SmartRootsColors.maBlue),
         ),
       ],
     ),

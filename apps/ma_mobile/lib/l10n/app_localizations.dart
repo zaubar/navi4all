@@ -1348,6 +1348,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'towards\n{direction}'**
   String routingScreenLegTransitDirection(String direction);
+
+  /// No description provided for @routingScreenNotificationChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Park-Stark Navigation'**
+  String get routingScreenNotificationChannel;
+
+  /// No description provided for @routingScreenNotificationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigating to your destination.'**
+  String get routingScreenNotificationDescription;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

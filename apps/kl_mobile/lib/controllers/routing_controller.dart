@@ -218,7 +218,7 @@ class RoutingController extends ChangeNotifier {
     }
   }
 
-  Future<void> _validateLocationServices() async {
+  Future<void> _validateLocationServices(BuildContext context) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       _flagError();
@@ -249,10 +249,10 @@ class RoutingController extends ChangeNotifier {
     }
 
     await FlutterNotificationChannel().registerNotificationChannel(
-      description: 'Step-by-step navigation in the background.',
+      description: 'Schritt-für-Schritt Navigation im Hintergrund.',
       id: 'geolocator_channel_01',
       importance: NotificationImportance.IMPORTANCE_HIGH,
-      name: 'Navi4All - Navigation',
+      name: AppLocalizations.of(context)!.routingScreenNotificationChannel,
       visibility: NotificationVisibility.VISIBILITY_PUBLIC,
       allowBubbles: true,
       enableVibration: true,
@@ -285,7 +285,7 @@ class RoutingController extends ChangeNotifier {
 
   Future<void> _subscribeToLocationStream(BuildContext context) async {
     // Ensure location services are available
-    await _validateLocationServices();
+    await _validateLocationServices(context);
 
     WakelockPlus.enable();
 
@@ -303,7 +303,9 @@ class RoutingController extends ChangeNotifier {
           notificationText: AppLocalizations.of(
             context,
           )!.routingScreenNotificationDescription,
-          notificationChannelName: 'Navi4All - Navigation',
+          notificationChannelName: AppLocalizations.of(
+            context,
+          )!.routingScreenNotificationChannel,
         ),
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS ||
@@ -428,7 +430,9 @@ class RoutingController extends ChangeNotifier {
     // Check if user is digressing
     if (_checkDigressing(position)) {
       // Attempt to fetch alternative route
-      if (_activeLeg!.mode == Mode.WALK) {
+      if (_activeLeg!.mode == Mode.WALK ||
+          _activeLeg!.mode == Mode.BICYCLE ||
+          _activeLeg!.mode == Mode.CAR) {
         _state = RoutingControllerState.rerouting;
 
         // Compute alternative walking route from current position to end of

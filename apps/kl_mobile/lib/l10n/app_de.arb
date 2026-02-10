@@ -399,5 +399,6 @@
             }
         }
     },
+    "routingScreenNotificationChannel": "Navi4All Navigation",
     "routingScreenNotificationDescription": "Navigiere zu deinem Ziel."
 }

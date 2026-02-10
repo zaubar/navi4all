@@ -660,5 +660,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get routingScreenNotificationChannel => 'Navi4All Navigation';
+
+  @override
   String get routingScreenNotificationDescription => 'Navigiere zu deinem Ziel.';
 }

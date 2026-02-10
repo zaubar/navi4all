@@ -495,5 +495,7 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "routingScreenNotificationChannel": "Park-Stark Navigation",
+    "routingScreenNotificationDescription": "Navigating to your destination."
 }

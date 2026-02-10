@@ -4,6 +4,7 @@ import 'package:smartroots/core/theme/values.dart';
 import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/itinerary.dart';
 import 'package:smartroots/schemas/routing/place.dart';
+import 'package:maps_toolkit/maps_toolkit.dart' as maps_toolkit;
 
 class TextFormatter {
   static String getOccupancyText(BuildContext context, Place place) {
@@ -121,5 +122,30 @@ class WidgetGenerator {
     }
 
     return Image.asset(assetPath, width: 32.0);
+  }
+}
+
+class GeographyUtils {
+  static int? getLocationIndexOnPath(
+    maps_toolkit.LatLng point,
+    List<maps_toolkit.LatLng> path,
+    double threshold,
+  ) {
+    // Find nearest point on path within snapping threshold
+    int? indexOnPath;
+    num nearestDistance = double.infinity;
+
+    for (int i = 0; i < path.length; i++) {
+      num distance = maps_toolkit.SphericalUtil.computeDistanceBetween(
+        point,
+        path[i],
+      );
+      if (distance <= threshold &&
+          (indexOnPath == null || distance < nearestDistance)) {
+        indexOnPath = i;
+        nearestDistance = distance;
+      }
+    }
+    return indexOnPath;
   }
 }
