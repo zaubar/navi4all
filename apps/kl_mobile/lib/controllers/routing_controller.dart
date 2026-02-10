@@ -243,22 +243,25 @@ class RoutingController extends ChangeNotifier {
       return;
     }
 
-    PermissionStatus notificationStatus = await Permission.notification.status;
-    if (notificationStatus != PermissionStatus.granted) {
-      await Permission.notification.request();
-    }
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      PermissionStatus notificationStatus =
+          await Permission.notification.status;
+      if (notificationStatus != PermissionStatus.granted) {
+        await Permission.notification.request();
+      }
 
-    await FlutterNotificationChannel().registerNotificationChannel(
-      description: 'Schritt-für-Schritt Navigation im Hintergrund.',
-      id: 'geolocator_channel_01',
-      importance: NotificationImportance.IMPORTANCE_HIGH,
-      name: AppLocalizations.of(context)!.routingScreenNotificationChannel,
-      visibility: NotificationVisibility.VISIBILITY_PUBLIC,
-      allowBubbles: true,
-      enableVibration: true,
-      enableSound: false,
-      showBadge: false,
-    );
+      await FlutterNotificationChannel().registerNotificationChannel(
+        description: 'Schritt-für-Schritt Navigation im Hintergrund.',
+        id: 'geolocator_channel_01',
+        importance: NotificationImportance.IMPORTANCE_HIGH,
+        name: AppLocalizations.of(context)!.routingScreenNotificationChannel,
+        visibility: NotificationVisibility.VISIBILITY_PUBLIC,
+        allowBubbles: true,
+        enableVibration: true,
+        enableSound: false,
+        showBadge: false,
+      );
+    }
   }
 
   void _flagError() {

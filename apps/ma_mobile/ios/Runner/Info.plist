@@ -24,6 +24,17 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>maps</string>
+		<string>comgooglemaps</string>
+		<string>waze</string>
+		<string>citymapper</string>
+		<string>here-location</string>
+		<string>moovit</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -36,6 +47,8 @@
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
@@ -44,17 +57,6 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-	</array>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>maps</string>            <!-- Apple Maps -->
-		<string>comgooglemaps</string>   <!-- Google Maps -->
-		<string>waze</string>            <!-- Waze -->
-		<string>citymapper</string>      <!-- Citymapper -->
-		<string>here-location</string>   <!-- HERE WeGo -->
-		<string>moovit</string>          <!-- Moovit -->
 	</array>
 </dict>
 </plist>
