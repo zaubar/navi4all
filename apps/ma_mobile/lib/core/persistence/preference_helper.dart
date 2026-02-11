@@ -62,6 +62,32 @@ class PreferenceHelper {
     await preferences.setStringList(keyFavorites, favorites);
   }
 
+  static Future<void> reorderFavorite(Place place, int newIndex) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String> favorites = _getStoredFavorites(preferences);
+
+    int currentIndex = favorites.indexWhere((item) {
+      Place storedPlace = Place.fromJson(jsonDecode(item));
+      return storedPlace.id == place.id && storedPlace.type == place.type;
+    });
+
+    if (currentIndex == -1) {
+      return;
+    }
+
+    try {
+      String favoriteItem = favorites.removeAt(currentIndex);
+      favorites.insert(
+        newIndex > currentIndex ? newIndex - 1 : newIndex,
+        favoriteItem,
+      );
+
+      await preferences.setStringList(keyFavorites, favorites);
+    } catch (e) {
+      return;
+    }
+  }
+
   static Future<bool> isFavorite(Place place) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     List<String> favorites = _getStoredFavorites(preferences);

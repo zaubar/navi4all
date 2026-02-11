@@ -46,6 +46,13 @@ class _FavoritesScreenState extends State<FavoritesScreen>
     await Provider.of<FavoritesController>(context, listen: false).refresh();
   }
 
+  void _onReorder(int oldIndex, int newIndex) {
+    Provider.of<FavoritesController>(
+      context,
+      listen: false,
+    ).reorderFavorite(oldIndex, newIndex);
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
@@ -94,16 +101,29 @@ class _FavoritesScreenState extends State<FavoritesScreen>
               ),
               SizedBox(height: 8),
               Consumer<FavoritesController>(
-                builder: (context, favouritesController, _) => Expanded(
-                  child: favouritesController.favorites.isNotEmpty
-                      ? ListView.builder(
+                builder: (context, favoritesController, _) => Expanded(
+                  child: favoritesController.favorites.isNotEmpty
+                      ? ReorderableListView.builder(
                           padding: EdgeInsets.all(16),
                           shrinkWrap: true,
-                          itemCount: favouritesController.favorites.length,
-                          itemBuilder: (context, index) => _FavouritesListItem(
-                            parkingLocation:
-                                favouritesController.favorites[index],
+                          itemCount: favoritesController.favorites.length,
+                          itemBuilder: (context, index) => _FavoritesListItem(
+                            key: ValueKey(
+                              '${favoritesController.favorites[index].id}_${favoritesController.favorites[index].type}',
+                            ),
+                            place: favoritesController.favorites[index],
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ParkingLocationScreen(
+                                  parkingLocation:
+                                      favoritesController.favorites[index],
+                                  showAlternatives: true,
+                                ),
+                              ),
+                            ),
                           ),
+                          onReorder: _onReorder,
                         )
                       : Center(
                           child: SingleChildScrollView(
@@ -128,7 +148,6 @@ class _FavoritesScreenState extends State<FavoritesScreen>
                                       )!.favouritesScreenPrompt,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 14,
                                         color: SmartRootsColors.maBlue,
                                       ),
                                     ),
@@ -150,29 +169,26 @@ class _FavoritesScreenState extends State<FavoritesScreen>
   }
 }
 
-class _FavouritesListItem extends StatelessWidget {
-  final Place parkingLocation;
+class _FavoritesListItem extends StatelessWidget {
+  final Place place;
+  final Function onTap;
 
-  const _FavouritesListItem({required this.parkingLocation});
+  const _FavoritesListItem({
+    super.key,
+    required this.place,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) => InkWell(
-    onTap: () => Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ParkingLocationScreen(
-          parkingLocation: parkingLocation,
-          showAlternatives: true,
-        ),
-      ),
-    ),
+    onTap: () => onTap(),
     child: Semantics(
       excludeSemantics: true,
       button: true,
       label: AppLocalizations.of(context)!.favoritesListItemSemantic(
-        parkingLocation.name,
-        parkingLocation.description,
-        TextFormatter.getOccupancyText(context, parkingLocation),
+        place.name,
+        place.description,
+        TextFormatter.getOccupancyText(context, place),
       ),
       child: Column(
         children: [
@@ -181,20 +197,20 @@ class _FavouritesListItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
             child: Row(
               children: [
-                WidgetGenerator.getParkingPlaceIcon(parkingLocation),
+                WidgetGenerator.getParkingPlaceIcon(place),
                 SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        parkingLocation.name,
+                        place.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        parkingLocation.description,
+                        place.description,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -213,10 +229,7 @@ class _FavouritesListItem extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          TextFormatter.getOccupancyText(
-                            context,
-                            parkingLocation,
-                          ),
+                          TextFormatter.getOccupancyText(context, place),
                           textAlign: TextAlign.center,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -224,6 +237,12 @@ class _FavouritesListItem extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                SizedBox(width: 8.0),
+                Icon(
+                  Icons.drag_handle,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 20.0,
                 ),
               ],
             ),

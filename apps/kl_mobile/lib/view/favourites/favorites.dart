@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:navi4all/core/config.dart';
 import 'package:navi4all/schemas/routing/place.dart';
 import 'package:navi4all/view/alt/place/place.dart' as alt_place;
 import 'package:navi4all/view/place/place.dart';
@@ -18,7 +21,60 @@ class FavoritesScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _FavoritesScreenState();
 }
 
-class _FavoritesScreenState extends State<FavoritesScreen> {
+class _FavoritesScreenState extends State<FavoritesScreen>
+    with WidgetsBindingObserver {
+  Timer? _refreshTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    // Start refresh after a delay since the controller is initialized anyway
+    Future.delayed(
+      Duration(seconds: Settings.dataRefreshIntervalSeconds),
+      () => _refreshData(),
+    );
+  }
+
+  Future<void> _refreshData() async {
+    // Schedule periodic data refresh
+    if (_refreshTimer == null || !_refreshTimer!.isActive) {
+      _refreshTimer = Timer.periodic(
+        Duration(seconds: Settings.dataRefreshIntervalSeconds),
+        (_) => _refreshData(),
+      );
+    }
+
+    // Refresh favorites data
+    await Provider.of<FavoritesController>(context, listen: false).refresh();
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+    Provider.of<FavoritesController>(
+      context,
+      listen: false,
+    ).reorderFavorite(oldIndex, newIndex);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      // Cancel periodic data refresh
+      _refreshTimer?.cancel();
+    } else if (state == AppLifecycleState.resumed) {
+      _refreshData();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,14 +126,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 8),
               Consumer<FavoritesController>(
                 builder: (context, favoritesController, _) => Expanded(
                   child: favoritesController.favorites.isNotEmpty
-                      ? ListView.builder(
+                      ? ReorderableListView.builder(
+                          padding: EdgeInsets.all(16),
                           shrinkWrap: true,
                           itemCount: favoritesController.favorites.length,
                           itemBuilder: (context, index) => _FavoritesListItem(
+                            key: ValueKey(
+                              '${favoritesController.favorites[index].id}_${favoritesController.favorites[index].type}',
+                            ),
                             place: favoritesController.favorites[index],
                             onTap: () {
                               Place place =
@@ -91,10 +151,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               );
                             },
                           ),
+                          onReorder: _onReorder,
                         )
-                      : Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
+                      : Center(
+                          child: SingleChildScrollView(
                             child: Semantics(
                               excludeSemantics: true,
                               child: Column(
@@ -160,7 +220,11 @@ class _FavoritesListItem extends StatelessWidget {
   final Place place;
   final Function onTap;
 
-  const _FavoritesListItem({required this.place, required this.onTap});
+  const _FavoritesListItem({
+    super.key,
+    required this.place,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) => InkWell(
@@ -198,6 +262,12 @@ class _FavoritesListItem extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                SizedBox(width: 12.0),
+                Icon(
+                  Icons.drag_handle,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: 20.0,
                 ),
               ],
             ),

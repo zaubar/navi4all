@@ -28,6 +28,15 @@ class FavoritesController extends ChangeNotifier {
     refresh();
   }
 
+  Future<void> reorderFavorite(int oldIndex, int newIndex) async {
+    Place place = _favorites.removeAt(oldIndex);
+    _favorites.insert(oldIndex < newIndex ? newIndex - 1 : newIndex, place);
+
+    notifyListeners();
+
+    await PreferenceHelper.reorderFavorite(place, newIndex);
+  }
+
   Future<bool> checkIsFavorite(Place place) async {
     return await PreferenceHelper.isFavorite(place);
   }
@@ -45,11 +54,6 @@ class FavoritesController extends ChangeNotifier {
       for (var item in favoritesMetadata) {
         _favorites.add(item);
       }
-
-      // Post-process favorites
-      _favorites.sort(
-        (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-      );
     } catch (e) {
       _state = FavoritesControllerState.error;
       notifyListeners();
