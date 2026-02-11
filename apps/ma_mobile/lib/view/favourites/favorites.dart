@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:smartroots/controllers/favorites_controller.dart';
 import 'package:smartroots/core/config.dart';
@@ -26,22 +27,25 @@ class _FavoritesScreenState extends State<FavoritesScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    // Start refresh after a delay since the controller is initialized anyway
-    Future.delayed(
-      Duration(seconds: Settings.dataRefreshIntervalSeconds),
-      () => _refreshData(),
-    );
+    // Start periodic data refresh
+    _startRefreshTimer();
   }
 
-  Future<void> _refreshData() async {
-    // Schedule periodic data refresh
+  void _startRefreshTimer() {
     if (_refreshTimer == null || !_refreshTimer!.isActive) {
       _refreshTimer = Timer.periodic(
         Duration(seconds: Settings.dataRefreshIntervalSeconds),
         (_) => _refreshData(),
       );
     }
+  }
 
+  void _stopRefreshTimer() {
+    _refreshTimer?.cancel();
+    _refreshTimer = null;
+  }
+
+  Future<void> _refreshData() async {
     // Refresh favorites data
     await Provider.of<FavoritesController>(context, listen: false).refresh();
   }
@@ -58,16 +62,18 @@ class _FavoritesScreenState extends State<FavoritesScreen>
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
       // Cancel periodic data refresh
-      _refreshTimer?.cancel();
+      _stopRefreshTimer();
     } else if (state == AppLifecycleState.resumed) {
+      // Resume periodic data refresh
       _refreshData();
+      _startRefreshTimer();
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _refreshTimer?.cancel();
+    _stopRefreshTimer();
     super.dispose();
   }
 
@@ -101,64 +107,86 @@ class _FavoritesScreenState extends State<FavoritesScreen>
               ),
               SizedBox(height: 8),
               Consumer<FavoritesController>(
-                builder: (context, favoritesController, _) => Expanded(
-                  child: favoritesController.favorites.isNotEmpty
-                      ? ReorderableListView.builder(
-                          padding: EdgeInsets.all(16),
-                          shrinkWrap: true,
-                          itemCount: favoritesController.favorites.length,
-                          itemBuilder: (context, index) => _FavoritesListItem(
-                            key: ValueKey(
-                              '${favoritesController.favorites[index].id}_${favoritesController.favorites[index].type}',
-                            ),
-                            place: favoritesController.favorites[index],
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ParkingLocationScreen(
-                                  parkingLocation:
-                                      favoritesController.favorites[index],
-                                  showAlternatives: true,
+                builder: (context, favoritesController, _) {
+                  final List<Place> favorites = favoritesController.favorites
+                      .toList();
+
+                  return Expanded(
+                    child: favorites.isNotEmpty
+                        ? ReorderableListView.builder(
+                            padding: EdgeInsets.all(16),
+                            shrinkWrap: true,
+                            itemCount: favorites.length,
+                            itemBuilder: (context, index) {
+                              final Place place = favorites[index];
+
+                              return _FavoritesListItem(
+                                key: ValueKey('${place.id}_${place.type}'),
+                                place: place,
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ParkingLocationScreen(
+                                      parkingLocation: place,
+                                      showAlternatives: true,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            proxyDecorator: (child, index, animation) {
+                              return Material(
+                                elevation: 4.0,
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(16),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: child,
+                                ),
+                              );
+                            },
+                            onReorder: _onReorder,
+                            onReorderStart: (_) {
+                              HapticFeedback.lightImpact();
+                              _stopRefreshTimer();
+                            },
+                            onReorderEnd: (_) => _startRefreshTimer(),
+                          )
+                        : Center(
+                            child: SingleChildScrollView(
+                              child: Semantics(
+                                excludeSemantics: true,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      size: 72,
+                                      color: SmartRootsColors.maBlue,
+                                    ),
+                                    SizedBox(height: 16),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 32,
+                                      ),
+                                      child: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.favouritesScreenPrompt,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: SmartRootsColors.maBlue,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 32),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-                          onReorder: _onReorder,
-                        )
-                      : Center(
-                          child: SingleChildScrollView(
-                            child: Semantics(
-                              excludeSemantics: true,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    size: 72,
-                                    color: SmartRootsColors.maBlue,
-                                  ),
-                                  SizedBox(height: 16),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 32,
-                                    ),
-                                    child: Text(
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.favouritesScreenPrompt,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: SmartRootsColors.maBlue,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 32),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                ),
+                  );
+                },
               ),
               SizedBox(height: 96),
             ],
@@ -182,6 +210,7 @@ class _FavoritesListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => InkWell(
     onTap: () => onTap(),
+    borderRadius: BorderRadius.circular(16),
     child: Semantics(
       excludeSemantics: true,
       button: true,
@@ -190,66 +219,75 @@ class _FavoritesListItem extends StatelessWidget {
         place.description,
         TextFormatter.getOccupancyText(context, place),
       ),
-      child: Column(
-        children: [
-          SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
-            child: Row(
-              children: [
-                WidgetGenerator.getParkingPlaceIcon(place),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        place.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        place.description,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 12),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.tertiary,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  width: 92,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          TextFormatter.getOccupancyText(context, place),
-                          textAlign: TextAlign.center,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 12,
+              ),
+              child: Row(
+                children: [
+                  WidgetGenerator.getParkingPlaceIcon(place),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          place.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          place.description,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(width: 8.0),
-                Icon(
-                  Icons.drag_handle,
-                  color: Theme.of(context).colorScheme.secondary,
-                  size: 20.0,
-                ),
-              ],
+                  SizedBox(width: 12),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.tertiary,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    width: 92,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            TextFormatter.getOccupancyText(context, place),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 8.0),
+                  Icon(
+                    Icons.drag_handle,
+                    color: Theme.of(context).colorScheme.secondary,
+                    size: 20.0,
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 4),
-          Divider(color: SmartRootsColors.maBlue, height: 0),
-        ],
+            SizedBox(height: 4),
+            Divider(color: SmartRootsColors.maBlue, height: 0),
+          ],
+        ),
       ),
     ),
   );
