@@ -8,7 +8,6 @@ from datetime import datetime
 class SupportedGeocodingProviders(str, Enum):
     NONE = "none"
     PELIAS = "pelias"
-    GOOGLE = "google"
 
 
 """Request and response models exposed via the API"""

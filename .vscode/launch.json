@@ -8,13 +8,19 @@
             "name": "kl_mobile",
             "cwd": "apps/kl_mobile",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define-from-file=.env"
+            ]
         },
         {
             "name": "ma_mobile",
             "cwd": "apps/ma_mobile",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "toolArgs": [
+                "--dart-define-from-file=.env"
+            ]
         },
         {
             "name": "core_backend",

@@ -35,14 +35,6 @@ class GeocodingAdaptor:
             request_params["focus.point.lon"] = request.focus_point.lon
         return request_url, request_params
 
-    def _build_request_google_autocomplete(
-        self, request: GeocodingAutocompleteRequestModel
-    ) -> tuple[str, dict]:
-        """Build the request URL and params for a Google autocomplete request."""
-
-        # TODO: Implement
-        pass
-
     def _process_response_pelias(self, response: Response) -> list[Place]:
         """Process the response from a Pelias request."""
 
@@ -71,12 +63,6 @@ class GeocodingAdaptor:
 
         return places
 
-    def _process_response_google(self, response: Response) -> list[Place]:
-        """Process the response from a Google request."""
-
-        # TODO: Implement
-        pass
-
     async def autocomplete(
         self, async_client: AsyncClient, request: GeocodingAutocompleteRequestModel
     ) -> list[Place]:
@@ -85,10 +71,6 @@ class GeocodingAdaptor:
         # Build request URL and params
         if self.provider == SupportedGeocodingProviders.PELIAS:
             request_url, request_params = self._build_request_pelias_autocomplete(
-                request
-            )
-        elif self.provider == SupportedGeocodingProviders.GOOGLE:
-            request_url, request_params = self._build_request_google_autocomplete(
                 request
             )
         else:
@@ -111,8 +93,6 @@ class GeocodingAdaptor:
         places: list[Place] = []
         if self.provider == SupportedGeocodingProviders.PELIAS:
             places = self._process_response_pelias(response)
-        elif self.provider == SupportedGeocodingProviders.GOOGLE:
-            places = self._process_response_google(response)
 
         # Clip length of response if limit is set
         if request.limit and len(places) > request.limit:

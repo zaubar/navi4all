@@ -22,3 +22,26 @@ An overview of disabled parking spaces with real-time availability information, 
     - **OpenTripPlanner**: Multi-modal routing with a focus on transit
     - **Valhalla**: Pedestrian and car routing with precise step-by-step instructions
     - **Pelias**: Geocoding and autocomplete for place search
+
+## Deployment
+
+### Core backend
+
+- Copy env template and configure: `cd apps/core_backend && cp .env.example .env`
+- Start with Docker: `docker compose up --build`
+- Full instructions: [apps/core_backend/README.md](apps/core_backend/README.md)
+
+### `kl_mobile`
+
+- Copy env template and configure: `cd apps/kl_mobile && cp .env.example .env`
+- Run with env defines: `flutter run --dart-define-from-file=.env`
+- Full instructions: [apps/kl_mobile/README.md](apps/kl_mobile/README.md)
+
+### `ma_mobile`
+
+- Copy env template and configure: `cd apps/ma_mobile && cp .env.example .env`
+- Run with env defines: `flutter run --dart-define-from-file=.env`
+- Full instructions: [apps/ma_mobile/README.md](apps/ma_mobile/README.md)
+
+
+

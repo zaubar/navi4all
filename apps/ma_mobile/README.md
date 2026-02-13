@@ -1,6 +1,48 @@
 # Park-Stark - Mannheim
 
-![Mannheim](./mannheim.png)
+![Park-Stark](/apps/ma_mobile/assets/ma_mobile_screenshots.png)
+
+## System Requirements
+
+- Flutter SDK with Dart 3.8+ (`flutter --version`)
+- Android Studio + Android SDK (for Android builds/runs)
+- Xcode 15+ (for iOS builds/runs on macOS)
+- A connected device or emulator/simulator
+
+## Environment Configuration
+
+Sensitive/configurable values are provided via compile-time Dart defines.
+
+1. Create your local env file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Adjust values in `.env` (this file is gitignored).
+
+Notes:
+- `.env.example` is configured for local core backend usage (`http://localhost:8010/v1/`).
+
+### Run from CLI
+
+```bash
+flutter run --dart-define-from-file=.env
+```
+
+### Build from CLI
+
+```bash
+flutter build apk --release --dart-define-from-file=.env
+```
+
+### Run from VS Code
+
+Use the workspace launch configuration `ma_mobile`, which already includes:
+
+`--dart-define-from-file=.env`
+
+Note: Changing `.env` values requires stopping and rerunning the app (hot reload does not refresh compile-time defines).
 
 ## Translation Guide
 This app currently supports the following locales:

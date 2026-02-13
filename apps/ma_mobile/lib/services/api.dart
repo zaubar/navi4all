@@ -6,10 +6,14 @@ class APIService {
   final Dio apiClient = Dio(
     BaseOptions(
       baseUrl: Settings.apiBaseUrl,
-      headers: {
-        'Authorization':
-            'Basic ${base64Encode(utf8.encode('${Settings.apiAuthorizationUsername}:${Settings.apiAuthorizationPassword}'))}',
-      },
+      headers:
+          Settings.apiAuthorizationUsername.isNotEmpty &&
+              Settings.apiAuthorizationPassword.isNotEmpty
+          ? {
+              'Authorization':
+                  'Basic ${base64Encode(utf8.encode('${Settings.apiAuthorizationUsername}:${Settings.apiAuthorizationPassword}'))}',
+            }
+          : {},
       connectTimeout: Duration(seconds: Settings.apiConnectTimeout),
       receiveTimeout: Duration(seconds: Settings.apiReceiveTimeout),
     ),

@@ -1,6 +1,3 @@
 .DS_Store
 .env
 services/**
-
-# Temporary
-**/config.dart

@@ -47,3 +47,8 @@ app.*.map.json
 # Codegen
 *.g.dart
 *.freezed.dart
+
+# Local environment files (for --dart-define-from-file)
+.env
+.env.*
+!.env.example
