@@ -1,0 +1,96 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font: 600 20px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+      .label { font: 600 16px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+      .small { font: 500 14px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+      .muted { fill: #475569; }
+      .node { fill: #F8FAFC; stroke: #CBD5E1; stroke-width: 2; }
+      .node-backend { fill: #F8FAFC; stroke: #94A3B8; stroke-width: 2; }
+      .node-kl { fill: #FFEDEB; stroke: #BF1C23; stroke-width: 2; }
+      .node-ma { fill: #E0ECFB; stroke: #0F5FBD; stroke-width: 2; }
+      .group-apps { fill: #FFEDEB; stroke: #BF1C23; stroke-width: 2; }
+      .group-backend { fill: #E0ECFB; stroke: #3685E2; stroke-width: 2; }
+      .group-services { fill: #F1F5F9; stroke: #94A3B8; stroke-width: 2; }
+      .service { fill: #F1F5F9; stroke: #94A3B8; stroke-width: 2; }
+      .line { stroke: #94A3B8; stroke-width: 2; }
+      .line-strong { stroke: #475569; stroke-width: 2.5; }
+      .icon-stroke { stroke: #0F172A; stroke-width: 2; fill: none; }
+      .icon-fill { fill: #0F172A; }
+      .label-pill { fill: #FFFFFF; stroke: #CBD5E1; stroke-width: 1; }
+      .label-text { font: 600 12px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="60" y="48" class="title">Navi4All — Component Relationships</text>
+
+  <!-- Top row: component groups -->
+  <rect x="80" y="100" width="300" height="88" rx="18" class="group-apps"/>
+  <text x="230" y="145" text-anchor="middle" class="label">Mobile Apps</text>
+  <text x="230" y="168" text-anchor="middle" class="small muted">Flutter clients</text>
+  <rect x="104" y="122" width="24" height="40" rx="5" class="icon-stroke"/>
+  <circle cx="116" cy="156" r="2.5" class="icon-fill"/>
+
+  <rect x="450" y="100" width="300" height="88" rx="18" class="group-backend"/>
+  <text x="600" y="145" text-anchor="middle" class="label">Core Backend</text>
+  <text x="600" y="168" text-anchor="middle" class="small muted">Unified APIs</text>
+  <rect x="474" y="122" width="30" height="11" rx="2" class="icon-stroke"/>
+  <rect x="474" y="140" width="30" height="11" rx="2" class="icon-stroke"/>
+  <circle cx="500" cy="127" r="1.7" class="icon-fill"/>
+  <circle cx="500" cy="145" r="1.7" class="icon-fill"/>
+
+  <rect x="820" y="100" width="300" height="88" rx="18" class="group-services"/>
+  <text x="970" y="145" text-anchor="middle" class="label">Services</text>
+  <text x="970" y="168" text-anchor="middle" class="small muted">Routing + Geocoding</text>
+  <circle cx="844" cy="132" r="5" class="icon-stroke"/>
+  <circle cx="866" cy="124" r="5" class="icon-stroke"/>
+  <circle cx="866" cy="148" r="5" class="icon-stroke"/>
+  <line x1="849" y1="132" x2="861" y2="126" class="icon-stroke"/>
+  <line x1="849" y1="132" x2="861" y2="146" class="icon-stroke"/>
+
+  <!-- Apps subnodes -->
+  <rect x="80" y="260" width="300" height="72" rx="16" class="node-kl"/>
+  <text x="230" y="300" text-anchor="middle" class="label">kl_mobile</text>
+  <text x="230" y="322" text-anchor="middle" class="small muted">Kaiserslautern</text>
+
+  <rect x="80" y="350" width="300" height="72" rx="16" class="node-ma"/>
+  <text x="230" y="390" text-anchor="middle" class="label">ma_mobile</text>
+  <text x="230" y="412" text-anchor="middle" class="small muted">Mannheim</text>
+
+  <!-- Backend subnode removed per request -->
+
+  <!-- Services subnodes -->
+  <rect x="820" y="260" width="300" height="64" rx="14" class="service"/>
+  <text x="970" y="298" text-anchor="middle" class="label">OpenTripPlanner</text>
+
+  <rect x="820" y="336" width="300" height="64" rx="14" class="service"/>
+  <text x="970" y="374" text-anchor="middle" class="label">Valhalla</text>
+
+  <rect x="820" y="412" width="300" height="64" rx="14" class="service"/>
+  <text x="970" y="450" text-anchor="middle" class="label">Pelias</text>
+
+  <!-- Hierarchy lines: group -> children -->
+  <line x1="230" y1="188" x2="230" y2="260" class="line"/>
+  <line x1="230" y1="332" x2="230" y2="350" class="line"/>
+
+  <!-- Backend hierarchy line removed per request -->
+
+  <line x1="970" y1="188" x2="970" y2="260" class="line"/>
+  <line x1="970" y1="324" x2="970" y2="336" class="line"/>
+  <line x1="970" y1="400" x2="970" y2="412" class="line"/>
+
+  <!-- Dependency arrows: Apps -> Backend -> Services -->
+  <line x1="380" y1="144" x2="450" y2="144" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="750" y1="144" x2="820" y2="144" class="line-strong" marker-end="url(#arrow)"/>
+
+  <!-- Dependency labels -->
+  <rect x="392" y="116" width="76" height="24" rx="12" class="label-pill"/>
+  <text x="430" y="132" text-anchor="middle" class="label-text">API calls</text>
+
+  <rect x="762" y="116" width="94" height="24" rx="12" class="label-pill"/>
+  <text x="809" y="132" text-anchor="middle" class="label-text">Service APIs</text>
+</svg>

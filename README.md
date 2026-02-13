@@ -1,27 +1,24 @@
 # Navi4All • Multi-modal navigation for everyone
 
-***This project is currently in the early stages of development.***
+Navi4All is an open-source, multi-modal navigation platform designed to provide accessible navigation solutions for everyone, including those with disabilities.
 
-Navi4All is an open-source, multi-modal navigation app designed to provide accessible navigation solutions for everyone, including those with disabilities.
+### Kaiserslautern: Navi4All
+Pedestrian and transit navigation with a focus on accessibility, including features for visually impaired users.
 
-![Kaiserslautern](./kaiserslautern.png)
+![Navi4All](/apps/kl_mobile/assets/kl_mobile_screenshots.png)
 
-*Note: Screenshots are illustrative and may not represent the final version of the app.*
+### Mannheim: Park-Stark
+An overview of disabled parking spaces with real-time availability information, along with destination search, favourites and car navigation.
 
-## Features
-- **Accessibility-first Design**: Conceptualised and built with accessibility in mind, ensuring that users with diverse needs can navigate easily.
-- **Multi-modal Navigation**: Supports various transportation modes including walking, cycling, driving, and public transit.
-- **POI Integration**: Allows users to find and navigate to Points of Interest (POIs).
-
-## User Profiles
-- **General Users**: The standard app interface with a visual-first navigation experience.
-- **Visually Impaired Users**: Features tailored for users with visual impairments, including a high-contrast interface and large interactive elements.
-- **Blind Users**: Enhanced functionality for users experiencing total vision impairment, such as semantic audio cues, haptic feedback, and an audio-first navigation experience.
-- **Mobility Impaired Users**: Customised navigation options for users with mobility challenges, including wheelchair-friendly routes.
+![Park-Stark](/apps/ma_mobile/assets/ma_mobile_screenshots.png)
 
 ## Codebase
 
-A monolithic codebase that includes:
-- **Cross-platform mobile app**: Built using Flutter, ensuring compatibility with both Android and iOS devices, along with web support.
-- **Backend services**: Implemented in Python, providing the necessary APIs and data processing capabilities.
-- **OpenTripPlanner**: Integrated for advanced routing and trip planning functionalities.
+![Project structure diagram](/docs/project-structure-diagram.svg)
+
+- **Cross-platform mobile apps**: Built using Flutter for Android and iOS
+- **Core backend**: A Python-based backend that integrates various data and routing services to expose unified APIs for the mobile app
+- **Services**:
+    - **OpenTripPlanner**: Multi-modal routing with a focus on transit
+    - **Valhalla**: Pedestrian and car routing with precise step-by-step instructions
+    - **Pelias**: Geocoding and autocomplete for place search

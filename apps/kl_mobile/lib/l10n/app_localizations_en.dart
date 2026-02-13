@@ -72,7 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingNavigationGuidanceTitle => 'Navigation guidance';
 
   @override
-  String get onboardingNavigationGuidanceSubtitleAndroid => 'In order to continue receiving navigation guidance when your device is locked, allow notifications from Park-Stark.\n\nTo customise navigation voice settings, visit your device\'s sound or accessibility settings.';
+  String get onboardingNavigationGuidanceSubtitleAndroid => 'In order to continue receiving navigation guidance when your device is locked, allow notifications from Navi4All.\n\nTo customise navigation voice settings, visit your device\'s sound or accessibility settings.';
 
   @override
   String get onboardingNavigationGuidanceSubtitleIos => 'Navigation guidance will pause if you lock your device. To continue receiving guidance, keep your device unlocked.\n\nTo customise navigation voice settings, visit your device\'s sound or accessibility settings.';

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:navi4all/controllers/autocomplete_controller.dart';
-import 'package:navi4all/controllers/canvas_controller.dart';
 import 'package:navi4all/controllers/favorites_controller.dart';
 import 'package:navi4all/controllers/itinerary_controller.dart';
 import 'package:navi4all/controllers/profile_controller.dart';

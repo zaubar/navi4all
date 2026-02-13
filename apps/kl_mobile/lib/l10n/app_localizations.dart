@@ -224,7 +224,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingNavigationGuidanceSubtitleAndroid.
   ///
   /// In en, this message translates to:
-  /// **'In order to continue receiving navigation guidance when your device is locked, allow notifications from Park-Stark.\n\nTo customise navigation voice settings, visit your device\'s sound or accessibility settings.'**
+  /// **'In order to continue receiving navigation guidance when your device is locked, allow notifications from Navi4All.\n\nTo customise navigation voice settings, visit your device\'s sound or accessibility settings.'**
   String get onboardingNavigationGuidanceSubtitleAndroid;
 
   /// No description provided for @onboardingNavigationGuidanceSubtitleIos.

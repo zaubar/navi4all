@@ -21,6 +21,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  final Key _key = GlobalKey();
   final PageController _controller = PageController();
   final List<Widget> _pages = const [
     _WelcomeScreen(),
@@ -71,61 +72,77 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _requestLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
-    if (permission != LocationPermission.whileInUse &&
-        permission != LocationPermission.always) {
+    if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
   }
+
+  Widget get _pageViewWidget => PageView(
+    key: _key,
+    controller: _controller,
+    physics: const NeverScrollableScrollPhysics(),
+    onPageChanged: (index) {
+      setState(() => _currentPage = index);
+    },
+    children: _pages,
+  );
+
+  Widget get _bottomWidget => Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          _pages.length,
+          (index) => Container(
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: index == _currentPage
+                  ? Navi4AllColors.klWhite
+                  : Navi4AllColors.klPink,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
+        child: AccessibleButton(
+          label: _currentPage < (_pages.length - 1)
+              ? AppLocalizations.of(context)!.commonContinueButtonSemantic
+              : AppLocalizations.of(context)!.onboardingFinishHomeScreenButton,
+          style: AccessibleButtonStyle.white,
+          onTap: () => _nextPage(),
+        ),
+      ),
+      Image.asset("assets/stadt_kl_white.png", width: 64),
+      SizedBox(height: 32),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Navi4AllColors.klRed,
-      body: Column(
-        children: [
-          SizedBox(height: 64),
-          Expanded(
-            child: PageView(
-              controller: _controller,
-              physics: const NeverScrollableScrollPhysics(),
-              onPageChanged: (index) {
-                setState(() => _currentPage = index);
-              },
-              children: _pages,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              4,
-              (index) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: index == _currentPage
-                      ? Navi4AllColors.klWhite
-                      : Navi4AllColors.klPink,
-                  shape: BoxShape.circle,
+      body: SafeArea(
+        child: OrientationBuilder(
+          builder: (context, orientation) => orientation == Orientation.portrait
+              ? Column(
+                  children: [
+                    SizedBox(height: 64),
+                    Expanded(child: _pageViewWidget),
+                    _bottomWidget,
+                  ],
+                )
+              : Row(
+                  children: [
+                    Expanded(child: _pageViewWidget),
+                    _bottomWidget,
+                  ],
                 ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 32),
-            child: AccessibleButton(
-              label: _currentPage < 3
-                  ? AppLocalizations.of(context)!.commonContinueButtonSemantic
-                  : AppLocalizations.of(
-                      context,
-                    )!.onboardingFinishHomeScreenButton,
-              style: AccessibleButtonStyle.white,
-              onTap: () => _nextPage(),
-            ),
-          ),
-          Image.asset(width: 100, "assets/stadt_kl_white.png"),
-          SizedBox(height: 48),
-        ],
+        ),
       ),
     );
   }
