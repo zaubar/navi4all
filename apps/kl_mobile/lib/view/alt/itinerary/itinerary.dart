@@ -97,12 +97,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                Expanded(
-                  child: ItineraryList(
-                    scrollController: ScrollController(),
-                    altMode: true,
-                  ),
-                ),
+                Expanded(child: ItineraryList(altMode: true)),
                 SizedBox(height: 16),
                 AccessibleButton(
                   label: AppLocalizations.of(

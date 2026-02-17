@@ -414,9 +414,9 @@ class RoutingState extends State<RoutingScreen> {
             RoutingMap(destination: widget.destinationPlace),
             Consumer<RoutingController>(
               builder: (context, routingController, _) => SlidingBottomSheet(
-                SizedBox.shrink(),
+                stickyHeader: null,
                 listItems: _processingStatus == ProcessingStatus.completed
-                    ? _legTiles
+                    ? [..._legTiles, SizedBox(height: 132)]
                     : null,
                 body:
                     _processingStatus == ProcessingStatus.processing ||
@@ -432,6 +432,7 @@ class RoutingState extends State<RoutingScreen> {
             Align(
               alignment: Alignment.bottomCenter,
               child: SafeArea(
+                bottom: false,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -615,6 +616,10 @@ class RoutingState extends State<RoutingScreen> {
                           ],
                         ),
                       ),
+                    ),
+                    Container(
+                      height: 16.0,
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                   ],
                 ),

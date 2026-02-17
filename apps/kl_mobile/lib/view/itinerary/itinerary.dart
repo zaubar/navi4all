@@ -10,7 +10,7 @@ import 'package:navi4all/schemas/routing/mode.dart';
 import 'package:navi4all/schemas/routing/place.dart';
 import 'package:navi4all/view/common/accessible_icon_button.dart';
 import 'package:navi4all/view/common/sheet_button.dart';
-import 'package:navi4all/view/canvas/sliding_bottom_sheet.dart';
+import 'package:navi4all/view/common/sliding_bottom_sheet.dart';
 import 'package:navi4all/view/itinerary/itinerary_options.dart';
 import 'package:navi4all/view/itinerary/map.dart';
 import 'package:navi4all/view/routing/routing.dart';
@@ -238,8 +238,7 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
                   ],
                 ),
               ),
-              listViewBuilder: (context, controller) =>
-                  ItineraryList(scrollController: controller),
+              body: ItineraryList(),
               initSize: 0.4,
               maxSize: 0.75,
             ),
@@ -252,14 +251,9 @@ class _ItineraryScreenState extends State<ItineraryScreen> {
 }
 
 class ItineraryList extends StatefulWidget {
-  final ScrollController scrollController;
   final bool altMode;
 
-  const ItineraryList({
-    super.key,
-    required this.scrollController,
-    this.altMode = false,
-  });
+  const ItineraryList({super.key, this.altMode = false});
 
   @override
   State<ItineraryList> createState() => _ItineraryListState();
@@ -273,7 +267,7 @@ class _ItineraryListState extends State<ItineraryList> {
           itineraryController.state == ItineraryControllerState.idle &&
               itineraryController.itineraries.isNotEmpty
           ? ListView.builder(
-              controller: widget.scrollController,
+              physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.zero,
               shrinkWrap: true,
               itemBuilder: (context, index) => ItineraryWidget(

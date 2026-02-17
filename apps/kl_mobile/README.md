@@ -5,7 +5,7 @@
 ## System Requirements
 
 - Flutter SDK with Dart 3.8+ (`flutter --version`)
-- Android Studio + Android SDK (for Android builds/runs)
+- VS Code / Android Studio + Android SDK (for Android builds/runs)
 - Xcode 15+ (for iOS builds/runs on macOS)
 - A connected device or emulator/simulator
 
@@ -43,6 +43,15 @@ Use the workspace launch configuration `kl_mobile`, which already includes:
 `--dart-define-from-file=.env`
 
 Note: Changing `.env` values requires stopping and rerunning the app (hot reload does not refresh compile-time defines).
+
+## App Architecture
+
+![kl_mobile architecture diagram](/apps/kl_mobile/assets/kl_mobile_architecture_diagram.svg)
+
+* View Layer: UI-related components (screens, widgets)
+* Controller Layer: State management, interface between View and Service layers
+* Service Layer: API clients, response parsing
+* DTOs: Data Transfer Objects for API communication
 
 ## Translation Guide
 This app currently supports the following locales:

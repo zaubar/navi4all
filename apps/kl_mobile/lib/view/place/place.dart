@@ -7,7 +7,7 @@ import 'package:navi4all/schemas/routing/coordinates.dart';
 import 'package:navi4all/schemas/routing/itinerary.dart';
 import 'package:navi4all/schemas/routing/mode.dart';
 import 'package:navi4all/view/itinerary/itinerary.dart';
-import 'package:navi4all/view/canvas/sliding_bottom_sheet.dart';
+import 'package:navi4all/view/common/sliding_bottom_sheet.dart';
 import 'package:navi4all/view/common/accessible_icon_button.dart';
 import 'package:navi4all/view/place/map.dart';
 import 'package:navi4all/view/search/search.dart';
@@ -266,7 +266,7 @@ class _PlaceScreenState extends State<PlaceScreen> {
                 ),
               ],
             ),
-            listViewBuilder: (context, controller) => Container(),
+            body: SizedBox.shrink(),
             initSize: 0.3,
             maxSize: 0.4,
           ),
