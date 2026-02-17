@@ -3,11 +3,11 @@ networks:
     name: navi4all-proxy
 
 services:
-  navi4all-prod:
+  core-backend:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: navi4all-prod
+    container_name: core-backend
     env_file:
       - .env
     volumes:
@@ -17,8 +17,8 @@ services:
     ports:
       - "8010:8010"
 
-  navi4all-redis:
+  core-redis:
     image: redis:latest
-    container_name: navi4all-redis
+    container_name: core-redis
     networks:
       proxy:

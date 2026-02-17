@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     TEMPLATES_DIR: str = "./templates"
 
     # Redis settings
-    REDIS_HOST: str = "navi4all-redis"
+    REDIS_HOST: str = "core-redis"
     REDIS_PORT: int = 6379
 
     # User engagement settings
