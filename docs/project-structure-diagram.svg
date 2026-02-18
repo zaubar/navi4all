@@ -57,10 +57,6 @@
   <text x="230" y="300" text-anchor="middle" class="label">kl_mobile</text>
   <text x="230" y="322" text-anchor="middle" class="small muted">Kaiserslautern</text>
 
-  <rect x="80" y="350" width="300" height="72" rx="16" class="node-ma"/>
-  <text x="230" y="390" text-anchor="middle" class="label">ma_mobile</text>
-  <text x="230" y="412" text-anchor="middle" class="small muted">Mannheim</text>
-
   <!-- Backend subnode removed per request -->
 
   <!-- Services subnodes -->
@@ -75,8 +71,6 @@
 
   <!-- Hierarchy lines: group -> children -->
   <line x1="230" y1="188" x2="230" y2="260" class="line"/>
-  <line x1="230" y1="332" x2="230" y2="350" class="line"/>
-
   <!-- Backend hierarchy line removed per request -->
 
   <line x1="970" y1="188" x2="970" y2="260" class="line"/>

@@ -1,8 +1,8 @@
 # Services
 
-OpenTripPlanner and Valhalla are used for routing, while Pelias is used for geocoding and place search. These services are deployed separately from the core backend and mobile apps, allowing for flexibility in scaling and maintenance. The core backend integrates with these services to provide unified APIs for the mobile applications.
+OpenTripPlanner and Valhalla are used for routing, while Pelias is used for geocoding and place search. These services are deployed separately from the core backend and mobile app, allowing for flexibility in scaling and maintenance. The core backend integrates with these services to provide unified APIs for the mobile application.
 
-As multi-modal routing is a key feature of the Navi4All platform, a hybrid approach was chosen for itinerary planning. OpenTripPlanner results are used to find the best public transport connections, while Valhalla is used for high-precision step-by-step instructions for the pedestrian and car routing legs of an itinerary.
+As multi-modal routing is a key feature of the Navi4All platform, a hybrid approach was chosen for itinerary planning. OpenTripPlanner results are used to find the best public transport connections, while Valhalla is used for high-precision step-by-step instructions for the pedestrian routing legs of an itinerary.
 
 ![Project structure diagram](/docs/project-structure-diagram.svg)
 
