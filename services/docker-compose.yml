@@ -1,0 +1,27 @@
+networks:
+  proxy:
+    name: navi4all-proxy
+
+services:
+  service-valhalla:
+    image: ghcr.io/valhalla/valhalla-scripted:latest
+    container_name: service-valhalla
+    ports:
+      - "8002:8002"
+    networks:
+      proxy:
+    volumes:
+      - ./valhalla:/custom_files
+  
+  service-otp-kl:
+    image: docker.io/opentripplanner/opentripplanner:2.5.0
+    container_name: service-otp-kl
+    environment:
+      - JAVA_OPTS=-Xmx4G
+    command: ["--load"]
+    volumes:
+      - ./otp_kl:/var/opentripplanner/
+    networks:
+      proxy:
+    ports:
+      - 8080:8080

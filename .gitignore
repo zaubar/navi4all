@@ -1,3 +1,5 @@
 .DS_Store
 .env
 services/**
+!services/docker-compose.yml
+!services/README.md

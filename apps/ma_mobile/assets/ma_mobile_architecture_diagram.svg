@@ -29,12 +29,12 @@
   <text x="450" y="156" text-anchor="middle" class="small muted">lib/controllers</text>
 
   <rect x="600" y="90" width="240" height="84" rx="16" class="node-ma"/>
-  <text x="720" y="134" text-anchor="middle" class="label">Service Layer</text>
-  <text x="720" y="156" text-anchor="middle" class="small muted">lib/services</text>
+  <text x="720" y="134" text-anchor="middle" class="label">DTOs</text>
+  <text x="720" y="156" text-anchor="middle" class="small muted">lib/schemas</text>
 
   <rect x="870" y="90" width="270" height="84" rx="16" class="node"/>
-  <text x="1005" y="134" text-anchor="middle" class="label">DTOs</text>
-  <text x="1005" y="156" text-anchor="middle" class="small muted">lib/schemas</text>
+  <text x="1005" y="134" text-anchor="middle" class="label">Service Layer</text>
+  <text x="1005" y="156" text-anchor="middle" class="small muted">lib/services</text>
 
   <rect x="420" y="250" width="360" height="92" rx="18" class="node-backend"/>
   <text x="600" y="298" text-anchor="middle" class="label">Navi4All Core Backend</text>
@@ -44,9 +44,9 @@
   <text x="600" y="438" text-anchor="middle" class="label">Routing / Geocoding Engines</text>
   <text x="600" y="460" text-anchor="middle" class="small muted">OpenTripPlanner · Valhalla · Pelias</text>
 
-  <line x1="300" y1="132" x2="330" y2="132" class="line-strong" marker-end="url(#arrow)"/>
-  <line x1="570" y1="132" x2="600" y2="132" class="line-strong" marker-end="url(#arrow)"/>
-  <line x1="840" y1="132" x2="870" y2="132" class="line-strong" marker-end="url(#arrow)"/>
-  <line x1="720" y1="174" x2="600" y2="250" class="line-strong" marker-end="url(#arrow)"/>
-  <line x1="600" y1="342" x2="600" y2="390" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="300" y1="132" x2="330" y2="132" class="line-strong"/>
+  <line x1="570" y1="132" x2="600" y2="132" class="line-strong"/>
+  <line x1="840" y1="132" x2="870" y2="132" class="line-strong"/>
+  <line x1="1005" y1="174" x2="600" y2="250" class="line-strong"/>
+  <line x1="600" y1="342" x2="600" y2="390" class="line-strong"/>
 </svg>
