@@ -21,6 +21,8 @@ import 'package:navi4all/schemas/routing/place.dart';
 import 'package:navi4all/services/api.dart';
 
 class GeocodingService extends APIService {
+  GeocodingService({super.apiClient});
+
   Future<(DateTime, List<Place>)> autocomplete({
     required String timestamp,
     required String query,

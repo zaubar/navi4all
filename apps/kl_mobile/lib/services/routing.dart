@@ -23,6 +23,11 @@ import 'package:navi4all/schemas/routing/itinerary.dart';
 import 'package:navi4all/services/api.dart';
 
 class RoutingService extends APIService {
+  final String _routingEngine;
+
+  RoutingService({super.apiClient, String? routingEngine})
+    : _routingEngine = routingEngine ?? Settings.apiRoutingEngine;
+
   Future<List<Object>> getItineraries({
     required double originLat,
     required double originLon,
@@ -64,7 +69,7 @@ class RoutingService extends APIService {
     // Make request
     Response response = await apiClient.post(
       '/routing/plan',
-      queryParameters: {'engine': Settings.apiRoutingEngine},
+      queryParameters: {'engine': _routingEngine},
       data: data,
     );
 
@@ -119,7 +124,7 @@ class RoutingService extends APIService {
     // Make request
     Response response = await apiClient.post(
       '/routing/itinerary-detailed',
-      queryParameters: {'engine': Settings.apiRoutingEngine},
+      queryParameters: {'engine': _routingEngine},
       data: data,
     );
 
@@ -136,7 +141,7 @@ class RoutingService extends APIService {
   }) async => ItineraryDetails.fromJson(
     (await apiClient.get(
       '/routing/itinerary/$itineraryId',
-      queryParameters: {'engine': Settings.apiRoutingEngine},
+      queryParameters: {'engine': _routingEngine},
     )).data,
   );
 }
