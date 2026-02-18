@@ -1,0 +1,109 @@
+<svg width="1600" height="980" viewBox="0 0 1600 980" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Core Backend Architecture</title>
+  <desc id="desc">Core backend flow from incoming geocoding and routing requests to endpoints, adaptors, and external services, including hybrid routing fan-out and merge.</desc>
+
+  <defs>
+    <style>
+      .title { font: 600 20px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+      .label { font: 600 16px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+      .small { font: 500 14px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+      .muted { fill: #475569; }
+      .node { fill: #F8FAFC; stroke: #CBD5E1; stroke-width: 2; }
+      .node-backend { fill: #F8FAFC; stroke: #94A3B8; stroke-width: 2; }
+      .group-apps { fill: #FFEDEB; stroke: #BF1C23; stroke-width: 2; }
+      .group-backend { fill: #E0ECFB; stroke: #3685E2; stroke-width: 2; }
+      .group-services { fill: #F1F5F9; stroke: #94A3B8; stroke-width: 2; }
+      .line { stroke: #94A3B8; stroke-width: 2; fill: none; }
+      .line-strong { stroke: #475569; stroke-width: 2.5; fill: none; }
+      .label-pill { fill: #FFFFFF; stroke: #CBD5E1; stroke-width: 1; }
+      .label-text { font: 600 12px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
+    </marker>
+  </defs>
+
+  <text x="60" y="48" class="title">Core Backend — Geocoding and Routing Flow</text>
+
+  <rect x="60" y="110" width="340" height="820" rx="18" class="group-apps"/>
+  <text x="230" y="150" text-anchor="middle" class="label">Incoming Requests</text>
+  <text x="230" y="172" text-anchor="middle" class="small muted">HTTP API calls</text>
+
+  <rect x="430" y="110" width="730" height="820" rx="18" class="group-backend"/>
+  <text x="795" y="150" text-anchor="middle" class="label">Core Backend Processing</text>
+  <text x="795" y="172" text-anchor="middle" class="small muted">FastAPI endpoints and adaptors</text>
+
+  <rect x="1190" y="110" width="350" height="820" rx="18" class="group-services"/>
+  <text x="1365" y="150" text-anchor="middle" class="label">External Services</text>
+  <text x="1365" y="172" text-anchor="middle" class="small muted">Geocoding and routing engines</text>
+
+  <rect x="90" y="240" width="280" height="92" rx="14" class="node"/>
+  <text x="230" y="276" text-anchor="middle" class="label">GET /geocoding/autocomplete</text>
+  <text x="230" y="300" text-anchor="middle" class="small muted">geocoding request</text>
+
+  <rect x="90" y="420" width="280" height="110" rx="14" class="node"/>
+  <text x="230" y="456" text-anchor="middle" class="label">Routing requests</text>
+  <text x="230" y="480" text-anchor="middle" class="small muted">POST /routing/plan</text>
+  <text x="230" y="500" text-anchor="middle" class="small muted">POST /routing/itinerary-detailed</text>
+  <text x="230" y="520" text-anchor="middle" class="small muted">GET /routing/itinerary/{id}</text>
+
+  <rect x="470" y="240" width="280" height="92" rx="14" class="node-backend"/>
+  <text x="610" y="276" text-anchor="middle" class="label">endpoints/geocoding.py</text>
+  <text x="610" y="300" text-anchor="middle" class="small muted">dispatch to GeocodingAdaptor</text>
+
+  <rect x="470" y="420" width="280" height="110" rx="14" class="node-backend"/>
+  <text x="610" y="456" text-anchor="middle" class="label">endpoints/routing.py</text>
+  <text x="610" y="480" text-anchor="middle" class="small muted">dispatch by engine</text>
+  <text x="610" y="500" text-anchor="middle" class="small muted">OTP / Valhalla / Hybrid</text>
+
+  <rect x="850" y="240" width="280" height="92" rx="14" class="node-backend"/>
+  <text x="990" y="276" text-anchor="middle" class="label">GeocodingAdaptor</text>
+  <text x="990" y="300" text-anchor="middle" class="small muted">services/adaptors/geocoding.py</text>
+
+  <rect x="850" y="420" width="280" height="82" rx="14" class="node-backend"/>
+  <text x="990" y="454" text-anchor="middle" class="label">OpenTripPlannerAdaptor</text>
+  <text x="990" y="476" text-anchor="middle" class="small muted">otp / otp_kl</text>
+
+  <rect x="850" y="530" width="280" height="82" rx="14" class="node-backend"/>
+  <text x="990" y="564" text-anchor="middle" class="label">ValhallaAdaptor</text>
+  <text x="990" y="586" text-anchor="middle" class="small muted">valhalla</text>
+
+  <rect x="850" y="640" width="280" height="92" rx="14" class="node-backend"/>
+  <text x="990" y="676" text-anchor="middle" class="label">HybridAdaptor</text>
+  <text x="990" y="700" text-anchor="middle" class="small muted">calls OTP + Valhalla and combines</text>
+
+  <rect x="1230" y="240" width="270" height="92" rx="14" class="node"/>
+  <text x="1365" y="276" text-anchor="middle" class="label">Pelias Geocoding</text>
+  <text x="1365" y="300" text-anchor="middle" class="small muted">/v1/autocomplete</text>
+
+  <rect x="1230" y="420" width="270" height="82" rx="14" class="node"/>
+  <text x="1365" y="454" text-anchor="middle" class="label">OpenTripPlanner Service</text>
+  <text x="1365" y="476" text-anchor="middle" class="small muted">GraphQL planner</text>
+
+  <rect x="1230" y="530" width="270" height="82" rx="14" class="node"/>
+  <text x="1365" y="564" text-anchor="middle" class="label">Valhalla Service</text>
+  <text x="1365" y="586" text-anchor="middle" class="small muted">/route API</text>
+
+  <line x1="370" y1="286" x2="470" y2="286" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="750" y1="286" x2="850" y2="286" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="1130" y1="286" x2="1230" y2="286" class="line-strong" marker-end="url(#arrow)"/>
+
+  <line x1="370" y1="475" x2="470" y2="475" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="750" y1="452" x2="850" y2="452" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="750" y1="570" x2="850" y2="570" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="750" y1="686" x2="850" y2="686" class="line-strong" marker-end="url(#arrow)"/>
+
+  <line x1="1130" y1="452" x2="1230" y2="452" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="1130" y1="570" x2="1230" y2="570" class="line-strong" marker-end="url(#arrow)"/>
+
+  <line x1="1130" y1="676" x2="1230" y2="452" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="1130" y1="692" x2="1230" y2="570" class="line-strong" marker-end="url(#arrow)"/>
+
+  <path d="M 850 700 C 800 700, 785 570, 750 500" class="line-strong" marker-end="url(#arrow)"/>
+
+  <rect x="1140" y="652" width="136" height="24" rx="12" class="label-pill"/>
+  <text x="1208" y="668" text-anchor="middle" class="label-text">fan-out to both</text>
+
+  <rect x="760" y="540" width="128" height="24" rx="12" class="label-pill"/>
+  <text x="824" y="556" text-anchor="middle" class="label-text">combined result</text>
+</svg>

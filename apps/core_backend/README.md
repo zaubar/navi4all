@@ -1,6 +1,9 @@
 # Core backend
 
-![Project structure diagram](/docs/project-structure-diagram.svg)
+This is a Python-based backend that integrates various data and routing services to expose unified APIs for the mobile app. It utilises a modular architecture with separate engines for different routing services (OpenTripPlanner, Valhalla) and geocoding providers (Pelias). The backend is designed to be scalable and maintainable, allowing for easy addition of new features and services in the future.
+
+
+![Core backend architecture diagram](./assets/core_backend_architecture_diagram.svg)
 
 ## System Requirements
 
@@ -23,7 +26,7 @@ Template file: `apps/core_backend/.env.example`
 
 - `OPEN_TRIP_PLANNER_URL`: OTP endpoint used by the `otp` engine.
 - `OPEN_TRIP_PLANNER_KL_URL`: OTP endpoint used by the `otp_kl` engine.
-- `VALHALLA_URL`: Valhalla base URL.
+- `VALHALLA_URL`: Valhalla endpoint used by the `valhalla` engine.
 - `GEOCODING_PROVIDER`: `none` or `pelias`.
 - `GEOCODING_PROVIDER_API_URL`: required when `GEOCODING_PROVIDER != none`.
 - `GEOCODING_PROVIDER_API_KEY`: optional/provider-specific key.

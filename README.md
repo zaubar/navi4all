@@ -7,7 +7,7 @@ Pedestrian and transit navigation with a focus on accessibility, including featu
 
 #### Features
 - General, vision-impaired and blind user profiles
-- Search for destinations including POIs, addresses and streets
+- Search for destinations including Points of Interest (POIs), addresses and streets
 - Favourite and sort destinations of your choice
 - Multi-modal itinerary planing with customisable mode, speed and accessibility options
 - Step-by-step navigation instructions with audio-cues and haptic feedback
@@ -19,7 +19,7 @@ Find disabled parking spaces with real-time availability information, along with
 
 #### Features
 - Map view of your location with nearby disabled parking spaces and real-time availability information
-- Search for destinations including POIs, addresses and streets
+- Search for destinations including Points of Interest (POIs), addresses and streets
 - View disabled parking spaces near your destination within a customisable radius
 - Favourite and sort parking spaces of your choice
 - Car itinerary planing with step-by-step navigation instructions and audio-cues
