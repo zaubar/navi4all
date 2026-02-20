@@ -70,7 +70,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     setState(() => _canInteractWithMap = true);
 
     // Fetch and display parking locations
-    _refreshData().then((_) {
+    _refreshData(isAutoRefresh: false).then((_) {
       // Pan to user location by default if location access was granted
       Geolocator.checkPermission().then((permission) {
         if (permission != LocationPermission.denied &&
@@ -81,12 +81,12 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     });
   }
 
-  Future<void> _refreshData() async {
+  Future<void> _refreshData({required bool isAutoRefresh}) async {
     // Schedule periodic data refresh
     if (_refreshTimer == null || !_refreshTimer!.isActive) {
       _refreshTimer = Timer.periodic(
         Duration(seconds: Settings.dataRefreshIntervalSeconds),
-        (_) => _refreshData(),
+        (_) => _refreshData(isAutoRefresh: true),
       );
     }
 
@@ -95,14 +95,14 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     }
 
     // Fetch and display parking locations
-    await _fetchParkingLocations();
+    await _fetchParkingLocations(isAutoRefresh: isAutoRefresh);
 
     // Add feature tap listener
     _mapController.onFeatureTapped.clear();
     _mapController.onFeatureTapped.add(_onFeatureTapped);
   }
 
-  Future<void> _fetchParkingLocations() async {
+  Future<void> _fetchParkingLocations({required bool isAutoRefresh}) async {
     POIParkingService parkingService = POIParkingService();
     try {
       List<Place> parkingLocations;
@@ -111,7 +111,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
       setState(() {
         _parkingLocations = parkingLocations;
       });
-      _updateMarkers(geoJson);
+      _updateMarkers(geoJson, isAutoRefresh: isAutoRefresh);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -418,7 +418,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
       // Cancel periodic data refresh
       _refreshTimer?.cancel();
     } else if (state == AppLifecycleState.resumed) {
-      _refreshData();
+      _refreshData(isAutoRefresh: true);
     }
   }
 
@@ -527,15 +527,28 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     );
   }
 
-  void _updateMarkers(Map<String, dynamic> geoJson) async {
+  void _updateMarkers(
+    Map<String, dynamic> geoJson, {
+    required bool isAutoRefresh,
+  }) async {
     // Remove existing parking layers and sources
+    // except of static parking locations if this is an auto-refresh
     for (String layerId in (await _mapController.getLayerIds())) {
       if (layerId.startsWith('parking_')) {
+        if (isAutoRefresh &&
+            (layerId == 'parking_unknown_layer' ||
+                layerId == 'parking_unknown_clusters' ||
+                layerId == 'parking_unknown_cluster_count')) {
+          continue;
+        }
         await _mapController.removeLayer(layerId);
       }
     }
     for (String sourceId in (await _mapController.getSourceIds())) {
       if (sourceId.startsWith('parking_')) {
+        if (isAutoRefresh && sourceId == 'parking_unknown') {
+          continue;
+        }
         await _mapController.removeSource(sourceId);
       }
     }
@@ -571,15 +584,18 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
     };
 
     // Add sources for each availability group
-    await _mapController.addSource(
-      'parking_unknown',
-      GeojsonSourceProperties(
-        data: unknownGeoJson,
-        cluster: true,
-        clusterMaxZoom: 16,
-        clusterRadius: 30,
-      ),
-    );
+    // except of static parking locations if this is an auto-refresh
+    if (!isAutoRefresh) {
+      await _mapController.addSource(
+        'parking_unknown',
+        GeojsonSourceProperties(
+          data: unknownGeoJson,
+          cluster: true,
+          clusterMaxZoom: 16,
+          clusterRadius: 30,
+        ),
+      );
+    }
 
     await _mapController.addSource(
       'parking_occupied',
@@ -601,48 +617,50 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
       ),
     );
 
-    // Add layer for unclustered points - Unknown (Blue)
-    await _mapController.addLayer(
-      'parking_unknown',
-      'parking_unknown_layer',
-      SymbolLayerProperties(
-        iconImage: 'assetMarkerMiniParkingUnknown',
-        iconSize: 0.3,
-        iconAllowOverlap: true,
-        iconIgnorePlacement: true,
-      ),
-      filter: [
-        '!',
-        ['has', 'point_count'],
-      ],
-    );
+    if (!isAutoRefresh) {
+      // Add layer for unclustered points - Unknown (Blue)
+      await _mapController.addLayer(
+        'parking_unknown',
+        'parking_unknown_layer',
+        SymbolLayerProperties(
+          iconImage: 'assetMarkerMiniParkingUnknown',
+          iconSize: 0.3,
+          iconAllowOverlap: true,
+          iconIgnorePlacement: true,
+        ),
+        filter: [
+          '!',
+          ['has', 'point_count'],
+        ],
+      );
 
-    // Add cluster circles - Unknown (Blue)
-    await _mapController.addLayer(
-      'parking_unknown',
-      'parking_unknown_clusters',
-      SymbolLayerProperties(
-        iconImage: 'assetMarkerMiniParkingUnknown',
-        iconSize: 0.7,
-        iconAllowOverlap: true,
-        iconIgnorePlacement: true,
-      ),
-      filter: ['has', 'point_count'],
-    );
+      // Add cluster circles - Unknown (Blue)
+      await _mapController.addLayer(
+        'parking_unknown',
+        'parking_unknown_clusters',
+        SymbolLayerProperties(
+          iconImage: 'assetMarkerMiniParkingUnknown',
+          iconSize: 0.7,
+          iconAllowOverlap: true,
+          iconIgnorePlacement: true,
+        ),
+        filter: ['has', 'point_count'],
+      );
 
-    await _mapController.addLayer(
-      'parking_unknown',
-      'parking_unknown_cluster_count',
-      SymbolLayerProperties(
-        textField: ['get', 'point_count_abbreviated'],
-        textFont: ['Roboto Bold'],
-        textSize: 12,
-        textColor: '#FFFFFF',
-        textIgnorePlacement: true,
-        textAllowOverlap: true,
-      ),
-      filter: ['has', 'point_count'],
-    );
+      await _mapController.addLayer(
+        'parking_unknown',
+        'parking_unknown_cluster_count',
+        SymbolLayerProperties(
+          textField: ['get', 'point_count_abbreviated'],
+          textFont: ['Roboto Bold'],
+          textSize: 12,
+          textColor: '#FFFFFF',
+          textIgnorePlacement: true,
+          textAllowOverlap: true,
+        ),
+        filter: ['has', 'point_count'],
+      );
+    }
 
     // Add layer for unclustered points - Occupied (Red)
     await _mapController.addLayer(

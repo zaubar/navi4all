@@ -1,16 +1,30 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:smartroots/core/config.dart' show Settings;
 import 'package:maps_toolkit/maps_toolkit.dart' as maps_toolkit;
 import 'package:smartroots/core/utils.dart';
 import 'package:smartroots/schemas/routing/coordinates.dart';
 import 'package:smartroots/schemas/routing/place.dart';
+import 'package:path_provider/path_provider.dart';
 
 class POIParkingService {
+  final String _staticParkingLocationsCacheFileName =
+      'ma_parking_locations_static.geojson';
+
   final Dio apiClient = Dio(
     BaseOptions(
       baseUrl: Settings.parkApiBaseUrl,
       connectTimeout: Duration(seconds: Settings.apiConnectTimeout),
       receiveTimeout: Duration(seconds: Settings.apiReceiveTimeout),
+      queryParameters: {
+        'purpose': 'CAR',
+        'lat_min': Settings.parkApiLatMin,
+        'lon_min': Settings.parkApiLonMin,
+        'lat_max': Settings.parkApiLatMax,
+        'lon_max': Settings.parkApiLonMax,
+      },
       validateStatus: (status) => true,
     ),
   );
@@ -23,7 +37,6 @@ class POIParkingService {
 
     // Build request query parameters
     Map<String, dynamic> queryParameters = {
-      'purpose': 'CAR',
       'source_uids': Settings.parkApiSourceUids.join(','),
     };
     if (focusPoint != null && radius != null) {
@@ -52,7 +65,9 @@ class POIParkingService {
         (parkingSpotsResponse.data['items'] as List)
             .map((item) => _parseParkingSpotLocation(item))
             .where(
-              (site) => site.attributes?["disabled_parking_supported"] == true,
+              (site) =>
+                  site.attributes?["disabled_parking_supported"] == true &&
+                  site.attributes?["has_realtime_data"] == true,
             )
             .toList(),
       );
@@ -66,12 +81,192 @@ class POIParkingService {
         (parkingSitesResponse.data['items'] as List)
             .map((item) => _parseParkingSiteLocation(item))
             .where(
-              (site) => site.attributes?["disabled_parking_supported"] == true,
+              (site) =>
+                  site.attributes?["disabled_parking_supported"] == true &&
+                  site.attributes?["has_realtime_data"] == true,
             )
             .toList(),
       );
     } else {
       throw Exception(parkingSitesResponse.statusMessage);
+    }
+
+    // Fetch static parking locations from cache
+    parkingLocations.addAll(
+      await _getStaticParkingLocationsFromCache(
+        focusPoint: focusPoint,
+        radius: radius,
+      ),
+    );
+
+    // Divide parking locations into availability groups
+    List<Place> availableDisabledParking = parkingLocations
+        .where(
+          (location) =>
+              location.attributes?["disabled_parking_available"] == true,
+        )
+        .toList();
+    List<Place> unavailableDisabledParking = parkingLocations
+        .where(
+          (location) =>
+              location.attributes?["disabled_parking_available"] == false,
+        )
+        .toList();
+    List<Place> unknownAvailabilityDisabledParking = parkingLocations
+        .where(
+          (location) =>
+              location.attributes?["disabled_parking_available"] == null,
+        )
+        .toList();
+
+    // Order parking locations by distance to focus point within same availability group
+    if (focusPoint != null) {
+      maps_toolkit.LatLng focusLatLng = maps_toolkit.LatLng(
+        focusPoint.lat,
+        focusPoint.lon,
+      );
+      availableDisabledParking.sort((a, b) {
+        num distanceA = maps_toolkit.SphericalUtil.computeDistanceBetween(
+          focusLatLng,
+          maps_toolkit.LatLng(a.coordinates.lat, a.coordinates.lon),
+        );
+        num distanceB = maps_toolkit.SphericalUtil.computeDistanceBetween(
+          focusLatLng,
+          maps_toolkit.LatLng(b.coordinates.lat, b.coordinates.lon),
+        );
+        return distanceA.compareTo(distanceB);
+      });
+      unavailableDisabledParking.sort((a, b) {
+        num distanceA = maps_toolkit.SphericalUtil.computeDistanceBetween(
+          focusLatLng,
+          maps_toolkit.LatLng(a.coordinates.lat, a.coordinates.lon),
+        );
+        num distanceB = maps_toolkit.SphericalUtil.computeDistanceBetween(
+          focusLatLng,
+          maps_toolkit.LatLng(b.coordinates.lat, b.coordinates.lon),
+        );
+        return distanceA.compareTo(distanceB);
+      });
+      unknownAvailabilityDisabledParking.sort((a, b) {
+        num distanceA = maps_toolkit.SphericalUtil.computeDistanceBetween(
+          focusLatLng,
+          maps_toolkit.LatLng(a.coordinates.lat, a.coordinates.lon),
+        );
+        num distanceB = maps_toolkit.SphericalUtil.computeDistanceBetween(
+          focusLatLng,
+          maps_toolkit.LatLng(b.coordinates.lat, b.coordinates.lon),
+        );
+        return distanceA.compareTo(distanceB);
+      });
+    }
+
+    // Rebuild final parking locations list
+    parkingLocations = [
+      ...availableDisabledParking,
+      ...unavailableDisabledParking,
+      ...unknownAvailabilityDisabledParking,
+    ];
+
+    return (parkingLocations, convertToGeoJSON(parkingLocations));
+  }
+
+  Future<void> updateStaticParkingLocationsCache() async {
+    List<Place> parkingLocations = [];
+
+    // Fetch parking spots
+    Response parkingSpotsResponse = await apiClient.get('/parking-spots');
+
+    // Fetch parking sites
+    Response parkingSitesResponse = await apiClient.get('/parking-sites');
+
+    // Process parking spots
+    if (parkingSpotsResponse.statusCode == 200) {
+      parkingLocations.addAll(
+        (parkingSpotsResponse.data['items'] as List)
+            .map((item) => _parseParkingSpotLocation(item))
+            .where(
+              (site) =>
+                  site.attributes?["disabled_parking_supported"] == true &&
+                  site.attributes?["has_realtime_data"] == false,
+            )
+            .toList(),
+      );
+    } else {
+      throw Exception(parkingSpotsResponse.statusMessage);
+    }
+
+    // Process parking sites
+    if (parkingSitesResponse.statusCode == 200) {
+      parkingLocations.addAll(
+        (parkingSitesResponse.data['items'] as List)
+            .map((item) => _parseParkingSiteLocation(item))
+            .where(
+              (site) =>
+                  site.attributes?["disabled_parking_supported"] == true &&
+                  site.attributes?["has_realtime_data"] == false,
+            )
+            .toList(),
+      );
+    } else {
+      throw Exception(parkingSitesResponse.statusMessage);
+    }
+
+    // Write static parking locations to cache as GeoJSON
+    try {
+      final file = File(
+        '${(await getApplicationDocumentsDirectory()).path}/$_staticParkingLocationsCacheFileName',
+      );
+
+      await file.writeAsString(
+        const JsonEncoder.withIndent(
+          '  ',
+        ).convert(convertToGeoJSON(parkingLocations)),
+      );
+    } catch (error) {
+      return;
+    }
+  }
+
+  Future<List<Place>> _getStaticParkingLocationsFromCache({
+    Coordinates? focusPoint,
+    int? radius,
+  }) async {
+    List<Place> parkingLocations = [];
+
+    // Fetch static parking locations from cache and parse GeoJSON
+    try {
+      final file = File(
+        '${(await getApplicationDocumentsDirectory()).path}/$_staticParkingLocationsCacheFileName',
+      );
+      if (await file.exists()) {
+        String content = await file.readAsString();
+        Map<String, dynamic> geoJson = jsonDecode(content);
+        for (var feature in geoJson['features'] as List) {
+          Map<String, dynamic> properties = feature['properties'];
+          parkingLocations.add(
+            Place(
+              id: feature['id'],
+              type: PlaceType.values.byName(properties['parking_type']),
+              name: properties['name'],
+              address: properties['address'],
+              description: properties['description'],
+              coordinates: Coordinates(
+                lat: feature['geometry']['coordinates'][1],
+                lon: feature['geometry']['coordinates'][0],
+              ),
+              attributes: {
+                "has_realtime_data": properties['has_realtime_data'],
+                "disabled_parking_supported":
+                    properties['disabled_parking_supported'],
+                "disabled_parking_available":
+                    properties['disabled_parking_available'],
+              },
+            ),
+          );
+        }
+      }
+    } catch (error) {
+      return parkingLocations;
     }
 
     // Remove parking locations outside the specified radius
@@ -88,47 +283,7 @@ class POIParkingService {
       }).toList();
     }
 
-    // Order parking locations by availablity
-    parkingLocations.sort((a, b) {
-      bool? aAvailable = a.attributes?["disabled_parking_available"];
-      bool? bAvailable = b.attributes?["disabled_parking_available"];
-
-      if (aAvailable == true && bAvailable != true) {
-        return -1;
-      } else if (aAvailable != true && bAvailable == true) {
-        return 1;
-      } else if (aAvailable == false && bAvailable != false) {
-        return -1;
-      } else if (aAvailable != false && bAvailable == false) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
-
-    // Order parking locations by distance to focus point within same availability group
-    if (focusPoint != null) {
-      parkingLocations.sort((a, b) {
-        bool? aAvailable = a.attributes?["disabled_parking_available"];
-        bool? bAvailable = b.attributes?["disabled_parking_available"];
-
-        if (aAvailable == bAvailable) {
-          num aDistance = maps_toolkit.SphericalUtil.computeDistanceBetween(
-            maps_toolkit.LatLng(focusPoint.lat, focusPoint.lon),
-            maps_toolkit.LatLng(a.coordinates.lat, a.coordinates.lon),
-          );
-          num bDistance = maps_toolkit.SphericalUtil.computeDistanceBetween(
-            maps_toolkit.LatLng(focusPoint.lat, focusPoint.lon),
-            maps_toolkit.LatLng(b.coordinates.lat, b.coordinates.lon),
-          );
-          return aDistance.compareTo(bDistance);
-        } else {
-          return 0;
-        }
-      });
-    }
-
-    return (parkingLocations, convertToGeoJSON(parkingLocations));
+    return parkingLocations;
   }
 
   Future<Place?> getParkingLocationDetails({
@@ -199,7 +354,7 @@ class POIParkingService {
     Place place = Place(
       id: item['id'].toString(),
       type: PlaceType.parkingSpot,
-      name: item['name'],
+      name: item['name'] ?? 'Parkplatz',
       address: item['address'] ?? '',
       description: TextFormatter.extractCityFromAddress(item['address'] ?? ''),
       coordinates: Coordinates(
@@ -207,7 +362,6 @@ class POIParkingService {
         lon: double.parse(item['lon']),
       ),
     ).copyWith(attributes: attributes);
-
     return place;
   }
 

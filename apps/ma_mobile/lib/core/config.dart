@@ -140,6 +140,18 @@ class Settings {
     'PARK_API_SOURCE_UIDS',
     const String.fromEnvironment('PARK_API_SOURCE_UIDS'),
   );
+  static final String parkApiLatMin = const String.fromEnvironment(
+    'PARK_API_LAT_MIN',
+  );
+  static final String parkApiLonMin = const String.fromEnvironment(
+    'PARK_API_LON_MIN',
+  );
+  static final String parkApiLatMax = const String.fromEnvironment(
+    'PARK_API_LAT_MAX',
+  );
+  static final String parkApiLonMax = const String.fromEnvironment(
+    'PARK_API_LON_MAX',
+  );
 
   // Legal and privacy
   static final String legalAndPrivacyUrl = _requiredString(

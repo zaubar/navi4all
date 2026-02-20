@@ -247,7 +247,9 @@ class _FavoritesListItem extends StatelessWidget {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          place.description,
+                          place.description.isNotEmpty
+                              ? place.description
+                              : place.address,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

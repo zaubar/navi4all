@@ -16,6 +16,7 @@ String keySearchRadius = "ma_search_radius";
 String keyRoutingRequestConfig = "ma_routing_request_config";
 String keyUserEngagementEvents = "ma_user_engagement_events";
 String keyLaunchCount = "ma_launch_count";
+String keyDataCacheTimestamp = "ma_data_cache_timestamp";
 
 class PreferenceHelper {
   static Future<bool> isOnboardingComplete() async {
@@ -232,5 +233,33 @@ class PreferenceHelper {
     final int nextCount = (preferences.getInt(keyLaunchCount) ?? 0) + 1;
     await preferences.setInt(keyLaunchCount, nextCount);
     return nextCount;
+  }
+
+  static Future<DateTime?> getDataCacheTimestamp() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final int? timestamp = preferences.getInt(keyDataCacheTimestamp);
+    if (timestamp == null) {
+      return null;
+    }
+    return DateTime.fromMillisecondsSinceEpoch(timestamp);
+  }
+
+  static Future<void> setDataCacheTimestamp(DateTime timestamp) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setInt(
+      keyDataCacheTimestamp,
+      timestamp.millisecondsSinceEpoch,
+    );
+  }
+
+  static Future<DateTime> setDataCacheTimestampNow() async {
+    final DateTime now = DateTime.now();
+    await setDataCacheTimestamp(now);
+    return now;
+  }
+
+  static Future<void> clearDataCacheTimestamp() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove(keyDataCacheTimestamp);
   }
 }
