@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Push main branch to openCode
+      - name: Force-sync main branch to openCode
         env:
           OPENCODE_TOKEN: ${{ secrets.OPENCODE_TOKEN }}
           OPENCODE_REPO_URL: ${{ secrets.OPENCODE_REPO_URL }}
@@ -29,4 +29,4 @@ jobs:
           fi
 
           git remote add opencode "https://oauth2:${OPENCODE_TOKEN}@${OPENCODE_REPO_URL#https://}"
-          git push opencode main:main
+          git push --force opencode main:main
