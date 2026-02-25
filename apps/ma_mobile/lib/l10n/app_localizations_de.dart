@@ -90,10 +90,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingUserLocationSubtitle => 'Mit Ihrer Standortfreigabe zeigen wir Ihnen die nächsten verfügbaren Parkplätze und navigieren Sie direkt dorthin.';
 
   @override
-  String get onboardingNavigationGuidanceTitle => 'Navigationsanleitung';
+  String get onboardingNavigationGuidanceTitle => 'Navigations-\nanleitung';
 
   @override
-  String get onboardingNavigationGuidanceSubtitleAndroid => 'Um weiterhin Navigationsanweisungen zu erhalten, wenn Ihr Gerät gesperrt ist, erlauben Sie Benachrichtigungen von Park-Stark.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
+  String get onboardingNavigationGuidanceSubtitleAndroid => 'Erlauben Sie Benachrichtigungen von Park-Stark, um bei gesperrtem Gerät weiterhin Navigationsanweisungen zu erhalten.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
 
   @override
   String get onboardingNavigationGuidanceSubtitleIos => 'Die Navigationsanleitung wird pausiert, wenn Sie Ihr Gerät sperren. Um die Anleitung weiterhin zu erhalten, halten Sie Ihr Gerät entsperrt.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';

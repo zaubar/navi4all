@@ -1,21 +1,3 @@
-// Navi4All
-// Copyright (C) Navi4All contributors
-// Maintainer: Plan4Better GmbH
-//
-// SPDX-License-Identifier: AGPL-3.0-only
-//
-// Licensed under the GNU Affero General Public License, Version 3 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.gnu.org/licenses/agpl-3.0.en.html
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
@@ -87,10 +69,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get onboardingUserLocationSubtitle => 'Dies ist notwendig, damit die Such- und Navigationsfunktionen funktionieren.';
 
   @override
-  String get onboardingNavigationGuidanceTitle => 'Navigationsanleitung';
+  String get onboardingNavigationGuidanceTitle => 'Navigations-\nanleitung';
 
   @override
-  String get onboardingNavigationGuidanceSubtitleAndroid => 'Um weiterhin Navigationsanweisungen zu erhalten, wenn Ihr Gerät gesperrt ist, erlauben Sie Benachrichtigungen von Navi4All.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
+  String get onboardingNavigationGuidanceSubtitleAndroid => 'Erlauben Sie Benachrichtigungen von Navi4All, um bei gesperrtem Gerät weiterhin Navigationsanweisungen zu erhalten.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
 
   @override
   String get onboardingNavigationGuidanceSubtitleIos => 'Die Navigationsanleitung wird pausiert, wenn Sie Ihr Gerät sperren. Um die Anleitung weiterhin zu erhalten, halten Sie Ihr Gerät entsperrt.\n\nUm die Spracheinstellungen der Navigation anzupassen, besuchen Sie die Sound- oder Barrierefreiheitseinstellungen Ihres Geräts.';
