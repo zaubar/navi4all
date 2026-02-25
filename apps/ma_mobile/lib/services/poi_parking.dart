@@ -318,37 +318,34 @@ class POIParkingService {
   }
 
   Place _parseParkingSpotLocation(Map<String, dynamic> item) {
-    Map<String, dynamic> attributes = {
-      "has_realtime_data": item['has_realtime_data'],
-    };
+    Map<String, dynamic> attributes = {};
 
-    // Parse availability information
-    int? capacityDisabled;
-    int? freeCapacityDisabled;
-    if (item.containsKey('restrictions')) {
-      for (var restriction in item['restrictions'] as List) {
-        if (restriction.containsKey('type') &&
-            restriction['type'] == 'DISABLED') {
-          capacityDisabled = 1;
-          break;
-        }
+    // Parse restrictions and derive disabled parking info
+    final restrictions = item['restrictions'] as List? ?? const [];
+    final supportsDisabledParking = restrictions.any((restriction) {
+      if (restriction is! Map<String, dynamic>) {
+        return false;
       }
-    }
-    if (item["has_realtime_data"] == true &&
-        item.containsKey("realtime_status")) {
-      String status = item["realtime_status"];
-      if (status == "AVAILABLE") {
-        freeCapacityDisabled = 1;
-      } else if (status == "TAKEN") {
-        freeCapacityDisabled = 0;
-      } else {
-        freeCapacityDisabled = null;
-      }
+      return restriction['type'] == 'DISABLED';
+    });
+
+    final hasRealtimeData = item['has_realtime_data'] == true;
+    final realtimeStatus = item['realtime_status'] as String?;
+
+    // Real-time data status is only relevant if supported for disabled parking
+    final hasDisabledRealtimeData =
+        supportsDisabledParking &&
+        hasRealtimeData &&
+        (realtimeStatus == 'AVAILABLE' || realtimeStatus == 'TAKEN');
+
+    bool? disabledParkingAvailable;
+    if (hasDisabledRealtimeData) {
+      disabledParkingAvailable = realtimeStatus == 'AVAILABLE';
     }
 
-    // Compute availability of disabled parking
-    attributes["disabled_parking_supported"] = (capacityDisabled ?? 0) > 0;
-    attributes["disabled_parking_available"] = (freeCapacityDisabled ?? 0) > 0;
+    attributes["has_realtime_data"] = hasDisabledRealtimeData;
+    attributes["disabled_parking_supported"] = supportsDisabledParking;
+    attributes["disabled_parking_available"] = disabledParkingAvailable;
 
     // Final place object
     Place place = Place(
@@ -366,33 +363,50 @@ class POIParkingService {
   }
 
   Place _parseParkingSiteLocation(Map<String, dynamic> item) {
-    Map<String, dynamic> attributes = {
-      "has_realtime_data": item['has_realtime_data'],
-    };
+    Map<String, dynamic> attributes = {};
 
-    // Parse availability information
-    int? capacityDisabled;
-    int? freeCapacityDisabled;
-    if (item["has_realtime_data"] == true) {
-      if (item.containsKey('realtime_capacity_disabled')) {
-        capacityDisabled = item['realtime_capacity_disabled'];
+    // Parse restrictions and derive disabled parking info
+    final restrictions = item['restrictions'] as List? ?? const [];
+    final disabledRestrictions = restrictions
+        .where((restriction) {
+          if (restriction is! Map<String, dynamic>) {
+            return false;
+          }
+          return restriction['type'] == 'DISABLED';
+        })
+        .cast<Map<String, dynamic>>()
+        .toList();
 
-        if (item.containsKey('realtime_free_capacity_disabled')) {
-          freeCapacityDisabled = item['realtime_free_capacity_disabled'];
-        }
-      } else if (item.containsKey('capacity_disabled')) {
-        capacityDisabled = item['capacity_disabled'];
-        attributes["has_realtime_data"] = false;
-      }
-    } else {
-      if (item.containsKey('capacity_disabled')) {
-        capacityDisabled = item['capacity_disabled'];
+    final hasRealtimeData = item['has_realtime_data'] == true;
+    final supportsDisabledParking = disabledRestrictions.isNotEmpty;
+
+    final realtimeFreeCapacities = disabledRestrictions
+        .map(
+          (restriction) => int.tryParse(
+            restriction['realtime_free_capacity']?.toString() ?? '',
+          ),
+        )
+        .whereType<int>()
+        .toList();
+
+    // Real-time data status is only relevant if supported for disabled parking
+    final hasDisabledRealtimeData =
+        supportsDisabledParking &&
+        hasRealtimeData &&
+        realtimeFreeCapacities.isNotEmpty;
+
+    bool? disabledParkingAvailable;
+    if (hasDisabledRealtimeData) {
+      if (realtimeFreeCapacities.any((capacity) => capacity > 0)) {
+        disabledParkingAvailable = true;
+      } else {
+        disabledParkingAvailable = false;
       }
     }
 
-    // Compute availability of disabled parking
-    attributes["disabled_parking_supported"] = (capacityDisabled ?? 0) > 0;
-    attributes["disabled_parking_available"] = (freeCapacityDisabled ?? 0) > 0;
+    attributes["has_realtime_data"] = hasDisabledRealtimeData;
+    attributes["disabled_parking_supported"] = supportsDisabledParking;
+    attributes["disabled_parking_available"] = disabledParkingAvailable;
 
     // Final place object
     Place place = Place(
