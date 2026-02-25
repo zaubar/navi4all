@@ -3,10 +3,11 @@
 Navi4All is an open-source, multi-modal navigation platform designed to provide accessible navigation solutions for everyone, including those with disabilities.
 
 #### Features
-- General, vision-impaired and blind user profiles
-- Search for destinations including Points of Interest (POIs), addresses and streets
-- Favourite and sort destinations of your choice
-- Multi-modal itinerary planing with customisable mode, speed and accessibility options
+- User profiles with accessibility preferences and custom settings
+- Map view of your current location and nearby Points of Interest (POIs)
+- Place search including POIs, addresses and streets
+- Favourite and sort places of your choice
+- Multi-modal itinerary planning with customisable mode, speed and accessibility options
 - Step-by-step navigation instructions with audio-cues and haptic feedback
 
 ![Navi4All](/apps/kl_mobile/assets/kl_mobile_screenshots.png)
@@ -29,14 +30,21 @@ Navi4All is an open-source, multi-modal navigation platform designed to provide 
 - Start routing services with Docker Compose: `cd services && docker compose up -d`
 - Full instructions: [services/README.md](services/README.md)
 
-### Core backend
+### Core Backend
 
 - Copy env template and configure: `cd apps/core_backend && cp .env.example .env`
 - Start with Docker: `docker compose up --build`
 - Full instructions: [apps/core_backend/README.md](apps/core_backend/README.md)
 
-### `kl_mobile`
+### Mobile App
+Navi4All is designed to be a modular and customisable platform for the needs of different cities and regions. The app is currently deployed in the following regions:
 
-- Copy env template and configure: `cd apps/kl_mobile && cp .env.example .env`
+- Navi4All - Kaiserslautern, Rhineland-Pfalz (DE): [kl_mobile](apps/kl_mobile/README.md)
+- Park-Stark - Mannheim, Baden-Württemberg (DE): [ma_mobile](apps/ma_mobile/README.md)
+
+Setup:
+- Copy env template and configure: `cd apps/REGIONAL_APP_DIR && cp .env.example .env`
 - Run with env defines: `flutter run --dart-define-from-file=.env`
-- Full instructions: [apps/kl_mobile/README.md](apps/kl_mobile/README.md)
+- Full instructions can be found in the respective app directories:
+    - [kl_mobile/README.md](apps/kl_mobile/README.md)
+    - [ma_mobile/README.md](apps/ma_mobile/README.md)

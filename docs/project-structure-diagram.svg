@@ -7,7 +7,6 @@
       .muted { fill: #475569; }
       .node { fill: #F8FAFC; stroke: #CBD5E1; stroke-width: 2; }
       .node-backend { fill: #F8FAFC; stroke: #94A3B8; stroke-width: 2; }
-      .node-kl { fill: #FFEDEB; stroke: #BF1C23; stroke-width: 2; }
       .node-ma { fill: #E0ECFB; stroke: #0F5FBD; stroke-width: 2; }
       .group-apps { fill: #FFEDEB; stroke: #BF1C23; stroke-width: 2; }
       .group-backend { fill: #E0ECFB; stroke: #3685E2; stroke-width: 2; }
@@ -30,8 +29,8 @@
 
   <!-- Top row: component groups -->
   <rect x="80" y="100" width="300" height="88" rx="18" class="group-apps"/>
-  <text x="230" y="145" text-anchor="middle" class="label">Mobile Apps</text>
-  <text x="230" y="168" text-anchor="middle" class="small muted">Flutter clients</text>
+  <text x="230" y="145" text-anchor="middle" class="label">Mobile App</text>
+  <text x="230" y="168" text-anchor="middle" class="small muted">Flutter client</text>
   <rect x="104" y="122" width="24" height="40" rx="5" class="icon-stroke"/>
   <circle cx="116" cy="156" r="2.5" class="icon-fill"/>
 
@@ -52,11 +51,6 @@
   <line x1="849" y1="132" x2="861" y2="126" class="icon-stroke"/>
   <line x1="849" y1="132" x2="861" y2="146" class="icon-stroke"/>
 
-  <!-- Apps subnodes -->
-  <rect x="80" y="260" width="300" height="72" rx="16" class="node-kl"/>
-  <text x="230" y="300" text-anchor="middle" class="label">kl_mobile</text>
-  <text x="230" y="322" text-anchor="middle" class="small muted">Kaiserslautern</text>
-
   <!-- Backend subnode removed per request -->
 
   <!-- Services subnodes -->
@@ -70,7 +64,6 @@
   <text x="970" y="450" text-anchor="middle" class="label">Pelias</text>
 
   <!-- Hierarchy lines: group -> children -->
-  <line x1="230" y1="188" x2="230" y2="260" class="line"/>
   <!-- Backend hierarchy line removed per request -->
 
   <line x1="970" y1="188" x2="970" y2="260" class="line"/>

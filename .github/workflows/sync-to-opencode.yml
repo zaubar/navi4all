@@ -1,0 +1,32 @@
+name: Sync to openCode
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push main branch to openCode
+        env:
+          OPENCODE_TOKEN: ${{ secrets.OPENCODE_TOKEN }}
+          OPENCODE_REPO_URL: ${{ secrets.OPENCODE_REPO_URL }}
+        run: |
+          if [ -z "$OPENCODE_TOKEN" ] || [ -z "$OPENCODE_REPO_URL" ]; then
+            echo "Missing required secrets: OPENCODE_TOKEN and/or OPENCODE_REPO_URL"
+            exit 1
+          fi
+
+          git remote add opencode "https://oauth2:${OPENCODE_TOKEN}@${OPENCODE_REPO_URL#https://}"
+          git push opencode main:main
