@@ -51,8 +51,8 @@ Designed to be a modular and customisable platform, Navi4All is currently deploy
 <p>
   <img src="docs/app_icon_kl_mobile.png" alt="Navi4All app icon" width="80" align="left" />
   <br/>
-  <strong>Navi4All</strong><br/>
-  Kaiserslautern, Rhineland-Pfalz (DE)
+  &nbsp;&nbsp;<strong>Navi4All</strong><br/>
+  &nbsp;&nbsp;Kaiserslautern, Rhineland-Pfalz (DE)
   <br/><br/>
 </p>
 
@@ -63,8 +63,8 @@ Designed to be a modular and customisable platform, Navi4All is currently deploy
 <p>
   <img src="docs/app_icon_ma_mobile.png" alt="Park-Stark app icon" width="80" align="left" />
   <br/>
-  <strong>Park-Stark</strong><br/>
-  Mannheim, Baden-Württemberg (DE)
+  &nbsp;&nbsp;<strong>Park-Stark</strong><br/>
+  &nbsp;&nbsp;Mannheim, Baden-Württemberg (DE)
   <br/><br/>
 </p>
 
