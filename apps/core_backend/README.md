@@ -1,9 +1,9 @@
-# Core backend
+# Core Backend
 
 This is a Python-based backend that integrates various data and routing services to expose unified APIs for the mobile app. It utilises a modular architecture with separate engines for different routing services (OpenTripPlanner, Valhalla) and geocoding providers (Pelias). The backend is designed to be scalable and maintainable, allowing for easy addition of new features and services in the future.
 
 
-![Core backend architecture diagram](./assets/core_backend_architecture_diagram.svg)
+![Core backend architecture diagram](/docs/core-backend-structure-diagram.svg)
 
 ## System Requirements
 

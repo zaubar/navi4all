@@ -4,7 +4,7 @@ OpenTripPlanner and Valhalla are used for routing, while Pelias is used for geoc
 
 As multi-modal routing is a key feature of the Navi4All platform, a hybrid approach was chosen for itinerary planning. OpenTripPlanner results are used to find the best public transport connections, while Valhalla is used for high-precision step-by-step instructions for the pedestrian routing legs of an itinerary.
 
-![Project structure diagram](/docs/project-structure-diagram.svg)
+![Services structure diagram](/docs/services-structure-diagram.svg)
 
 ## System Requirements
 

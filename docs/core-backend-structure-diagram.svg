@@ -1,0 +1,90 @@
+<svg width="1200" height="456" viewBox="0 0 1200 456" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .label { font: 600 16px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+      .small { font: 500 14px/1.2 "Inter", "SF Pro Text", "Segoe UI", sans-serif; fill: #0F172A; }
+      .muted { fill: #475569; }
+      .group-apps { fill: #FFEDEB; stroke: #BF1C23; stroke-width: 2; }
+      .group-backend { fill: #E0ECFB; stroke: #3685E2; stroke-width: 2; }
+      .group-services { fill: #F1F5F9; stroke: #94A3B8; stroke-width: 2; }
+      .backend-unit { fill: #F8FAFC; stroke: #3685E2; stroke-width: 2; }
+      .service-unit { fill: #F8FAFC; stroke: #94A3B8; stroke-width: 2; }
+      .line { stroke: #94A3B8; stroke-width: 2; }
+      .line-strong { stroke: #475569; stroke-width: 2.5; }
+      .line-request { stroke: #475569; stroke-width: 2; }
+      .icon-stroke { stroke: #0F172A; stroke-width: 2; fill: none; }
+      .icon-fill { fill: #0F172A; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
+    </marker>
+  </defs>
+
+  <!-- Top row: minimal component groups -->
+  <rect x="80" y="24" width="300" height="88" rx="18" class="group-apps"/>
+  <text x="230" y="63" text-anchor="middle" class="label">Mobile App</text>
+  <text x="230" y="86" text-anchor="middle" class="small muted">Flutter client</text>
+  <rect x="104" y="50" width="24" height="40" rx="5" class="icon-stroke"/>
+  <circle cx="116" cy="84" r="2.5" class="icon-fill"/>
+
+  <rect x="450" y="24" width="300" height="88" rx="18" class="group-backend"/>
+  <text x="600" y="63" text-anchor="middle" class="label">Core Backend</text>
+  <text x="600" y="86" text-anchor="middle" class="small muted">Unified APIs</text>
+  <rect x="474" y="53" width="30" height="11" rx="2" class="icon-stroke"/>
+  <rect x="474" y="71" width="30" height="11" rx="2" class="icon-stroke"/>
+  <circle cx="500" cy="58" r="1.7" class="icon-fill"/>
+  <circle cx="500" cy="76" r="1.7" class="icon-fill"/>
+
+  <rect x="820" y="24" width="300" height="88" rx="18" class="group-services"/>
+  <text x="970" y="63" text-anchor="middle" class="label">Services</text>
+  <text x="970" y="86" text-anchor="middle" class="small muted">Routing + Geocoding</text>
+  <circle cx="844" cy="64" r="5" class="icon-stroke"/>
+  <circle cx="866" cy="56" r="5" class="icon-stroke"/>
+  <circle cx="866" cy="80" r="5" class="icon-stroke"/>
+  <line x1="849" y1="64" x2="861" y2="58" class="icon-stroke"/>
+  <line x1="849" y1="64" x2="861" y2="78" class="icon-stroke"/>
+
+  <!-- Top-level dependency arrows -->
+  <line x1="380" y1="68" x2="450" y2="68" class="line-strong" marker-end="url(#arrow)"/>
+  <line x1="750" y1="68" x2="820" y2="68" class="line-strong" marker-end="url(#arrow)"/>
+
+  <!-- Expanded group containers -->
+  <rect x="160" y="146" width="460" height="286" rx="18" class="group-backend"/>
+  <rect x="660" y="146" width="460" height="286" rx="18" class="group-services"/>
+  <line x1="600" y1="112" x2="390" y2="146" class="line"/>
+  <line x1="970" y1="112" x2="890" y2="146" class="line"/>
+
+  <!-- Backend adapters -->
+  <rect x="190" y="170" width="400" height="52" rx="10" class="backend-unit"/>
+  <text x="390" y="192" text-anchor="middle" class="label">Geocoding Adaptor</text>
+  <text x="390" y="211" text-anchor="middle" class="small muted">Autocomplete requests</text>
+
+  <rect x="190" y="232" width="400" height="52" rx="10" class="backend-unit"/>
+  <text x="390" y="254" text-anchor="middle" class="label">OpenTripPlanner Adapter</text>
+  <text x="390" y="273" text-anchor="middle" class="small muted">Routing requests</text>
+
+  <rect x="190" y="294" width="400" height="52" rx="10" class="backend-unit"/>
+  <text x="390" y="316" text-anchor="middle" class="label">Valhalla Adapter</text>
+  <text x="390" y="335" text-anchor="middle" class="small muted">Routing requests</text>
+
+  <rect x="190" y="356" width="400" height="52" rx="10" class="backend-unit"/>
+  <text x="390" y="378" text-anchor="middle" class="label">Hybrid Adapter</text>
+  <text x="390" y="397" text-anchor="middle" class="small muted">Combined routing requests</text>
+
+  <!-- Services inside services group (centered within container) -->
+  <rect x="690" y="198" width="400" height="50" rx="12" class="service-unit"/>
+  <text x="890" y="229" text-anchor="middle" class="label">OpenTripPlanner</text>
+
+  <rect x="690" y="264" width="400" height="50" rx="12" class="service-unit"/>
+  <text x="890" y="295" text-anchor="middle" class="label">Valhalla</text>
+
+  <rect x="690" y="330" width="400" height="50" rx="12" class="service-unit"/>
+  <text x="890" y="361" text-anchor="middle" class="label">Pelias</text>
+
+  <!-- Adapter to service requests (plain lines) -->
+  <line x1="590" y1="196" x2="690" y2="355" class="line-request"/>
+  <line x1="590" y1="258" x2="690" y2="223" class="line-request"/>
+  <line x1="590" y1="320" x2="690" y2="289" class="line-request"/>
+  <line x1="590" y1="382" x2="690" y2="223" class="line-request"/>
+  <line x1="590" y1="382" x2="690" y2="289" class="line-request"/>
+</svg>
