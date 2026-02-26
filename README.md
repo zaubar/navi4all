@@ -48,19 +48,27 @@ Designed to be a modular and customisable platform, Navi4All is currently deploy
 
 ## Gallery
 
-<h3><img src="apps/kl_mobile/android/app/src/main/ic_launcher-playstore.png" alt="Navi4All app icon" height="80" style="border-radius:16px; vertical-align:middle; margin-right:12px;" /><span style="display:inline-block; vertical-align:middle; line-height:1.3;">Navi4All<br/><span style="font-size:0.78em; font-weight:400;">Kaiserslautern, Rhineland-Pfalz (DE)</span></span></h3>
-
-![Navi4All](/apps/kl_mobile/assets/kl_mobile_screenshots.png)
-
-<h3><img src="apps/ma_mobile/android/app/src/main/ic_launcher-playstore.png" alt="Park-Stark app icon" height="80" style="border-radius:16px; vertical-align:middle; margin-right:12px;" /><span style="display:inline-block; vertical-align:middle; line-height:1.3;">Park-Stark<br/><span style="font-size:0.78em; font-weight:400;">Mannheim, Baden-Württemberg (DE)</span></span></h3>
-
 <p>
-    <a href="https://play.google.com/store/apps/details?id=de.plan4better.smartroots" style="display:inline-block; margin-right:12px;margin-top:12px;">
-        <img src="docs/GetItOnGooglePlay_Badge_Web_color_English.svg" alt="Get it on Google Play" height="48" />
-    </a>
-    <a href="https://apps.apple.com/de/app/park-stark/id6752861087">
-        <img src="docs/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store" height="48" />
-    </a>
+  <img src="docs/app_icon_kl_mobile.png" alt="Navi4All app icon" width="80" align="left" />
+  <br/>
+  <strong>Navi4All</strong><br/>
+  Kaiserslautern, Rhineland-Pfalz (DE)
+  <br/><br/>
 </p>
 
-![Park-Stark](/apps/ma_mobile/assets/ma_mobile_screenshots.png)
+![Navi4All](apps/kl_mobile/assets/kl_mobile_screenshots.png)
+
+<br/>
+
+<p>
+  <img src="docs/app_icon_ma_mobile.png" alt="Park-Stark app icon" width="80" align="left" />
+  <br/>
+  <strong>Park-Stark</strong><br/>
+  Mannheim, Baden-Württemberg (DE)
+  <br/><br/>
+</p>
+
+<a href="https://play.google.com/store/apps/details?id=de.plan4better.smartroots"><img src="docs/GetItOnGooglePlay_Badge_Web_color_English.svg" alt="Get it on Google Play" width="130" /></a>&nbsp;&nbsp;
+<a href="https://apps.apple.com/de/app/park-stark/id6752861087"><img src="docs/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store" width="120" /></a>
+
+![Park-Stark](apps/ma_mobile/assets/ma_mobile_screenshots.png)
