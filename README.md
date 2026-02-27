@@ -3,11 +3,11 @@
 Navi4All is an open-source, multi-modal map & navigation platform for mobile devices. With a focus on modular and customisable design, the app is easy to setup and deploy in new regions.
 
 ## Features
-- **User profiles** with accessibility preferences and custom settings
 - **Map view** of the user's location and nearby Points of Interest (POIs)
 - **Place search** including POIs, addresses and streets
 - **Favourites** with drag-and-drop sorting
-- **Multi-modal itinerary planning** with customisable mode, speed and accessibility options
+- **Accessibility profiles** with custom settings for different user needs
+- **Multi-modal itinerary planning** with mode, speed and accessibility options
 - **Step-by-step navigation** instructions with audio-cues and haptic feedback
 
 ## Codebase
