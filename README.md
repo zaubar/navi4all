@@ -1,14 +1,14 @@
 # Navi4All • Multi-modal navigation for everyone
 
-Navi4All is an open-source, multi-modal navigation platform designed to provide accessible navigation solutions for everyone, including those with disabilities.
+Navi4All is an open-source, multi-modal map & navigation platform for mobile devices. With a focus on modular and customisable design, the app is easy to setup and deploy in new regions.
 
 ## Features
-- User profiles with accessibility preferences and custom settings
-- Map view of the user's location and nearby Points of Interest (POIs)
-- Place search including POIs, addresses and streets
-- Favourites with drag-and-drop sorting
-- Multi-modal itinerary planning with customisable mode, speed and accessibility options
-- Step-by-step navigation instructions with audio-cues and haptic feedback
+- **User profiles** with accessibility preferences and custom settings
+- **Map view** of the user's location and nearby Points of Interest (POIs)
+- **Place search** including POIs, addresses and streets
+- **Favourites** with drag-and-drop sorting
+- **Multi-modal itinerary planning** with customisable mode, speed and accessibility options
+- **Step-by-step navigation** instructions with audio-cues and haptic feedback
 
 ## Codebase
 
@@ -34,17 +34,17 @@ Navi4All is an open-source, multi-modal navigation platform designed to provide 
 - Full instructions: [apps/core_backend/README.md](apps/core_backend/README.md)
 
 ### Mobile App
-Designed to be a modular and customisable platform, Navi4All is currently deployed in the following regions:
+Navi4All is currently deployed in the following regions:
 
-- Navi4All - Kaiserslautern, Rhineland-Pfalz (DE): [kl_mobile](apps/kl_mobile/README.md)
-- Park-Stark - Mannheim, Baden-Württemberg (DE): [ma_mobile](apps/ma_mobile/README.md)
+- Kaiserslautern, Rhineland-Pfalz (DE) as ***Navi4All***
+- Mannheim, Baden-Württemberg (DE) as ***Park-Stark***
 
 #### Setup
 - Copy env template and configure: `cd apps/REGIONAL_APP_DIR && cp .env.example .env`
 - Run with env defines: `flutter run --dart-define-from-file=.env`
 - Full instructions can be found in the respective app directories:
-    - [kl_mobile/README.md](apps/kl_mobile/README.md)
-    - [ma_mobile/README.md](apps/ma_mobile/README.md)
+    - Kaiserslautern: [kl_mobile/README.md](apps/kl_mobile/README.md)
+    - Mannheim: [ma_mobile/README.md](apps/ma_mobile/README.md)
 
 ## Gallery
 

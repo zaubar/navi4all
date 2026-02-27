@@ -2,14 +2,33 @@
 
 ![Park-Stark](/apps/ma_mobile/assets/ma_mobile_screenshots.png)
 
-## System Requirements
+## Features
+- Map view of disabled parking spaces with real-time availability status
+- Place search including POIs, addresses and streets
+- Disabled parking spaces with real-time availability status near a searched location
+- Favourites with drag-and-drop sorting
+- In-app or external car navigation to disabled parking spaces
+- Step-by-step navigation instructions with audio-cues
+
+## App Architecture
+
+![ma_mobile architecture diagram](/apps/ma_mobile/assets/ma_mobile_architecture_diagram.svg)
+
+* View Layer: UI-related components (screens, widgets)
+* Controller Layer: State management, interface between View and Service layers
+* Service Layer: API clients, response parsing
+* DTOs: Data Transfer Objects for API communication
+
+## Deployment
+
+### System Requirements
 
 - Flutter SDK with Dart 3.8+ (`flutter --version`)
 - VS Code / Android Studio + Android SDK (for Android builds/runs)
 - Xcode 15+ (for iOS builds/runs on macOS)
 - A connected device or emulator/simulator
 
-## Environment Configuration
+### Environment Configuration
 
 Sensitive/configurable values are provided via compile-time Dart defines.
 
@@ -21,8 +40,9 @@ Sensitive/configurable values are provided via compile-time Dart defines.
 
 2. Adjust values in `.env` (this file is gitignored).
 
-Notes:
-- `.env.example` is configured for local core backend usage (`http://localhost:8010/v1/`).
+Note:
+
+`.env.example` is configured for local core backend usage (`http://localhost:8010/v1/`).
 
 ### Run from CLI
 
@@ -43,15 +63,6 @@ Use the workspace launch configuration `ma_mobile`, which already includes:
 `--dart-define-from-file=.env`
 
 Note: Changing `.env` values requires stopping and rerunning the app (hot reload does not refresh compile-time defines).
-
-## App Architecture
-
-![ma_mobile architecture diagram](/apps/ma_mobile/assets/ma_mobile_architecture_diagram.svg)
-
-* View Layer: UI-related components (screens, widgets)
-* Controller Layer: State management, interface between View and Service layers
-* Service Layer: API clients, response parsing
-* DTOs: Data Transfer Objects for API communication
 
 ## Translation Guide
 This app currently supports the following locales:
