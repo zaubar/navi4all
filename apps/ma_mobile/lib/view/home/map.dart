@@ -113,13 +113,16 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
       });
       _updateMarkers(geoJson, isAutoRefresh: isAutoRefresh);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.errorUnableToFetchParkingSites,
+      // Ignore errors during periodic refresh to avoid disrupting user experience
+      if (!isAutoRefresh) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.errorUnableToFetchParkingSites,
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 

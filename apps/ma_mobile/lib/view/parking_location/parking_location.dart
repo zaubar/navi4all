@@ -84,13 +84,7 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.errorUnableToFetchParkingSites,
-          ),
-        ),
-      );
+      // Parking location is already initialized, keep error silent
     }
   }
 

@@ -11,7 +11,6 @@ import 'package:smartroots/controllers/theme_controller.dart';
 import 'package:smartroots/core/config.dart';
 import 'package:smartroots/core/persistence/preference_helper.dart';
 import 'package:smartroots/core/theme/values.dart';
-import 'package:smartroots/l10n/app_localizations.dart';
 import 'package:smartroots/schemas/routing/place.dart';
 import 'package:smartroots/services/poi_parking.dart';
 import 'package:smartroots/view/parking_location/parking_location.dart';
@@ -177,13 +176,7 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
         _drawPlace();
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.errorUnableToFetchParkingSites,
-          ),
-        ),
-      );
+      // Ignore error, messages are displayed on bottom sheet
     }
   }
 
@@ -201,13 +194,7 @@ class _ParkingSiteMapState extends State<ParkingSiteMap>
       });
       _updateMarkers(geoJson);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.errorUnableToFetchParkingSites,
-          ),
-        ),
-      );
+      // Ignore error, messages are displayed on bottom sheet
     }
   }
 

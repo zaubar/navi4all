@@ -44,23 +44,23 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
       _selectedRadius = searchRadius;
     });
 
-    _refreshData();
+    _refreshData(isAutoRefresh: false);
   }
 
-  Future<void> _refreshData() async {
+  Future<void> _refreshData({required bool isAutoRefresh}) async {
     // Schedule periodic data refresh
     if (_refreshTimer == null || !_refreshTimer!.isActive) {
       _refreshTimer = Timer.periodic(
         Duration(seconds: Settings.dataRefreshIntervalSeconds),
-        (_) => _refreshData(),
+        (_) => _refreshData(isAutoRefresh: true),
       );
     }
 
     // Fetch parking locations
-    await _fetchParkingLocations();
+    await _fetchParkingLocations(isAutoRefresh: isAutoRefresh);
   }
 
-  Future<void> _fetchParkingLocations() async {
+  Future<void> _fetchParkingLocations({required bool isAutoRefresh}) async {
     POIParkingService parkingService = POIParkingService();
     try {
       List<Place> result;
@@ -73,13 +73,16 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
         _parkingLocations = result;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.errorUnableToFetchParkingSites,
+      // Ignore errors during periodic refresh to avoid disrupting user experience
+      if (!isAutoRefresh) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.errorUnableToFetchParkingSites,
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -93,7 +96,7 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
             setState(() {
               _selectedRadius = changedRadius;
             });
-            _refreshData();
+            _refreshData(isAutoRefresh: false);
 
             // Analytics event
             MatomoTracker.instance.trackEvent(
@@ -122,7 +125,7 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
       // Cancel periodic data refresh
       _refreshTimer?.cancel();
     } else if (state == AppLifecycleState.resumed) {
-      _refreshData();
+      _refreshData(isAutoRefresh: true);
     }
   }
 
