@@ -440,9 +440,11 @@ class RoutingController extends ChangeNotifier {
       _isCurrentPositionSnapped = true;
       _currentPosition = snappedPosition;
 
-      // Haptic feedback to indicate user is on path
-      if (lastVibrate == null ||
-          lastVibrate!.difference(position.timestamp).inSeconds.abs() >= 5) {
+      // Haptic feedback to indicate user is on path for WALK legs
+      if (_activeLeg!.mode == Mode.WALK &&
+          (lastVibrate == null ||
+              lastVibrate!.difference(position.timestamp).inSeconds.abs() >=
+                  5)) {
         lastVibrate = position.timestamp;
         Vibration.hasVibrator().then((_) => Vibration.vibrate(duration: 100));
       }
