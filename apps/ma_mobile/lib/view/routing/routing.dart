@@ -106,6 +106,9 @@ class RoutingState extends State<RoutingScreen> {
             category: EventCategory.routingScreen.toString(),
             action: EventAction.routingScreenAvailabilityChangeOccurred
                 .toString(),
+            name:
+                eventActionLabels[EventAction
+                    .routingScreenAvailabilityChangeOccurred]!,
           ),
         );
       }
@@ -193,6 +196,9 @@ class RoutingState extends State<RoutingScreen> {
                                   action: EventAction
                                       .routingScreenAvailabilityChangeAlternativeSearchCancelled
                                       .toString(),
+                                  name:
+                                      eventActionLabels[EventAction
+                                          .routingScreenAvailabilityChangeAlternativeSearchCancelled]!,
                                 ),
                               );
                             },
@@ -226,6 +232,9 @@ class RoutingState extends State<RoutingScreen> {
                                   action: EventAction
                                       .routingScreenAvailabilityChangeAlternativeSearchConfirmed
                                       .toString(),
+                                  name:
+                                      eventActionLabels[EventAction
+                                          .routingScreenAvailabilityChangeAlternativeSearchConfirmed]!,
                                 ),
                               );
                             },
@@ -302,6 +311,9 @@ class RoutingState extends State<RoutingScreen> {
                                 action: EventAction
                                     .routingScreenDisclaimerRejected
                                     .toString(),
+                                name:
+                                    eventActionLabels[EventAction
+                                        .routingScreenDisclaimerRejected]!,
                               ),
                             );
                           },
@@ -326,6 +338,9 @@ class RoutingState extends State<RoutingScreen> {
                                 action: EventAction
                                     .routingScreenDisclaimerAccepted
                                     .toString(),
+                                name:
+                                    eventActionLabels[EventAction
+                                        .routingScreenDisclaimerAccepted]!,
                               ),
                             );
                           },
@@ -945,7 +960,7 @@ class RoutingState extends State<RoutingScreen> {
                         ),
                         orientation == Orientation.portrait
                             ? Container(
-                                height: 16.0,
+                                height: 8.0,
                                 color: Theme.of(context).colorScheme.surface,
                               )
                             : SizedBox.shrink(),

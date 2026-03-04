@@ -291,6 +291,7 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
       eventInfo: EventInfo(
         category: EventCategory.homeMapScreen.toString(),
         action: EventAction.homeMapScreenBaseMapChanged.toString(),
+        name: eventActionLabels[EventAction.homeMapScreenBaseMapChanged]!,
       ),
     );
   }
@@ -390,6 +391,9 @@ class _HomeMapState extends State<HomeMap> with WidgetsBindingObserver {
             category: EventCategory.homeMapScreen.toString(),
             action: EventAction.homeMapScreenParkingLocationMarkerClicked
                 .toString(),
+            name:
+                eventActionLabels[EventAction
+                    .homeMapScreenParkingLocationMarkerClicked]!,
           ),
         );
       }

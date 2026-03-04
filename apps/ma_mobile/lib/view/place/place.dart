@@ -100,6 +100,9 @@ class _PlaceScreenState extends State<PlaceScreen> with WidgetsBindingObserver {
               eventInfo: EventInfo(
                 category: EventCategory.placeScreen.toString(),
                 action: EventAction.placeScreenSearchRadiusChanged.toString(),
+                name:
+                    eventActionLabels[EventAction
+                        .placeScreenSearchRadiusChanged]!,
               ),
             );
 

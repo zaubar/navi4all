@@ -119,6 +119,9 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
         eventInfo: EventInfo(
           category: EventCategory.parkingLocationScreen.toString(),
           action: EventAction.parkingLocationScreenFavouriteAdded.toString(),
+          name:
+              eventActionLabels[EventAction
+                  .parkingLocationScreenFavouriteAdded]!,
         ),
       );
     }
@@ -342,6 +345,9 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                               action: EventAction
                                                   .parkingLocationScreenRouteExternalClicked
                                                   .toString(),
+                                              name:
+                                                  eventActionLabels[EventAction
+                                                      .parkingLocationScreenRouteExternalClicked]!,
                                             ),
                                           );
                                         },
@@ -379,6 +385,9 @@ class _ParkingLocationScreenState extends State<ParkingLocationScreen>
                                               action: EventAction
                                                   .parkingLocationScreenRouteInternalClicked
                                                   .toString(),
+                                              name:
+                                                  eventActionLabels[EventAction
+                                                      .parkingLocationScreenRouteInternalClicked]!,
                                             ),
                                           );
                                         },

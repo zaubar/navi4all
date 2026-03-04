@@ -120,6 +120,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     action: EventAction
                                         .homeMapScreenSearchClicked
                                         .toString(),
+                                    name:
+                                        eventActionLabels[EventAction
+                                            .homeMapScreenSearchClicked]!,
                                   ),
                                 );
                               },
