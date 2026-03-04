@@ -107,13 +107,18 @@ class Settings {
   };
 
   // Support and feedback
-  static final String supportEmailUrl = _requiredString(
-    'SUPPORT_EMAIL_URL',
-    const String.fromEnvironment('SUPPORT_EMAIL_URL'),
+  static final String supportEmail = _requiredString(
+    'SUPPORT_EMAIL',
+    const String.fromEnvironment('SUPPORT_EMAIL'),
   );
   static final String supportEmailSubject = _requiredString(
     'SUPPORT_EMAIL_SUBJECT',
     const String.fromEnvironment('SUPPORT_EMAIL_SUBJECT'),
+  );
+
+  static final String feedbackEmail = _requiredString(
+    'FEEDBACK_EMAIL',
+    const String.fromEnvironment('FEEDBACK_EMAIL'),
   );
   static final String feedbackEmailSubject = _requiredString(
     'FEEDBACK_EMAIL_SUBJECT',

@@ -12,7 +12,7 @@ class SettingsScreen extends StatelessWidget {
   void _launchSupport() async {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: Settings.supportEmailUrl,
+      path: Settings.supportEmail,
       query: 'subject=${Settings.supportEmailSubject}',
     );
 

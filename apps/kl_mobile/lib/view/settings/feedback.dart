@@ -67,7 +67,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         '${AppLocalizations.of(context)!.feedbackMessageHint}: ${_messageController.text}\n\n';
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: Settings.supportEmailUrl,
+      path: Settings.feedbackEmail,
       query: 'subject=${Settings.feedbackEmailSubject}&body=$messageBody',
     );
 

@@ -38,6 +38,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       return;
     }
 
+    String intentQuery = 'subject=${Settings.feedbackEmailSubject}';
+
     String messageBody = '';
     if (_selectedFeedbackType != FeedbackType.unselected) {
       messageBody +=
@@ -47,10 +49,18 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         '${AppLocalizations.of(context)!.feedbackSubjectHint}: ${_subjectController.text}\n\n';
     messageBody +=
         '${AppLocalizations.of(context)!.feedbackMessageHint}: ${_messageController.text}\n\n';
+
+    intentQuery += '&body=$messageBody';
+
+    if (_selectedFeedbackType == FeedbackType.appFunctionality &&
+        Settings.feedbackTypeAppFunctionalityCCEmail.isNotEmpty) {
+      intentQuery += '&cc=${Settings.feedbackTypeAppFunctionalityCCEmail}';
+    }
+
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
-      path: Settings.supportEmailUrl,
-      query: 'subject=${Settings.feedbackEmailSubject}&body=$messageBody',
+      path: Settings.supportEmail,
+      query: intentQuery,
     );
 
     await launchUrl(emailLaunchUri);
