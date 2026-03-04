@@ -35,7 +35,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  Future<void> _nextPage() async {
+  Future<void> _onPageChangeButtonClick() async {
+    // Run any pre-page-change logic before navigating to the next page
+    await _onPageChangeInitiated();
+
+    // Navigate to the next page or finish onboarding
+    if (_pages[_currentPage] is _FinishScreen) {
+      PreferenceHelper.setOnboardingComplete(true);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } else {
+      _controller.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  Future<void> _onPageChangeInitiated() async {
     if (_pages[_currentPage] is _UserLocationScreen) {
       await _requestLocationPermission();
     } else if (_pages[_currentPage] is _NavigationGuidanceScreen &&
@@ -45,16 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (notificationStatus != PermissionStatus.granted) {
         await Permission.notification.request();
       }
-    } else if (_pages[_currentPage] is _FinishScreen) {
-      PreferenceHelper.setOnboardingComplete(true);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
     }
-    _controller.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
   }
 
   Future<void> _requestLocationPermission() async {
@@ -67,8 +76,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget get _pageViewWidget => PageView(
     key: _key,
     controller: _controller,
-    physics: const NeverScrollableScrollPhysics(),
     onPageChanged: (index) {
+      _onPageChangeInitiated();
       setState(() => _currentPage = index);
     },
     children: _pages,
@@ -101,7 +110,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ? AppLocalizations.of(context)!.commonContinueButtonSemantic
               : AppLocalizations.of(context)!.onboardingFinishHomeScreenButton,
           style: AccessibleButtonStyle.white,
-          onTap: () => _nextPage(),
+          onTap: _onPageChangeButtonClick,
         ),
       ),
       Image.asset("assets/smart_logo.png", width: 64),
