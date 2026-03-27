@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: Semantics(
                           excludeSemantics: true,
+                          button: true,
                           label: AppLocalizations.of(
                             context,
                           )!.searchTextFieldHintSemantic,
