@@ -37,7 +37,7 @@ Template file: `apps/core_backend/.env.example`
 
 ```bash
 cd apps/core_backend
-docker compose up --build
+docker compose up --build -d
 ```
 
 API at `http://localhost:8010`

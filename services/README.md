@@ -9,7 +9,8 @@ As multi-modal routing is a key feature of the Navi4All platform, a hybrid appro
 ## System Requirements
 
 - Docker Engine (or Docker Desktop)
-- Docker Compose v2 (`docker compose`)
+
+To install Docker, follow the [official setup instructions](https://docs.docker.com/engine/install/).
 
 ## Deploy Routing Services (OpenTripPlanner + Valhalla)
 
@@ -26,9 +27,13 @@ mkdir -p services/otp_kl services/valhalla
 After creating the directories, download and place the following files:
 
 - `services/otp_kl/graph.obj`
-	- https://assets.plan4better.de/otp/klnavi/graph.obj
+```bash
+wget -P services/otp_kl/ https://assets.plan4better.de/otp/klnavi/graph.obj
+```
 - `services/valhalla/kl_ped_net.pbf`
-	- https://assets.plan4better.de/otp/klnavi/kl_ped_net.pbf
+```bash
+wget -P services/valhalla/ https://assets.plan4better.de/otp/klnavi/kl_ped_net.pbf
+```
 
 *Note: The OpenTripPlanner graph file and Valhalla PBF file have been specially produced for Kaiserslautern. You may choose to alternatively use custom files for different regions or routing configurations.*
 
@@ -45,13 +50,13 @@ From the `services` directory:
 
 ```bash
 cd services
-docker compose up
+docker compose up -d
 ```
 
-To run in detached mode:
+To view logs and run in the foreground (skip the `-d` option):
 
 ```bash
-docker compose up -d
+docker compose up
 ```
 
 To stop services:
@@ -62,12 +67,44 @@ docker compose down
 
 ## Deploy Geocoder (Pelias)
 
-The geocoder (Pelias) is **not started from this `services` directory**.
+The following instructions are specific to setting up Pelias in the Kaiserslautern region.
 
-Set up Pelias using the official Docker Compose project instructions for Germany:
+1. Create and change to a directory for the `pelias` deployment
+```bash
+mkdir pelias && cd pelias
+```
+2. Create a data directory
+```bash
+mkdir data
+```
+3. Install the Pelias command-line utility
+```bash
+git clone https://github.com/pelias/docker.git && cd docker
+sudo ln -s "$(pwd)/pelias" /usr/local/bin/pelias
+```
+4. Download and place the configuration for Kaiserslautern
+```bash
+wget -P projects/ https://assets.plan4better.de/kaiserslautern.zip && cd projects
+unzip kaiserslautern.zip && cd kaiserslautern/
+```
+5. Run the following commands to prepare and start the Pelias service
 
-- https://github.com/pelias/docker/tree/master/projects/germany
+	_Note: This step may take a while._
 
-This link points to the **Germany region** setup. You may instead choose a Pelias project for a different region if that better matches your deployment needs.
+```bash
+pelias compose pull
+pelias elastic start
+pelias elastic wait
+pelias elastic create
+pelias download all
+pelias prepare all
+pelias import all
+pelias compose up
+```
 
-Before starting the backend, ensure `apps/core_backend/.env` is correctly configured so API settings point to your running geocoder service.
+6. Before starting the backend, ensure `apps/core_backend/.env` is correctly configured so API settings point to your running geocoder service.
+
+### Additional Regions
+To deploy Pelias in various other regions, follow the [official setup instructions](https://github.com/pelias/docker/tree/master/projects/germany).
+
+_Note: This link points to the **Germany region** setup. You may instead choose a Pelias project for a different region if that better matches your deployment needs._

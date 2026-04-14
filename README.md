@@ -23,6 +23,20 @@ Navi4All is an open-source, multi-modal map & navigation platform for mobile dev
 
 ## Deployment
 
+1. To get started with deploying the Navi4All project, use `git` to clone this repository to your local machine.
+
+```bash
+git clone https://github.com/plan4better/navi4all.git
+```
+
+2. Next, change to the `navi4all` directory to work within the project.
+
+```bash
+cd navi4all/
+```
+
+3. Then, follow the steps and full instructions linked below to setup services, the core backend, and the mobile app.
+
 ### Services
 - Fetch required routing data files and place in `services/otp_kl` and `services/valhalla` directories
 - Start routing services with Docker Compose: `cd services && docker compose up -d`
@@ -30,7 +44,7 @@ Navi4All is an open-source, multi-modal map & navigation platform for mobile dev
 
 ### Core Backend
 - Copy env template and configure: `cd apps/core_backend && cp .env.example .env`
-- Start with Docker: `docker compose up --build`
+- Start with Docker: `docker compose up --build -d`
 - Full instructions: [apps/core_backend/README.md](apps/core_backend/README.md)
 
 ### Mobile App
