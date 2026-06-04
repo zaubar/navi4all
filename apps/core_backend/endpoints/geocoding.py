@@ -19,7 +19,7 @@
 import httpx
 from fastapi import APIRouter
 from schemas.coordinates import Coordinates
-from schemas.geocoding import GeocodingAutocompleteRequestModel, GeocodingAutocompleteResponseModel
+from schemas.geocoding import GeocodingAutocompleteRequestModel, GeocodingAutocompleteResponseModel, GeocodingReverseRequestModel, GeocodingReverseResponseModel
 from services.adaptors.geocoding import GeocodingAdaptor
 from core.config import settings
 
@@ -48,6 +48,27 @@ async def autocomplete(
                 focus_point=Coordinates(lat=focus_point_lat, lon=focus_point_lon)
                 if focus_point_lat is not None and focus_point_lon is not None
                 else None,
+                limit=limit,
+            ),
+        )
+    return response
+
+
+
+@router.get("/reverse", response_model=GeocodingReverseResponseModel)
+async def reverse(
+    timestamp: str,
+    lat: float,
+    lon: float,
+    limit: int | None = 5,
+):
+    async with httpx.AsyncClient() as client:
+        response = await adaptor.reverse(
+            client,
+            GeocodingReverseRequestModel(
+                timestamp=timestamp,
+                lat=lat,
+                lon=lon,
                 limit=limit,
             ),
         )

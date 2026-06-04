@@ -51,3 +51,26 @@ class GeocodingAutocompleteRequestModel(BaseModel):
 class GeocodingAutocompleteResponseModel(BaseModel):
     timestamp: datetime
     results: list[Place]
+
+
+class GeocodingReverseRequestModel(BaseModel):
+    lat: float
+    lon: float
+    timestamp: datetime
+    limit: int | None = 5
+
+    @field_validator("timestamp", mode="before")
+    def validate_timestamp(cls, value: str | datetime) -> datetime:
+        if value is None:
+            raise ValueError("Timestamp must be provided")
+        elif isinstance(value, str):
+            try:
+                value = datetime.fromisoformat(value)
+            except ValueError:
+                raise ValueError("Invalid timestamp format, must be ISO 8601")
+        return value
+
+
+class GeocodingReverseResponseModel(BaseModel):
+    timestamp: datetime
+    results: list[Place]

@@ -43,4 +43,4 @@ app.include_router(user_engagement_router, prefix=settings.API_VERSION)
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the Navi4All Core Backend API"}
+    return {"message": "Hey there! The Regensburg routing backend is alive and ready to roll 🚀"}
