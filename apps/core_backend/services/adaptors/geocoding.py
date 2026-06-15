@@ -94,7 +94,7 @@ class GeocodingAdaptor:
             "api_key": self.api_key,
             "point.lat": request.lat,
             "point.lon": request.lon,
-            "layers": "address,street,venue,neighbourhood",
+            "layers": "address,venue,neighbourhood",
         }
         return request_url, request_params
 
