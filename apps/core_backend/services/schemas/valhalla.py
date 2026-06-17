@@ -228,6 +228,7 @@ class ValhallaRouteRequestModel(BaseModel):
     locations: list[ValhallaLocation]
     costing: ValhallaCosting = ValhallaCosting.pedestrian
     costing_options: ValhallaCostingOptions | None = None
+    exclude_locations: list[ValhallaLocation] | None = None
     language: ValhallaLanguage = ValhallaLanguage.en
     # Number of alternate routes to request in addition to the primary trip.
     # Valhalla only supports alternates for non-multimodal costings.

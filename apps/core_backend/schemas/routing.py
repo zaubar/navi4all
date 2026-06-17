@@ -193,6 +193,12 @@ class GuidanceLanguage(str, Enum):
     de = "de"
 
 
+class PedestrianProfile(str, Enum):
+    foot = "foot"
+    wheelchair = "wheelchair"
+    blind = "blind"
+
+
 """Request and response models exposed via the API"""
 
 
@@ -206,6 +212,8 @@ class RoutingPlanRequestModel(BaseModel):
     walk: WalkOptions | None = None
     bicycle: BicycleOptions | None = None
     accessible: bool = False
+    pedestrian_profile: PedestrianProfile | None = None
+    exclude_locations: list[Coordinates] | None = None
     num_itineraries: int = 3
     guidance_language: GuidanceLanguage = GuidanceLanguage.en
     grade_category: GradeCategory | None = None
