@@ -175,6 +175,7 @@ class RoutingEngine(str, Enum):
 class WalkOptions(BaseModel):
     speed: float
     avoid: bool
+    surface_quality: float | None = None
 
 
 class BicycleOptions(BaseModel):

@@ -69,6 +69,42 @@ class ValhallaAdaptor:
     ) -> RoutingPlanSummaryResponseModel | RoutingPlanDetailedResponseModel:
         """Make a route request to the Valhalla routing engine."""
 
+        def _get_surface_quality_options(
+            surface_quality: float | None,
+            accessible: bool,
+        ) -> ValhallaPedestrianCostingOptions:
+            """Map surface_quality (0.0-1.0) to Valhalla pedestrian options."""
+
+            # Determine type
+            if surface_quality is not None and surface_quality >= 0.7:
+                costing_type = ValhallaPedestrianCostingOptionsType.wheelchair
+            elif surface_quality is not None and surface_quality > 0.0:
+                costing_type = ValhallaPedestrianCostingOptionsType.foot
+            else:
+                costing_type = (
+                    ValhallaPedestrianCostingOptionsType.blind
+                    if accessible
+                    else ValhallaPedestrianCostingOptionsType.foot
+                )
+
+            # Determine surface_smoothness
+            surface_smoothness: float | None = None
+            if surface_quality is not None and surface_quality > 0.0:
+                if surface_quality <= 0.3:
+                    surface_smoothness = 0.0
+                elif surface_quality <= 0.6:
+                    surface_smoothness = 0.5
+                elif surface_quality <= 0.9:
+                    surface_smoothness = 0.75
+                else:
+                    surface_smoothness = 1.0
+
+            return ValhallaPedestrianCostingOptions(
+                walking_speed=request.walk.speed if request.walk else None,
+                surface_smoothness=surface_smoothness,
+                type=costing_type,
+            )
+
         # Reformat request payload
         request_dict = str(
             ValhallaRouteRequestModel(
@@ -82,11 +118,9 @@ class ValhallaAdaptor:
                 if len(request.transport_modes) == 1
                 else ValhallaCosting.multi_modal,
                 costing_options=ValhallaCostingOptions(
-                    pedestrian=ValhallaPedestrianCostingOptions(
-                        walking_speed=request.walk.speed if request.walk else None,
-                        type=ValhallaPedestrianCostingOptionsType.blind
-                        if request.accessible
-                        else ValhallaPedestrianCostingOptionsType.foot,
+                    pedestrian=_get_surface_quality_options(
+                        surface_quality=request.walk.surface_quality if request.walk else None,
+                        accessible=request.accessible,
                     )
                 ),
                 language=request.guidance_language.value,

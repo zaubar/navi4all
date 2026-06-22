@@ -103,9 +103,18 @@ class OpenTripPlannerAdaptor:
             to=OTPInputCoordinates(
                 lat=request.destination.lat, lon=request.destination.lon
             ),
-            wheelchair=request.accessible,
+            wheelchair=request.accessible
+            if request.walk is None or request.walk.surface_quality is None
+            else request.walk.surface_quality >= 0.7,
             walk_speed=(request.walk.speed * 1000) / 3600 if request.walk else None,
-            walk_reluctance=4.0
+            walk_reluctance=(
+                6.0 if request.walk.surface_quality >= 1.0
+                else 5.0 if request.walk.surface_quality >= 0.7
+                else 4.0 if request.walk.surface_quality >= 0.4
+                else 2.5 if request.walk.surface_quality > 0.0
+                else 2.0
+            ) if request.walk and request.walk.surface_quality is not None
+            else 4.0
             if request.walk and request.walk.avoid
             else 2.0
             if request.walk

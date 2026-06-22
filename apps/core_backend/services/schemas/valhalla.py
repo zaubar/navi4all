@@ -64,6 +64,7 @@ class ValhallaPedestrianCostingOptionsType(str, Enum):
 
 class ValhallaPedestrianCostingOptions(BaseModel):
     walking_speed: float | None = None
+    surface_smoothness: float | None = None
     type: ValhallaPedestrianCostingOptionsType | None = None
 
 
