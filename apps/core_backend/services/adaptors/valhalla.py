@@ -72,8 +72,20 @@ class ValhallaAdaptor:
         def _get_surface_quality_options(
             surface_quality: float | None,
             accessible: bool,
+            grade_category: str | None = None,
         ) -> ValhallaPedestrianCostingOptions:
-            """Map surface_quality (0.0-1.0) to Valhalla pedestrian options."""
+            """Map surface_quality (0.0-1.0) and grade_category to Valhalla pedestrian options."""
+
+            # grade_category takes precedence over surface_quality + accessible
+            if grade_category:
+                if grade_category == "gentle":
+                    costing_type = ValhallaPedestrianCostingOptionsType.wheelchair
+                else:
+                    costing_type = ValhallaPedestrianCostingOptionsType.foot
+                return ValhallaPedestrianCostingOptions(
+                    walking_speed=request.walk.speed if request.walk else None,
+                    type=costing_type,
+                )
 
             # Determine type
             if surface_quality is not None and surface_quality >= 0.7:
@@ -121,6 +133,7 @@ class ValhallaAdaptor:
                     pedestrian=_get_surface_quality_options(
                         surface_quality=request.walk.surface_quality if request.walk else None,
                         accessible=request.accessible,
+                        grade_category=request.grade_category,
                     )
                 ),
                 language=request.guidance_language.value,

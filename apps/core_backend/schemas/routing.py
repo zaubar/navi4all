@@ -46,6 +46,12 @@ class Mode(str, Enum):
     monorail = "MONORAIL"
 
 
+class GradeCategory(str, Enum):
+    gentle = "gentle"
+    moderate = "moderate"
+    steep = "steep"
+
+
 class RelativeDirection(Enum):
     depart = "DEPART"
     hard_left = "HARD_LEFT"
@@ -202,6 +208,7 @@ class RoutingPlanRequestModel(BaseModel):
     accessible: bool = False
     num_itineraries: int = 3
     guidance_language: GuidanceLanguage = GuidanceLanguage.en
+    grade_category: GradeCategory | None = None
 
     @field_validator("date", mode="before")
     @classmethod

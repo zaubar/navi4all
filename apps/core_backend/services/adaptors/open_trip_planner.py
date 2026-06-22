@@ -39,6 +39,7 @@ from schemas.routing import (
 )
 from services.schemas.open_trip_planner import (
     OTPInputCoordinates,
+    OTPOptimizeType,
     OTPPlanRequestModel,
     OTPPlanResponseModel,
     OTPTransportMode,
@@ -94,6 +95,17 @@ class OpenTripPlannerAdaptor:
         )
 
         # Reformat request payload
+        wheelchair_value = request.accessible
+        if request.walk and request.walk.surface_quality is not None:
+            wheelchair_value = request.walk.surface_quality >= 0.7
+
+        # grade_category overrides wheelchair and adds optimize
+        if request.grade_category:
+            wheelchair_value = request.grade_category == "gentle"
+            optimize_value = OTPOptimizeType.flat if request.grade_category in ("gentle", "moderate") else OTPOptimizeType.quick
+        else:
+            optimize_value = None
+
         request_dict = OTPPlanRequestModel(
             date=request.date,
             time=(
@@ -103,9 +115,7 @@ class OpenTripPlannerAdaptor:
             to=OTPInputCoordinates(
                 lat=request.destination.lat, lon=request.destination.lon
             ),
-            wheelchair=request.accessible
-            if request.walk is None or request.walk.surface_quality is None
-            else request.walk.surface_quality >= 0.7,
+            wheelchair=wheelchair_value,
             walk_speed=(request.walk.speed * 1000) / 3600 if request.walk else None,
             walk_reluctance=(
                 6.0 if request.walk.surface_quality >= 1.0
@@ -127,6 +137,7 @@ class OpenTripPlannerAdaptor:
             transport_modes=[
                 OTPTransportMode(mode=mode) for mode in request.transport_modes
             ],
+            optimize=optimize_value,
         ).model_dump()
         request_dict = {to_camel_case(k): v for k, v in request_dict.items()}
 

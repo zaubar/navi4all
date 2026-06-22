@@ -238,6 +238,14 @@ class OTPTransportMode(BaseModel):
     mode: OTPMode
 
 
+class OTPOptimizeType(str, Enum):
+    quick = "QUICK"
+    safe = "SAFE"
+    flat = "FLAT"
+    greenways = "GREENWAYS"
+    triangle = "TRIANGLE"
+
+
 class OTPPlanRequestModel(BaseModel):
     date: str
     time: str
@@ -249,6 +257,8 @@ class OTPPlanRequestModel(BaseModel):
     transport_modes: list[OTPTransportMode]
     walk_speed: float | None = None
     walk_reluctance: float | None = None
+    walk_safety_factor: float | None = None
+    optimize: OTPOptimizeType | None = None
     bike_speed: float | None = None
     
 

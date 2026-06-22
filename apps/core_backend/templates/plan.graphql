@@ -9,7 +9,9 @@ query RoutingPlan(
     $transportModes: [TransportMode!]
     $walkSpeed: Float,
     $walkReluctance: Float,
-    $bikeSpeed: Float
+    $walkSafetyFactor: Float,
+    $bikeSpeed: Float,
+    $optimize: OptimizeType
 ) {
     plan(
         date: $date,
@@ -22,7 +24,9 @@ query RoutingPlan(
         transportModes: $transportModes
         walkSpeed: $walkSpeed,
         walkReluctance: $walkReluctance,
-        bikeSpeed: $bikeSpeed
+        walkSafetyFactor: $walkSafetyFactor,
+        bikeSpeed: $bikeSpeed,
+        optimize: $optimize
     ) {
         date
         from {
