@@ -94,7 +94,7 @@ class ValhallaAdaptor:
                 costing_type = ValhallaPedestrianCostingOptionsType.foot
             else:
                 costing_type = (
-                    ValhallaPedestrianCostingOptionsType.blind
+                    ValhallaPedestrianCostingOptionsType.wheelchair
                     if accessible
                     else ValhallaPedestrianCostingOptionsType.foot
                 )
