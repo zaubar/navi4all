@@ -30,6 +30,7 @@ from schemas.routing import (
     ItineraryResponseModel,
     ItineraryDetailed,
     AbsoluteDirection,
+    RelativeDirection,
     Place,
     PlaceType,
 )
@@ -38,13 +39,12 @@ from services.schemas.valhalla import (
     ValhallaRouteResponseModel,
     ValhallaLocation,
     ValhallaCosting,
-    ValhallaCostingOptions,
-    ValhallaPedestrianCostingOptions,
-    ValhallaPedestrianCostingOptionsType,
-    MODE_TO_COSTING,
+    ValhallaManeuverType,
     MANEUVER_TYPE_TO_RELATIVE_DIRECTION,
+    MODE_TO_COSTING,
     TRAVEL_MODE_TO_MODE,
 )
+from services import route_utils
 from uuid import uuid4
 from datetime import datetime, timedelta
 import json
@@ -168,18 +168,52 @@ class ValhallaAdaptor:
             shape_points = polyline.decode(leg.shape, precision=6)
 
             steps: list[Step] = []
-            for maneuver in leg.maneuvers:
+            for i, maneuver in enumerate(leg.maneuvers):
                 step_shape = shape_points[
                     maneuver.begin_shape_index : maneuver.end_shape_index + 1
                 ]
+                step_bearing = route_utils.compute(step_shape)
+
+                # For first step (depart) keep the original maneuver type;
+                # for subsequent steps compute turn direction from bearing
+                # difference between consecutive street segments.
+                if i == 0:
+                    relative_direction = MANEUVER_TYPE_TO_RELATIVE_DIRECTION.get(
+                        maneuver.type, RelativeDirection.continue_
+                    )
+                else:
+                    prev_maneuver = leg.maneuvers[i - 1]
+                    prev_shape = shape_points[
+                        prev_maneuver.begin_shape_index : prev_maneuver.end_shape_index + 1
+                    ]
+                    prev_bearing = route_utils.compute(prev_shape)
+                    relative_direction = route_utils.turn_direction(prev_bearing, step_bearing)
+
+                # Determine absolute (compass) direction from the step bearing.
+                if step_bearing < 22.5 or step_bearing >= 337.5:
+                    absolute_direction = AbsoluteDirection.north
+                elif step_bearing < 67.5:
+                    absolute_direction = AbsoluteDirection.northeast
+                elif step_bearing < 112.5:
+                    absolute_direction = AbsoluteDirection.east
+                elif step_bearing < 157.5:
+                    absolute_direction = AbsoluteDirection.southeast
+                elif step_bearing < 202.5:
+                    absolute_direction = AbsoluteDirection.south
+                elif step_bearing < 247.5:
+                    absolute_direction = AbsoluteDirection.southwest
+                elif step_bearing < 292.5:
+                    absolute_direction = AbsoluteDirection.west
+                else:
+                    absolute_direction = AbsoluteDirection.northwest
+
                 steps.append(
                     Step(
                         distance=round(maneuver.length * 1000),  # convert km to m
                         lat=step_shape[0][0],
                         lon=step_shape[0][1],
-                        relative_direction=MANEUVER_TYPE_TO_RELATIVE_DIRECTION.get(
-                            maneuver.type,
-                        ),
+                        relative_direction=relative_direction,
+                        absolute_direction=absolute_direction,
                         street_name=maneuver.instruction,
                         bogus_name=True,
                         text_instruction=maneuver.instruction,
