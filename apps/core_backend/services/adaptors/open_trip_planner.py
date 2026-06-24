@@ -36,6 +36,7 @@ from schemas.routing import (
     ItineraryDetailed,
     Place,
     PlaceType,
+    RelativeDirection,
 )
 from services.schemas.open_trip_planner import (
     OTPInputCoordinates,
@@ -45,6 +46,7 @@ from services.schemas.open_trip_planner import (
     OTPTransportMode,
     OTPLeg,
 )
+from services import route_utils
 from uuid import uuid4
 from datetime import datetime, timedelta
 import json
@@ -80,6 +82,39 @@ class OpenTripPlannerAdaptor:
                 return otp_leg.trip.stops[-1].name
 
         return ""
+
+    def _build_steps(self, otp_steps: list) -> list[Step]:
+        """Build Step list with bearing-normalized turn directions.
+
+        Computes turn direction at each step point by comparing the bearing
+        of the segment *into* the step with the segment *out of* the step.
+        """
+        steps: list[Step] = []
+        prev_bearing: float | None = None
+        prev_coords: tuple[float, float] | None = None
+        for i, s in enumerate(otp_steps):
+            coords = (s.lat, s.lon)
+            if i == 0:
+                relative_direction = RelativeDirection.depart
+            elif prev_coords is not None:
+                bearing = route_utils.compute([prev_coords, coords])
+                if prev_bearing is not None:
+                    relative_direction = route_utils.turn_direction(prev_bearing, bearing)
+                else:
+                    relative_direction = RelativeDirection.continue_
+                prev_bearing = bearing
+            else:
+                relative_direction = RelativeDirection.continue_
+            prev_coords = coords
+            steps.append(Step(
+                distance=s.distance,
+                lon=s.lon,
+                lat=s.lat,
+                relative_direction=relative_direction,
+                street_name=s.street_name,
+                bogus_name=s.bogus_name,
+            ))
+        return steps
 
     async def make_plan_request(
         self,
@@ -198,17 +233,7 @@ class OpenTripPlannerAdaptor:
                         ),
                         distance=round(leg.distance),
                         geometry=leg.leg_geometry.points,
-                        steps=[
-                            Step(
-                                distance=step.distance,
-                                lon=step.lon,
-                                lat=step.lat,
-                                relative_direction=step.relative_direction.value,
-                                street_name=step.street_name,
-                                bogus_name=step.bogus_name,
-                            )
-                            for step in leg.steps
-                        ],
+                        steps=self._build_steps(leg.steps),
                         route=Route(
                             id=leg.route.id,
                             short_name=leg.route.short_name,
