@@ -158,6 +158,92 @@ def test_get_leg_headsign_uses_fallback_order() -> None:
     assert adaptor._get_leg_headsign(_FakeLeg(headsign=None, trip=None)) == ""
 
 
+class _FakeOTPStep:
+    """Minimal OTP step stub for _build_steps testing."""
+    def __init__(self, lat: float, lon: float, distance: float = 10.0,
+                 street_name: str = "", bogus_name: bool = False):
+        self.lat = lat
+        self.lon = lon
+        self.distance = distance
+        self.street_name = street_name
+        self.bogus_name = bogus_name
+
+
+class TestBuildSteps:
+    """Verify _build_steps computes correct turn directions.
+
+    The method pre-computes segment bearings so every step (except the
+    last) compares its incoming segment with its outgoing segment.
+
+    Coordinate reference (Regensburg Domplatz area):
+      lat ~49.019, lon ~12.098
+    """
+
+    def _fake_step(self, lat: float, lon: float) -> _FakeOTPStep:
+        return _FakeOTPStep(lat=lat, lon=lon)
+
+    def test_depart_only(self) -> None:
+        """Single step → depart."""
+        adaptor = OpenTripPlannerAdaptor(url="https://otp.example/graphql")
+        steps = adaptor._build_steps([self._fake_step(49.019, 12.098)])
+        assert len(steps) == 1
+        assert steps[0].relative_direction == RelativeDirection.depart
+
+    def test_two_steps_continues(self) -> None:
+        """Two steps on the same bearing → step 1 continues, no turn angle to compute."""
+        adaptor = OpenTripPlannerAdaptor(url="https://otp.example/graphql")
+        steps = adaptor._build_steps([
+            self._fake_step(49.0190, 12.0980),
+            self._fake_step(49.0195, 12.0980),  # directly north
+        ])
+        assert len(steps) == 2
+        assert steps[0].relative_direction == RelativeDirection.depart
+        assert steps[1].relative_direction == RelativeDirection.continue_
+
+    def test_three_steps_right_turn(self) -> None:
+        """Three steps forming a right-angle → step 1 is right, step 2 continues / last."""
+        adaptor = OpenTripPlannerAdaptor(url="https://otp.example/graphql")
+        # Step 0→1: northward; Step 1→2: eastward  → right turn at step 1
+        steps = adaptor._build_steps([
+            self._fake_step(49.0190, 12.0980),  # 0: depart
+            self._fake_step(49.0195, 12.0980),  # 1: 90° right (north → east)
+            self._fake_step(49.0195, 12.0985),  # 2: last, no outgoing segment
+        ])
+        assert len(steps) == 3
+        assert steps[0].relative_direction == RelativeDirection.depart
+        assert steps[1].relative_direction == RelativeDirection.right
+        assert steps[2].relative_direction == RelativeDirection.continue_
+
+    def test_three_steps_left_turn(self) -> None:
+        """Three steps forming a left-turn angle → step 1 is left."""
+        adaptor = OpenTripPlannerAdaptor(url="https://otp.example/graphql")
+        # Step 0→1: eastward; Step 1→2: northward → left turn at step 1
+        steps = adaptor._build_steps([
+            self._fake_step(49.0190, 12.0980),  # 0: depart
+            self._fake_step(49.0190, 12.0985),  # 1: 90° left (east → north)
+            self._fake_step(49.0195, 12.0985),  # 2: last
+        ])
+        assert len(steps) == 3
+        assert steps[0].relative_direction == RelativeDirection.depart
+        assert steps[1].relative_direction == RelativeDirection.left
+        assert steps[2].relative_direction == RelativeDirection.continue_
+
+    def test_four_steps_straight_then_right(self) -> None:
+        """Four steps: depart, continue (straight), right, last."""
+        adaptor = OpenTripPlannerAdaptor(url="https://otp.example/graphql")
+        # Step 0→1→2→3: straight, then right
+        steps = adaptor._build_steps([
+            self._fake_step(49.0190, 12.0980),
+            self._fake_step(49.0195, 12.0980),  # straight
+            self._fake_step(49.0200, 12.0980),  # straight → continue_
+            self._fake_step(49.0200, 12.0985),  # right → last (continue_)
+        ])
+        assert len(steps) == 4
+        assert steps[0].relative_direction == RelativeDirection.depart
+        assert steps[1].relative_direction == RelativeDirection.continue_
+        assert steps[2].relative_direction == RelativeDirection.right
+        assert steps[3].relative_direction == RelativeDirection.continue_
+
 @pytest.mark.asyncio
 async def test_get_itinerary_deserializes_cached_payload() -> None:
     adaptor = OpenTripPlannerAdaptor(url="https://otp.example/graphql")

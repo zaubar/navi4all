@@ -214,7 +214,7 @@ class ValhallaAdaptor:
                         lon=step_shape[0][1],
                         relative_direction=relative_direction,
                         absolute_direction=absolute_direction,
-                        street_name=maneuver.instruction,
+                        street_name=maneuver.street_names[0] if maneuver.street_names else maneuver.instruction,
                         bogus_name=True,
                         text_instruction=maneuver.instruction,
                         voice_instruction=maneuver.verbal_pre_transition_instruction,

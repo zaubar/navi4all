@@ -88,24 +88,33 @@ class OpenTripPlannerAdaptor:
 
         Computes turn direction at each step point by comparing the bearing
         of the segment *into* the step with the segment *out of* the step.
+
+        Pre-computes all segment bearings from the coordinate list so that
+        every step (except the last) can be compared against its incoming
+        AND outgoing segment, eliminating the off-by-one shift that existed
+        when bearings were computed incrementally.
         """
+        coords = [(s.lat, s.lon) for s in otp_steps]
+
+        # Pre-compute bearing for each segment between consecutive step points
+        segment_bearings: list[float] = []
+        for j in range(len(coords) - 1):
+            segment_bearings.append(route_utils.compute([coords[j], coords[j + 1]]))
+
         steps: list[Step] = []
-        prev_bearing: float | None = None
-        prev_coords: tuple[float, float] | None = None
         for i, s in enumerate(otp_steps):
-            coords = (s.lat, s.lon)
             if i == 0:
                 relative_direction = RelativeDirection.depart
-            elif prev_coords is not None:
-                bearing = route_utils.compute([prev_coords, coords])
-                if prev_bearing is not None:
-                    relative_direction = route_utils.turn_direction(prev_bearing, bearing)
-                else:
-                    relative_direction = RelativeDirection.continue_
-                prev_bearing = bearing
+            elif i < len(segment_bearings):
+                # Turn at step i: compare incoming segment (i-1→i)
+                # with outgoing segment (i→i+1).
+                relative_direction = route_utils.turn_direction(
+                    segment_bearings[i - 1], segment_bearings[i]
+                )
             else:
+                # Last step — no outgoing segment to compare.
                 relative_direction = RelativeDirection.continue_
-            prev_coords = coords
+
             steps.append(Step(
                 distance=s.distance,
                 lon=s.lon,
@@ -114,6 +123,7 @@ class OpenTripPlannerAdaptor:
                 street_name=s.street_name,
                 bogus_name=s.bogus_name,
             ))
+
         return steps
 
     async def make_plan_request(

@@ -190,6 +190,7 @@ TRAVEL_MODE_TO_MODE: dict[ValhallaTravelMode, Mode] = {
 class ValhallaManeuver(BaseModel):
     type: ValhallaManeuverType
     instruction: str
+    street_names: list[str] = []
     verbal_pre_transition_instruction: str | None = None
     travel_mode: ValhallaTravelMode
     time: float  # in seconds
