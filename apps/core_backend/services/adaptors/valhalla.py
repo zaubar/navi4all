@@ -39,6 +39,7 @@ from services.schemas.valhalla import (
     ValhallaRouteResponseModel,
     ValhallaLocation,
     ValhallaCosting,
+    ValhallaCostingOptions,
     ValhallaManeuverType,
     ValhallaPedestrianCostingOptions,
     ValhallaPedestrianCostingOptionsType,
