@@ -40,6 +40,8 @@ from services.schemas.valhalla import (
     ValhallaLocation,
     ValhallaCosting,
     ValhallaManeuverType,
+    ValhallaPedestrianCostingOptions,
+    ValhallaPedestrianCostingOptionsType,
     MANEUVER_TYPE_TO_RELATIVE_DIRECTION,
     MODE_TO_COSTING,
     TRAVEL_MODE_TO_MODE,
