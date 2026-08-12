@@ -85,9 +85,16 @@ class ValhallaAdaptor:
                     costing_type = ValhallaPedestrianCostingOptionsType.wheelchair
                 else:
                     costing_type = ValhallaPedestrianCostingOptionsType.foot
+                # use_hills (0 = avoid hills as much as possible, 1 = no preference)
+                # feeds Valhalla's per-grade-bin cost penalty (kAvoidHillsStrength).
+                # "gentle" previously only changed the costing type, which alone does
+                # not bias routing away from steep edges -- this is the option that
+                # actually does.
+                use_hills = 0.0 if grade_category == "gentle" else None
                 return ValhallaPedestrianCostingOptions(
                     walking_speed=request.walk.speed if request.walk else None,
                     type=costing_type,
+                    use_hills=use_hills,
                 )
 
             # Determine type

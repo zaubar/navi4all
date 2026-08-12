@@ -66,6 +66,7 @@ class ValhallaPedestrianCostingOptions(BaseModel):
     walking_speed: float | None = None
     surface_smoothness: float | None = None
     type: ValhallaPedestrianCostingOptionsType | None = None
+    use_hills: float | None = None
 
 
 class ValhallaCostingOptions(BaseModel):
