@@ -50,11 +50,13 @@ class Settings(BaseSettings):
     # services/grade_gate.py). Uses Valhalla's /height DEM endpoint, so it
     # works for itineraries from ANY engine. Threshold is the maximum
     # sustained grade a "gentle" route may contain; the window is the span
-    # over which a grade must persist to count (smooths single-sample DEM
-    # noise). Disable via env GRADE_GATE_ENABLED=false.
+    # over which a grade must persist to count. 40 m measured on the live
+    # Regensburg DEM: flat old-town streets read 3-4% (30 m-DEM noise), the
+    # Blaue-Lilien-Gasse ramp reads 12.5% -- a 20 m window put flat streets
+    # at 6-7%, above the threshold. Disable via env GRADE_GATE_ENABLED=false.
     GRADE_GATE_ENABLED: bool = True
     GRADE_GATE_MAX_PERCENT: float = 6.0
-    GRADE_GATE_WINDOW_M: float = 20.0
+    GRADE_GATE_WINDOW_M: float = 40.0
     GRADE_GATE_TIMEOUT_S: float = 5.0
 
     GEOCODING_PROVIDER: SupportedGeocodingProviders
