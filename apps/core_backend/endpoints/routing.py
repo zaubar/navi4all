@@ -29,6 +29,7 @@ from schemas.routing import (
 from services.adaptors.open_trip_planner import OpenTripPlannerAdaptor
 from services.adaptors.valhalla import ValhallaAdaptor
 from services.adaptors.hybrid import HybridAdaptor
+from services.grade_gate import apply_grade_gate
 from core.config import settings
 
 
@@ -78,6 +79,10 @@ async def plan(
                 detail=f"Error making plan request: HTTPStatus {e.response.status_code}",
             )
 
+        # Engine-agnostic hard gradient exclusion (no-op unless the request
+        # asks for gentle grades on a walk mode) -- see services/grade_gate.py.
+        response = await apply_grade_gate(client, request, response)
+
     return response
 
 
@@ -110,6 +115,10 @@ async def itinerary_detailed(
                 status_code=e.response.status_code,
                 detail=f"Error making plan request: HTTPStatus {e.response.status_code}",
             )
+
+        # Engine-agnostic hard gradient exclusion (no-op unless the request
+        # asks for gentle grades on a walk mode) -- see services/grade_gate.py.
+        response = await apply_grade_gate(client, request, response)
 
     return response
 
