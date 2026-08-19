@@ -100,7 +100,7 @@ def resample_shape(
 
 
 def max_sustained_grade_percent(
-    range_height: list[tuple[float, float | None]], window_m: float = 20.0
+    range_height: list[tuple[float, float | None]], window_m: float = 40.0
 ) -> float | None:
     """Steepest sustained grade (%) over at-least-``window_m`` spans.
 
@@ -140,11 +140,10 @@ def max_sustained_grade_percent(
         while j < len(usable) and usable[j][0] - d_i < window_m:
             j += 1
         if j >= len(usable):
-            # Tail shorter than the window: measure against the final sample so
-            # a steep last stretch still counts (unless it is trivially short).
-            d_j, h_j = usable[-1]
-            if d_j - d_i >= window_m / 2 and d_j > d_i:
-                steepest = max(steepest, abs(h_j - h_i) / (d_j - d_i) * 100.0)
+            # Tail shorter than a full window: stop. Sub-window spans amplify
+            # 30 m-DEM interpolation noise into fake ramps (measured live:
+            # half-window tails put flat Regensburg streets above 6%), and a
+            # stretch shorter than the window is by definition not sustained.
             break
         d_j, h_j = usable[j]
         steepest = max(steepest, abs(h_j - h_i) / (d_j - d_i) * 100.0)

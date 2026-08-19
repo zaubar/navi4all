@@ -140,6 +140,12 @@ class TestMaxSustainedGrade:
     def test_no_coverage_returns_none(self):
         assert max_sustained_grade_percent([[0, None], [15, None]]) is None
 
+    def test_shape_shorter_than_window_is_not_sustained(self):
+        # A 30 m stub cannot contain a sustained-over-40 m grade; sub-window
+        # tails must not be measured (they amplify DEM noise into fake ramps).
+        stub = [[0, 340], [15, 342], [30, 344]]
+        assert max_sustained_grade_percent(stub, window_m=40.0) == 0.0
+
 
 class TestPickItineraries:
     def test_drops_steep_when_compliant_exists(self):
