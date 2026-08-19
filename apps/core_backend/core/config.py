@@ -43,8 +43,19 @@ class Settings(BaseSettings):
     OPEN_TRIP_PLANNER_PLAN_TEMPLATE: str = "plan.graphql"
     
     VALHALLA_URL: str
-    
+
     ROUTING_ENGINE_URLS: dict[RoutingEngine, str] = {}
+
+    # Hard gradient gate for grade_category="gentle" walk requests (see
+    # services/grade_gate.py). Uses Valhalla's /height DEM endpoint, so it
+    # works for itineraries from ANY engine. Threshold is the maximum
+    # sustained grade a "gentle" route may contain; the window is the span
+    # over which a grade must persist to count (smooths single-sample DEM
+    # noise). Disable via env GRADE_GATE_ENABLED=false.
+    GRADE_GATE_ENABLED: bool = True
+    GRADE_GATE_MAX_PERCENT: float = 6.0
+    GRADE_GATE_WINDOW_M: float = 20.0
+    GRADE_GATE_TIMEOUT_S: float = 5.0
 
     GEOCODING_PROVIDER: SupportedGeocodingProviders
     GEOCODING_PROVIDER_API_URL: str | None = None
