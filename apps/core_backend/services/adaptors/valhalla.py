@@ -37,6 +37,7 @@ from schemas.routing import (
 from services.schemas.valhalla import (
     ValhallaRouteRequestModel,
     ValhallaRouteResponseModel,
+    ValhallaTrip,
     ValhallaLocation,
     ValhallaCosting,
     ValhallaCostingOptions,
@@ -127,6 +128,27 @@ class ValhallaAdaptor:
                 type=costing_type,
             )
 
+        costing = (
+            MODE_TO_COSTING.get(request.transport_modes[0])
+            if len(request.transport_modes) == 1
+            else ValhallaCosting.multi_modal
+        )
+
+        # For "gentle" (avoid gradients) pedestrian requests, ask Valhalla for
+        # alternate routes. The grade gate (services/grade_gate.py) can only
+        # drop a too-steep itinerary when a compliant alternative exists IN the
+        # response — a single-trip response starves it and its keep-least-steep
+        # fallback returns the steep route (measured live: Blaue-Lilien-Gasse,
+        # 11% sustained, still suggested with the setting on). Valhalla only
+        # supports alternates for non-multimodal costings, and may return
+        # fewer than requested (often just one) — the gate handles any count.
+        alternates = (
+            2
+            if request.grade_category == "gentle"
+            and costing == ValhallaCosting.pedestrian
+            else None
+        )
+
         # Reformat request payload
         request_dict = str(
             ValhallaRouteRequestModel(
@@ -136,9 +158,8 @@ class ValhallaAdaptor:
                         lat=request.destination.lat, lon=request.destination.lon
                     ),
                 ],
-                costing=MODE_TO_COSTING.get(request.transport_modes[0])
-                if len(request.transport_modes) == 1
-                else ValhallaCosting.multi_modal,
+                costing=costing,
+                alternates=alternates,
                 costing_options=ValhallaCostingOptions(
                     pedestrian=_get_surface_quality_options(
                         surface_quality=request.walk.surface_quality if request.walk else None,
@@ -168,13 +189,32 @@ class ValhallaAdaptor:
             else RoutingPlanDetailedResponseModel(itineraries=[])
         )
 
+        # Map the primary trip and any alternates into itineraries, each cached
+        # under its own id so get_itinerary works for whichever one survives
+        # downstream filtering (e.g. the grade gate).
+        for trip in [router_response.trip] + [
+            alternate.trip for alternate in (router_response.alternates or [])
+        ]:
+            self._append_trip_itinerary(response, trip, request, summarized)
+
+        return response
+
+    def _append_trip_itinerary(
+        self,
+        response: RoutingPlanSummaryResponseModel | RoutingPlanDetailedResponseModel,
+        trip: ValhallaTrip,
+        request: RoutingPlanRequestModel,
+        summarized: bool,
+    ) -> None:
+        """Map one Valhalla trip into an itinerary appended to the response."""
+
         # Write itinerary to cache
         # Produce a unique ID for this itinerary and the journey it represents
         itinerary_id = str(uuid4())
 
         # Produce ItineraryDetailed model for full itinerary response
         legs: list[LegDetailed] = []
-        for leg in router_response.trip.legs:
+        for leg in trip.legs:
             shape_points = polyline.decode(leg.shape, precision=6)
 
             steps: list[Step] = []
@@ -258,10 +298,10 @@ class ValhallaAdaptor:
 
         itinerary_detailed = ItineraryDetailed(
             itinerary_id=itinerary_id,
-            duration=round(router_response.trip.summary.time),
+            duration=round(trip.summary.time),
             start_time=datetime.now(),
             end_time=datetime.now()
-            + timedelta(seconds=router_response.trip.summary.time),
+            + timedelta(seconds=trip.summary.time),
             origin=request.origin,
             destination=request.destination,
             legs=legs,
@@ -309,8 +349,6 @@ class ValhallaAdaptor:
             )
         else:
             response.itineraries.append(itinerary_detailed)
-
-        return response
 
     async def get_itinerary(self, itinerary_id: str) -> ItineraryResponseModel:
         """Retrieve a full itinerary from the cache by its journey ID."""

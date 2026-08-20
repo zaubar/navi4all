@@ -229,6 +229,9 @@ class ValhallaRouteRequestModel(BaseModel):
     costing: ValhallaCosting = ValhallaCosting.pedestrian
     costing_options: ValhallaCostingOptions | None = None
     language: ValhallaLanguage = ValhallaLanguage.en
+    # Number of alternate routes to request in addition to the primary trip.
+    # Valhalla only supports alternates for non-multimodal costings.
+    alternates: int | None = None
     
     @field_validator("language", mode="before")
     @classmethod
@@ -240,5 +243,12 @@ class ValhallaRouteRequestModel(BaseModel):
         return ValhallaLanguage.en
 
 
+class ValhallaAlternate(BaseModel):
+    trip: ValhallaTrip
+
+
 class ValhallaRouteResponseModel(BaseModel):
     trip: ValhallaTrip
+    # Present when the request asked for alternates; each entry wraps a full
+    # trip of the same shape as the primary one.
+    alternates: list[ValhallaAlternate] | None = None
