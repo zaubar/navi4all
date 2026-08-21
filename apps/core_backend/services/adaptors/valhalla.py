@@ -80,7 +80,23 @@ class ValhallaAdaptor:
         ) -> ValhallaPedestrianCostingOptions:
             """Map surface_quality (0.0-1.0) and grade_category to Valhalla pedestrian options."""
 
+            # Determine surface_smoothness (shared by both branches below: a
+            # gradient-avoider with surface sensitivity must not lose surface
+            # handling — the web app now steers those users here instead of to
+            # OTP precisely because Valhalla can honour both).
+            surface_smoothness: float | None = None
+            if surface_quality is not None and surface_quality > 0.0:
+                if surface_quality <= 0.3:
+                    surface_smoothness = 0.0
+                elif surface_quality <= 0.6:
+                    surface_smoothness = 0.5
+                elif surface_quality <= 0.9:
+                    surface_smoothness = 0.75
+                else:
+                    surface_smoothness = 1.0
+
             # grade_category takes precedence over surface_quality + accessible
+            # for the costing TYPE, but surface_smoothness rides along.
             if grade_category:
                 if grade_category == "gentle":
                     costing_type = ValhallaPedestrianCostingOptionsType.wheelchair
@@ -96,6 +112,7 @@ class ValhallaAdaptor:
                     walking_speed=request.walk.speed if request.walk else None,
                     type=costing_type,
                     use_hills=use_hills,
+                    surface_smoothness=surface_smoothness,
                 )
 
             # Determine type
@@ -109,18 +126,6 @@ class ValhallaAdaptor:
                     if accessible
                     else ValhallaPedestrianCostingOptionsType.foot
                 )
-
-            # Determine surface_smoothness
-            surface_smoothness: float | None = None
-            if surface_quality is not None and surface_quality > 0.0:
-                if surface_quality <= 0.3:
-                    surface_smoothness = 0.0
-                elif surface_quality <= 0.6:
-                    surface_smoothness = 0.5
-                elif surface_quality <= 0.9:
-                    surface_smoothness = 0.75
-                else:
-                    surface_smoothness = 1.0
 
             return ValhallaPedestrianCostingOptions(
                 walking_speed=request.walk.speed if request.walk else None,
