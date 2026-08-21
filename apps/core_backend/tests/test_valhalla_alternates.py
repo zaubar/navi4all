@@ -201,3 +201,23 @@ async def test_single_trip_response_maps_one_itinerary() -> None:
 
     assert len(response.itineraries) == 1
     assert response.itineraries[0].duration == 120
+
+
+@pytest.mark.asyncio
+async def test_gentle_with_surface_quality_keeps_surface_smoothness() -> None:
+    # A gradient-avoider with surface sensitivity must not lose surface
+    # handling: the gentle branch used to early-return without
+    # surface_smoothness, which forced the web app to steer such users to OTP
+    # (where gradient avoidance is dead). Both options must now be sent.
+    adaptor, _ = _adaptor()
+    client = _FakeAsyncClient({"trip": _PRIMARY})
+
+    request = _request(GradeCategory.gentle)
+    request.walk.surface_quality = 1.0
+    await adaptor.make_plan_request(client, request)
+
+    request_json = json.loads(client.requested_urls[0].split("json=", 1)[1])
+    pedestrian = request_json["costing_options"]["pedestrian"]
+    assert pedestrian["type"] == "wheelchair"
+    assert pedestrian["use_hills"] == 0.0
+    assert pedestrian["surface_smoothness"] == 1.0
