@@ -154,6 +154,18 @@ class ValhallaAdaptor:
             else None
         )
 
+        pedestrian_options = _get_surface_quality_options(
+            surface_quality=request.walk.surface_quality if request.walk else None,
+            accessible=request.accessible,
+            grade_category=request.grade_category,
+        )
+        # An explicit caller-selected profile (foot/wheelchair/blind) overrides
+        # the type derived from surface_quality / accessible / grade_category.
+        if request.pedestrian_profile:
+            pedestrian_options.type = ValhallaPedestrianCostingOptionsType(
+                request.pedestrian_profile.value
+            )
+
         # Reformat request payload
         request_dict = str(
             ValhallaRouteRequestModel(
@@ -166,12 +178,14 @@ class ValhallaAdaptor:
                 costing=costing,
                 alternates=alternates,
                 costing_options=ValhallaCostingOptions(
-                    pedestrian=_get_surface_quality_options(
-                        surface_quality=request.walk.surface_quality if request.walk else None,
-                        accessible=request.accessible,
-                        grade_category=request.grade_category,
-                    )
+                    pedestrian=pedestrian_options
                 ),
+                exclude_locations=[
+                    ValhallaLocation(lat=location.lat, lon=location.lon)
+                    for location in request.exclude_locations
+                ]
+                if request.exclude_locations
+                else None,
                 language=request.guidance_language.value,
             ).model_dump(mode="json", exclude_none=True)
         ).replace("'", '"')
