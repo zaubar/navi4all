@@ -67,6 +67,10 @@ class ValhallaPedestrianCostingOptions(BaseModel):
     surface_smoothness: float | None = None
     type: ValhallaPedestrianCostingOptionsType | None = None
     use_hills: float | None = None
+    # Seconds added when a route enters a destination-only edge. Valhalla's
+    # default (600 s) also applies to pedestrians, although "Anlieger frei"
+    # style access=destination restrictions are vehicle rules; see the adaptor.
+    destination_only_penalty: float | None = None
 
 
 class ValhallaCostingOptions(BaseModel):

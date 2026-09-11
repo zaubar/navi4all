@@ -59,6 +59,16 @@ class Settings(BaseSettings):
     GRADE_GATE_WINDOW_M: float = 40.0
     GRADE_GATE_TIMEOUT_S: float = 5.0
 
+    # Valhalla adds destination_only_penalty (default 600 s) when a route
+    # enters an edge tagged access=destination / motor_vehicle=destination,
+    # for pedestrians too (upstream PR #5862 to change the default is open).
+    # In the Regensburg Altstadt nearly every living street carries that
+    # vehicle rule, so walking routes circled the old town: on 80 real POI
+    # pairs the total distance was 66.7 km at 600 s and 56.0 km at 0 s, 35
+    # pairs more than 10 % shorter, none longer (2026-09-11). Pedestrians
+    # are not bound by "Anlieger frei"; 0 is the correct value.
+    VALHALLA_PEDESTRIAN_DESTINATION_ONLY_PENALTY: float = 0.0
+
     GEOCODING_PROVIDER: SupportedGeocodingProviders
     GEOCODING_PROVIDER_API_URL: str | None = None
     GEOCODING_PROVIDER_API_KEY: str | None = None

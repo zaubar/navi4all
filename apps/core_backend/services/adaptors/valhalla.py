@@ -165,6 +165,16 @@ class ValhallaAdaptor:
             pedestrian_options.type = ValhallaPedestrianCostingOptionsType(
                 request.pedestrian_profile.value
             )
+        # Destination-only edges (access=destination, "Anlieger frei") are a
+        # vehicle rule, but Valhalla charges its 600 s destination_only_penalty
+        # to pedestrians as well. Nearly every Altstadt living street carries
+        # the tag, so walking routes went around the old town (Haus der Musik
+        # to Thon-Dittmer-Palais: 1087 m at 600 s, 587 m at 0 s; OTP 402 m).
+        # Applies to every pedestrian costing type, including wheelchair.
+        if costing == ValhallaCosting.pedestrian:
+            pedestrian_options.destination_only_penalty = (
+                settings.VALHALLA_PEDESTRIAN_DESTINATION_ONLY_PENALTY
+            )
 
         # Reformat request payload
         request_dict = str(
