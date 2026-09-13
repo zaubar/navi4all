@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 from enum import Enum
 from schemas.routing import RelativeDirection, Mode
 
@@ -66,6 +66,16 @@ class ValhallaPedestrianCostingOptions(BaseModel):
     walking_speed: float | None = None
     surface_smoothness: float | None = None
     type: ValhallaPedestrianCostingOptionsType | None = None
+    use_hills: float | None = None
+    # Seconds added when a route enters a destination-only edge. Valhalla's
+    # default (600 s) also applies to pedestrians, although "Anlieger frei"
+    # style access=destination restrictions are vehicle rules; see the adaptor.
+    destination_only_penalty: float | None = None
+    # Pedestrian costing option added by the zaubar/valhalla fork (PR #1),
+    # 0..1, engine default 0: an edge whose surface is paved_rough or worse
+    # costs 1 + 24 * avoid_bad_surfaces times more; sett files as paved_rough.
+    # None is omitted from the request (the model is dumped exclude_none).
+    avoid_bad_surfaces: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class ValhallaCostingOptions(BaseModel):
@@ -218,16 +228,28 @@ class ValhallaLeg(BaseModel):
     shape: str
 
 
+class ValhallaTripLocation(BaseModel):
+    # The request locations as Valhalla echoes them back on the trip; leg i
+    # runs from locations[i] to locations[i + 1].
+    lat: float
+    lon: float
+
+
 class ValhallaTrip(BaseModel):
     legs: list[ValhallaLeg]
     summary: ValhallaSummary
+    locations: list[ValhallaTripLocation] | None = None
 
 
 class ValhallaRouteRequestModel(BaseModel):
     locations: list[ValhallaLocation]
     costing: ValhallaCosting = ValhallaCosting.pedestrian
     costing_options: ValhallaCostingOptions | None = None
+    exclude_locations: list[ValhallaLocation] | None = None
     language: ValhallaLanguage = ValhallaLanguage.en
+    # Number of alternate routes to request in addition to the primary trip.
+    # Valhalla only supports alternates for non-multimodal costings.
+    alternates: int | None = None
     
     @field_validator("language", mode="before")
     @classmethod
@@ -239,5 +261,12 @@ class ValhallaRouteRequestModel(BaseModel):
         return ValhallaLanguage.en
 
 
+class ValhallaAlternate(BaseModel):
+    trip: ValhallaTrip
+
+
 class ValhallaRouteResponseModel(BaseModel):
     trip: ValhallaTrip
+    # Present when the request asked for alternates; each entry wraps a full
+    # trip of the same shape as the primary one.
+    alternates: list[ValhallaAlternate] | None = None
