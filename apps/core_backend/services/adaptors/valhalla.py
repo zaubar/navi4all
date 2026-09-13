@@ -130,17 +130,15 @@ class ValhallaAdaptor:
                     avoid_bad_surfaces=avoid_bad_surfaces,
                 )
 
-            # Determine type
-            if surface_quality is not None and surface_quality >= 0.7:
-                costing_type = ValhallaPedestrianCostingOptionsType.wheelchair
-            elif surface_quality is not None and surface_quality > 0.0:
-                costing_type = ValhallaPedestrianCostingOptionsType.foot
-            else:
-                costing_type = (
-                    ValhallaPedestrianCostingOptionsType.wheelchair
-                    if accessible
-                    else ValhallaPedestrianCostingOptionsType.foot
-                )
+            # Determine type: from the accessible flag only. The surface level feeds
+            # avoid_bad_surfaces above and never the type: a surface slider step 1 user
+            # with accessible=true keeps the wheelchair type (stairs refused by access)
+            # and only gets a softer rough-surface factor.
+            costing_type = (
+                ValhallaPedestrianCostingOptionsType.wheelchair
+                if accessible
+                else ValhallaPedestrianCostingOptionsType.foot
+            )
 
             return ValhallaPedestrianCostingOptions(
                 walking_speed=request.walk.speed if request.walk else None,

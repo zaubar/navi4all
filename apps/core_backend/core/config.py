@@ -84,8 +84,8 @@ class Settings(BaseSettings):
     # pairs: a hard exclusion was rejected (4 pairs unroutable, 42 routes up
     # to 3x longer); OTP accessible routes crossed 9.8 km of sett against
     # 22.0 km on the Valhalla wheelchair type, which this option is to close.
-    VALHALLA_AVOID_BAD_SURFACES_SMOOTH: float = Field(1.0, ge=0.0, le=1.0)
-    VALHALLA_AVOID_BAD_SURFACES_MEDIUM: float = Field(0.4, ge=0.0, le=1.0)
+    VALHALLA_AVOID_BAD_SURFACES_SMOOTH: float = Field(0.4, ge=0.0, le=1.0)
+    VALHALLA_AVOID_BAD_SURFACES_MEDIUM: float = Field(0.15, ge=0.0, le=1.0)
 
     GEOCODING_PROVIDER: SupportedGeocodingProviders
     GEOCODING_PROVIDER_API_URL: str | None = None

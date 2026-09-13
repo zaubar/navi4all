@@ -23,8 +23,8 @@ The zaubar/valhalla fork (PR #1) adds the pedestrian costing option
 ``avoid_bad_surfaces`` (0..1, engine default 0): an edge whose surface is
 paved_rough or worse costs 1 + 24 * value times more, and sett files as
 paved_rough. The adaptor maps surface_quality >= 0.7 to the SMOOTH setting
-(default 1.0), 0.3 < surface_quality < 0.7 to the MEDIUM setting (default
-0.4) and sends nothing otherwise. The costing type rule, surface_smoothness,
+(default 0.4), 0.3 < surface_quality < 0.7 to the MEDIUM setting (default
+0.15) and sends nothing otherwise. The costing type rule, surface_smoothness,
 alternates and destination_only_penalty are unchanged.
 """
 
@@ -134,11 +134,15 @@ async def _sent_pedestrian(request: RoutingPlanRequestModel) -> dict:
 
 
 @pytest.mark.parametrize("surface_quality", [1.0, 0.7])
-async def test_smooth_band_sends_smooth_setting_and_wheelchair(
+async def test_smooth_band_sends_smooth_setting_and_keeps_the_type_from_accessible(
     surface_quality: float,
 ) -> None:
+    # The surface level never picks the costing type: the type follows accessible.
     pedestrian = await _sent_pedestrian(_request(surface_quality))
-    assert pedestrian["avoid_bad_surfaces"] == 1.0
+    assert pedestrian["avoid_bad_surfaces"] == 0.4
+    assert pedestrian["type"] == "foot"
+    pedestrian = await _sent_pedestrian(_request(surface_quality, accessible=True))
+    assert pedestrian["avoid_bad_surfaces"] == 0.4
     assert pedestrian["type"] == "wheelchair"
 
 
@@ -146,10 +150,14 @@ async def test_smooth_band_sends_smooth_setting_and_wheelchair(
 async def test_medium_band_sends_medium_setting_and_keeps_foot(
     surface_quality: float,
 ) -> None:
-    # The costing type rule is untouched: 0 < q < 0.7 stays foot.
+    # The medium band softens the factor only; an accessible user keeps the
+    # wheelchair type (stairs refused by access), a plain walker stays foot.
     pedestrian = await _sent_pedestrian(_request(surface_quality))
-    assert pedestrian["avoid_bad_surfaces"] == 0.4
+    assert pedestrian["avoid_bad_surfaces"] == 0.15
     assert pedestrian["type"] == "foot"
+    pedestrian = await _sent_pedestrian(_request(surface_quality, accessible=True))
+    assert pedestrian["avoid_bad_surfaces"] == 0.15
+    assert pedestrian["type"] == "wheelchair"
 
 
 @pytest.mark.parametrize("surface_quality", [0.3, 0.0])
@@ -180,7 +188,7 @@ async def test_gentle_early_return_branch_carries_the_option() -> None:
     pedestrian = await _sent_pedestrian(
         _request(1.0, grade_category=GradeCategory.gentle)
     )
-    assert pedestrian["avoid_bad_surfaces"] == 1.0
+    assert pedestrian["avoid_bad_surfaces"] == 0.4
     assert pedestrian["use_hills"] == 0.0
     assert pedestrian["surface_smoothness"] == 1.0
     assert pedestrian["type"] == "wheelchair"
@@ -190,7 +198,7 @@ async def test_gentle_medium_band_carries_the_medium_setting() -> None:
     pedestrian = await _sent_pedestrian(
         _request(0.5, grade_category=GradeCategory.gentle)
     )
-    assert pedestrian["avoid_bad_surfaces"] == 0.4
+    assert pedestrian["avoid_bad_surfaces"] == 0.15
     assert pedestrian["use_hills"] == 0.0
 
 
@@ -200,7 +208,7 @@ async def test_explicit_pedestrian_profile_keeps_the_option() -> None:
         _request(1.0, pedestrian_profile=ValhallaPedestrianCostingOptionsType.foot)
     )
     assert pedestrian["type"] == "foot"
-    assert pedestrian["avoid_bad_surfaces"] == 1.0
+    assert pedestrian["avoid_bad_surfaces"] == 0.4
 
 
 async def test_existing_options_are_untouched() -> None:
