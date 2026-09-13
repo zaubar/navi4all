@@ -96,6 +96,19 @@ class ValhallaAdaptor:
                 else:
                     surface_smoothness = 1.0
 
+            # Soft cobblestone avoidance (fork PR #1 option avoid_bad_surfaces;
+            # settings in core/config.py). Two bands from surface_quality:
+            # >= 0.7 smooth surfaces only, 0.3 < q < 0.7 mostly smooth. Below
+            # that, or without surface_quality, the option is not sent and the
+            # engine default (0) applies. Shared by both branches below like
+            # surface_smoothness. The costing TYPE is not derived from it.
+            avoid_bad_surfaces: float | None = None
+            if surface_quality is not None:
+                if surface_quality >= 0.7:
+                    avoid_bad_surfaces = settings.VALHALLA_AVOID_BAD_SURFACES_SMOOTH
+                elif surface_quality > 0.3:
+                    avoid_bad_surfaces = settings.VALHALLA_AVOID_BAD_SURFACES_MEDIUM
+
             # grade_category takes precedence over surface_quality + accessible
             # for the costing TYPE, but surface_smoothness rides along.
             if grade_category:
@@ -114,6 +127,7 @@ class ValhallaAdaptor:
                     type=costing_type,
                     use_hills=use_hills,
                     surface_smoothness=surface_smoothness,
+                    avoid_bad_surfaces=avoid_bad_surfaces,
                 )
 
             # Determine type
@@ -132,6 +146,7 @@ class ValhallaAdaptor:
                 walking_speed=request.walk.speed if request.walk else None,
                 surface_smoothness=surface_smoothness,
                 type=costing_type,
+                avoid_bad_surfaces=avoid_bad_surfaces,
             )
 
         costing = (

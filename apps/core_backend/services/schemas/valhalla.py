@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
 from enum import Enum
 from schemas.routing import RelativeDirection, Mode
 
@@ -71,6 +71,11 @@ class ValhallaPedestrianCostingOptions(BaseModel):
     # default (600 s) also applies to pedestrians, although "Anlieger frei"
     # style access=destination restrictions are vehicle rules; see the adaptor.
     destination_only_penalty: float | None = None
+    # Pedestrian costing option added by the zaubar/valhalla fork (PR #1),
+    # 0..1, engine default 0: an edge whose surface is paved_rough or worse
+    # costs 1 + 24 * avoid_bad_surfaces times more; sett files as paved_rough.
+    # None is omitted from the request (the model is dumped exclude_none).
+    avoid_bad_surfaces: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class ValhallaCostingOptions(BaseModel):

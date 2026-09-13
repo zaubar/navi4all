@@ -19,7 +19,7 @@
 import os
 
 
-os.environ.setdefault("OPEN_TRIP_PLANNER_URL", "https://otp.example/graphql")
-os.environ.setdefault("OPEN_TRIP_PLANNER_KL_URL", "https://otp-kl.example/graphql")
+# OPEN_TRIP_PLANNER_URL / _KL_URL are deliberately NOT set: OTP was retired
+# 2026-09 and the suite must prove the service boots without them.
 os.environ.setdefault("VALHALLA_URL", "https://valhalla.example")
 os.environ.setdefault("GEOCODING_PROVIDER", "none")

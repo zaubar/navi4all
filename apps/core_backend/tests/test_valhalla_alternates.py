@@ -230,3 +230,5 @@ async def test_gentle_with_surface_quality_keeps_surface_smoothness() -> None:
     assert pedestrian["type"] == "wheelchair"
     assert pedestrian["use_hills"] == 0.0
     assert pedestrian["surface_smoothness"] == 1.0
+    # The soft cobblestone option must ride along on the early-return branch.
+    assert pedestrian["avoid_bad_surfaces"] == 1.0

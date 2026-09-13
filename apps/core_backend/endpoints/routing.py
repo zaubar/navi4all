@@ -18,35 +18,37 @@
 
 import httpx
 from fastapi import APIRouter, HTTPException
-from typing import Union
 from schemas.routing import (
+    RETIRED_ROUTING_ENGINES,
     RoutingEngine,
     RoutingPlanRequestModel,
     RoutingPlanSummaryResponseModel,
     RoutingPlanDetailedResponseModel,
     ItineraryResponseModel,
 )
-from services.adaptors.open_trip_planner import OpenTripPlannerAdaptor
 from services.adaptors.valhalla import ValhallaAdaptor
-from services.adaptors.hybrid import HybridAdaptor
 from services.grade_gate import apply_grade_gate
 from core.config import settings
 
 
 router = APIRouter(prefix="/routing")
-adaptor_otp = OpenTripPlannerAdaptor(
-    url=settings.ROUTING_ENGINE_URLS[RoutingEngine.open_trip_planner]
-)
-adaptor_otp_kl = OpenTripPlannerAdaptor(
-    url=settings.ROUTING_ENGINE_URLS[RoutingEngine.open_trip_planner_kl]
-)
-adaptor_valhalla = ValhallaAdaptor(
-    url=settings.ROUTING_ENGINE_URLS[RoutingEngine.valhalla]
-)
-adaptor_hybrid = HybridAdaptor(
-    otp_adaptor=adaptor_otp_kl,
-    valhalla_adaptor=adaptor_valhalla,
-)
+
+# Valhalla is the only engine since 2026-09. The OpenTripPlanner and hybrid
+# adaptor modules still exist in services/adaptors but nothing constructs
+# them, so the service boots without OPEN_TRIP_PLANNER_URL / _KL_URL.
+adaptor_valhalla = ValhallaAdaptor(url=settings.VALHALLA_URL)
+
+
+def _select_adaptor(engine: RoutingEngine) -> ValhallaAdaptor:
+    """Return the adaptor for ``engine`` or answer 400 for a retired one.
+
+    Called before any HTTP client is opened so a retired engine never costs a
+    connection. Unknown engine strings never reach here: FastAPI rejects them
+    at query validation with a 422.
+    """
+    if engine in RETIRED_ROUTING_ENGINES:
+        raise HTTPException(status_code=400, detail="engine retired: use valhalla")
+    return adaptor_valhalla
 
 
 @router.post(
@@ -55,24 +57,12 @@ adaptor_hybrid = HybridAdaptor(
 )
 async def plan(
     request: RoutingPlanRequestModel,
-    engine: RoutingEngine = RoutingEngine.open_trip_planner,
+    engine: RoutingEngine = RoutingEngine.valhalla,
 ):
+    adaptor = _select_adaptor(engine)
     async with httpx.AsyncClient() as client:
-        if engine == RoutingEngine.open_trip_planner:
-            adaptor = adaptor_otp
-        elif engine == RoutingEngine.open_trip_planner_kl:
-            adaptor = adaptor_otp_kl
-        elif engine == RoutingEngine.valhalla:
-            adaptor = adaptor_valhalla
-        elif engine == RoutingEngine.hybrid:
-            adaptor = adaptor_hybrid
-        else:
-            raise ValueError("Unsupported routing engine specified.")
-
         try:
-            response = await adaptor.make_plan_request(
-                client, request, summarized=True
-            )
+            response = await adaptor.make_plan_request(client, request, summarized=True)
         except httpx.HTTPStatusError as e:
             raise HTTPException(
                 status_code=e.response.status_code,
@@ -92,20 +82,10 @@ async def plan(
 )
 async def itinerary_detailed(
     request: RoutingPlanRequestModel,
-    engine: RoutingEngine = RoutingEngine.open_trip_planner,
+    engine: RoutingEngine = RoutingEngine.valhalla,
 ):
+    adaptor = _select_adaptor(engine)
     async with httpx.AsyncClient() as client:
-        if engine == RoutingEngine.open_trip_planner:
-            adaptor = adaptor_otp
-        elif engine == RoutingEngine.open_trip_planner_kl:
-            adaptor = adaptor_otp_kl
-        elif engine == RoutingEngine.valhalla:
-            adaptor = adaptor_valhalla
-        elif engine == RoutingEngine.hybrid:
-            adaptor = adaptor_hybrid
-        else:
-            raise ValueError("Unsupported routing engine specified.")
-
         try:
             response = await adaptor.make_plan_request(
                 client, request, summarized=False
@@ -125,18 +105,9 @@ async def itinerary_detailed(
 
 @router.get("/itinerary/{itinerary_id}", response_model=ItineraryResponseModel)
 async def get_itinerary(
-    itinerary_id: str, engine: RoutingEngine = RoutingEngine.open_trip_planner
+    itinerary_id: str, engine: RoutingEngine = RoutingEngine.valhalla
 ):
-    if engine == RoutingEngine.open_trip_planner:
-        adaptor = adaptor_otp
-    elif engine == RoutingEngine.open_trip_planner_kl:
-        adaptor = adaptor_otp_kl
-    elif engine == RoutingEngine.valhalla:
-        adaptor = adaptor_valhalla
-    elif engine == RoutingEngine.hybrid:
-        adaptor = adaptor_hybrid
-    else:
-        raise ValueError("Unsupported routing engine specified.")
+    adaptor = _select_adaptor(engine)
 
     response = await adaptor.get_itinerary(itinerary_id)
 
