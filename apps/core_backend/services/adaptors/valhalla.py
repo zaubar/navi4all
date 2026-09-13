@@ -19,6 +19,7 @@
 from core.config import settings
 from httpx import AsyncClient
 from redis import Redis
+from schemas.coordinates import Coordinates
 from schemas.routing import (
     RoutingPlanRequestModel,
     RoutingPlanSummaryResponseModel,
@@ -139,20 +140,28 @@ class ValhallaAdaptor:
             else ValhallaCosting.multi_modal
         )
 
-        # For "gentle" (avoid gradients) pedestrian requests, ask Valhalla for
-        # alternate routes. The grade gate (services/grade_gate.py) can only
-        # drop a too-steep itinerary when a compliant alternative exists IN the
-        # response — a single-trip response starves it and its keep-least-steep
-        # fallback returns the steep route (measured live: Blaue-Lilien-Gasse,
-        # 11% sustained, still suggested with the setting on). Valhalla only
-        # supports alternates for non-multimodal costings, and may return
-        # fewer than requested (often just one) — the gate handles any count.
-        alternates = (
-            2
-            if request.grade_category == "gentle"
-            and costing == ValhallaCosting.pedestrian
-            else None
-        )
+        # Ask Valhalla for alternate routes on every pedestrian plan, sized by
+        # the caller's num_itineraries (1 -> none, 3 -> 2, 5 -> 2: Valhalla caps
+        # at service_limits.max_alternates = 2). Before 2026-09-11 alternates
+        # were requested only for "gentle", so every other Valhalla plan came
+        # back as exactly one itinerary although the app asked for 3 or 5, and
+        # the grade gate (services/grade_gate.py) starved: it can only drop a
+        # too-steep itinerary when a compliant alternative exists IN the
+        # response (measured live: Blaue-Lilien-Gasse, 11% sustained, still
+        # suggested with the setting on). A gate needs candidates, so "gentle"
+        # keeps 2 alternates even when the caller wants a single itinerary.
+        # Valhalla only supports alternates for non-multimodal costings and may
+        # return fewer than requested; every consumer handles any count.
+        #
+        # walk.avoid is intentionally not mapped here: OTP used it as a
+        # walk-vs-transit reluctance, which is a no-op for WALK-only requests,
+        # and Valhalla has no equivalent single knob.
+        alternates: int | None = None
+        if costing == ValhallaCosting.pedestrian:
+            wanted = min(max(request.num_itineraries - 1, 0), 2)
+            if request.grade_category == "gentle":
+                wanted = 2
+            alternates = wanted or None
 
         pedestrian_options = _get_surface_quality_options(
             surface_quality=request.walk.surface_quality if request.walk else None,
@@ -241,9 +250,23 @@ class ValhallaAdaptor:
         # Produce a unique ID for this itinerary and the journey it represents
         itinerary_id = str(uuid4())
 
-        # Produce ItineraryDetailed model for full itinerary response
+        # Produce ItineraryDetailed model for full itinerary response. Leg i
+        # runs between the trip locations i and i + 1 (Valhalla echoes the
+        # request locations on the trip); without them fall back to the
+        # request's origin and destination, which is exact for a single leg.
+        trip_locations = trip.locations or []
         legs: list[LegDetailed] = []
-        for leg in trip.legs:
+        for leg_index, leg in enumerate(trip.legs):
+            leg_start = (
+                Coordinates(lat=trip_locations[leg_index].lat, lon=trip_locations[leg_index].lon)
+                if len(trip_locations) > leg_index + 1
+                else request.origin
+            )
+            leg_end = (
+                Coordinates(lat=trip_locations[leg_index + 1].lat, lon=trip_locations[leg_index + 1].lon)
+                if len(trip_locations) > leg_index + 1
+                else request.destination
+            )
             shape_points = polyline.decode(leg.shape, precision=6)
 
             steps: list[Step] = []
@@ -309,13 +332,13 @@ class ValhallaAdaptor:
                         id="",
                         name="",
                         type=PlaceType.address,
-                        coordinates=request.origin,
+                        coordinates=leg_start,
                     ),
                     end_place=Place(
                         id="",
                         name="",
                         type=PlaceType.address,
-                        coordinates=request.destination,
+                        coordinates=leg_end,
                     ),
                     mode=TRAVEL_MODE_TO_MODE[leg.maneuvers[0].travel_mode],
                     duration=round(leg.summary.time),

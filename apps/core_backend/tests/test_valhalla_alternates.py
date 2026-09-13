@@ -149,12 +149,21 @@ async def test_gentle_walk_requests_alternates() -> None:
 
 
 @pytest.mark.asyncio
-async def test_plain_walk_requests_no_alternates() -> None:
+async def test_plain_walk_requests_alternates_by_num_itineraries() -> None:
+    """Since 2026-09-11 every pedestrian plan asks for alternates, sized by
+    num_itineraries (default 3 -> 2); a single-itinerary request asks for none."""
     adaptor, _ = _adaptor()
     client = _FakeAsyncClient({"trip": _PRIMARY})
 
-    await adaptor.make_plan_request(client, _request(grade_category=None))
+    await adaptor.make_plan_request(client, _request())
 
+    request_json = json.loads(client.requested_urls[0].split("json=", 1)[1])
+    assert request_json["alternates"] == 2
+
+    single = _request()
+    single.num_itineraries = 1
+    client = _FakeAsyncClient({"trip": _PRIMARY})
+    await adaptor.make_plan_request(client, single)
     request_json = json.loads(client.requested_urls[0].split("json=", 1)[1])
     assert "alternates" not in request_json
 

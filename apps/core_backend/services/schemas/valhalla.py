@@ -223,9 +223,17 @@ class ValhallaLeg(BaseModel):
     shape: str
 
 
+class ValhallaTripLocation(BaseModel):
+    # The request locations as Valhalla echoes them back on the trip; leg i
+    # runs from locations[i] to locations[i + 1].
+    lat: float
+    lon: float
+
+
 class ValhallaTrip(BaseModel):
     legs: list[ValhallaLeg]
     summary: ValhallaSummary
+    locations: list[ValhallaTripLocation] | None = None
 
 
 class ValhallaRouteRequestModel(BaseModel):
