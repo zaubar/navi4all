@@ -20,6 +20,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 import httpx
+import pytest
 from fastapi.testclient import TestClient
 
 from main import app
@@ -150,10 +151,8 @@ def _routing_payload() -> dict:
 
 
 def _patch_all_adaptors(monkeypatch, adaptor):
-    monkeypatch.setattr(routing_endpoint, "adaptor_otp", adaptor)
-    monkeypatch.setattr(routing_endpoint, "adaptor_otp_kl", adaptor)
+    # Valhalla is the only adaptor the endpoint constructs since OTP retired.
     monkeypatch.setattr(routing_endpoint, "adaptor_valhalla", adaptor)
-    monkeypatch.setattr(routing_endpoint, "adaptor_hybrid", adaptor)
 
 
 def test_routing_plan_success(monkeypatch):
@@ -222,3 +221,106 @@ def test_routing_plan_invalid_request_returns_422(monkeypatch):
     response = client.post("/v1/routing/plan", json=payload)
 
     assert response.status_code == 422
+
+
+def test_no_otp_adaptor_is_built_at_import():
+    # Boot proof: conftest sets no OPEN_TRIP_PLANNER_URL, the app imported,
+    # and the endpoint module holds only the Valhalla adaptor.
+    for name in ("adaptor_otp", "adaptor_otp_kl", "adaptor_hybrid"):
+        assert not hasattr(routing_endpoint, name)
+    assert isinstance(routing_endpoint.adaptor_valhalla, routing_endpoint.ValhallaAdaptor)
+
+
+def test_routing_plan_defaults_to_valhalla(monkeypatch):
+    fake_adaptor = _FakeRoutingAdaptor(summary_response=_summary_response())
+    _patch_all_adaptors(monkeypatch, fake_adaptor)
+    client = TestClient(app)
+
+    response = client.post("/v1/routing/plan", json=_routing_payload())
+
+    assert response.status_code == 200
+    assert fake_adaptor.last_call["summarized"] is True
+    assert routing_endpoint._select_adaptor(RoutingEngine.valhalla) is fake_adaptor
+
+
+def test_routing_itinerary_detailed_defaults_to_valhalla(monkeypatch):
+    fake_adaptor = _FakeRoutingAdaptor(detailed_response=_detailed_response())
+    _patch_all_adaptors(monkeypatch, fake_adaptor)
+    client = TestClient(app)
+
+    response = client.post("/v1/routing/itinerary-detailed", json=_routing_payload())
+
+    assert response.status_code == 200
+    assert fake_adaptor.last_call["summarized"] is False
+
+
+def test_routing_get_itinerary_defaults_to_valhalla(monkeypatch):
+    fake_adaptor = _FakeRoutingAdaptor(itinerary_response=_itinerary_response())
+    _patch_all_adaptors(monkeypatch, fake_adaptor)
+    client = TestClient(app)
+
+    response = client.get("/v1/routing/itinerary/abc123")
+
+    assert response.status_code == 200
+    assert fake_adaptor.last_call["itinerary_id"] == "abc123"
+
+
+_RETIRED = ["otp", "otp_kl", "hybrid"]
+
+
+@pytest.mark.parametrize("engine", _RETIRED)
+def test_routing_plan_retired_engine_returns_400(monkeypatch, engine):
+    fake_adaptor = _FakeRoutingAdaptor(summary_response=_summary_response())
+    _patch_all_adaptors(monkeypatch, fake_adaptor)
+    client = TestClient(app)
+
+    response = client.post(
+        "/v1/routing/plan", params={"engine": engine}, json=_routing_payload()
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "engine retired: use valhalla"
+    assert fake_adaptor.last_call is None
+
+
+@pytest.mark.parametrize("engine", _RETIRED)
+def test_routing_itinerary_detailed_retired_engine_returns_400(monkeypatch, engine):
+    fake_adaptor = _FakeRoutingAdaptor(detailed_response=_detailed_response())
+    _patch_all_adaptors(monkeypatch, fake_adaptor)
+    client = TestClient(app)
+
+    response = client.post(
+        "/v1/routing/itinerary-detailed",
+        params={"engine": engine},
+        json=_routing_payload(),
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "engine retired: use valhalla"
+    assert fake_adaptor.last_call is None
+
+
+@pytest.mark.parametrize("engine", _RETIRED)
+def test_routing_get_itinerary_retired_engine_returns_400(monkeypatch, engine):
+    fake_adaptor = _FakeRoutingAdaptor(itinerary_response=_itinerary_response())
+    _patch_all_adaptors(monkeypatch, fake_adaptor)
+    client = TestClient(app)
+
+    response = client.get("/v1/routing/itinerary/abc123", params={"engine": engine})
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "engine retired: use valhalla"
+    assert fake_adaptor.last_call is None
+
+
+def test_routing_plan_unknown_engine_returns_422(monkeypatch):
+    fake_adaptor = _FakeRoutingAdaptor(summary_response=_summary_response())
+    _patch_all_adaptors(monkeypatch, fake_adaptor)
+    client = TestClient(app)
+
+    response = client.post(
+        "/v1/routing/plan", params={"engine": "foo"}, json=_routing_payload()
+    )
+
+    assert response.status_code == 422
+    assert fake_adaptor.last_call is None

@@ -178,6 +178,19 @@ class RoutingEngine(str, Enum):
     hybrid = "hybrid"
 
 
+# Retired 2026-09: OpenTripPlanner (and the hybrid that needed it) are no
+# longer served. The members stay in the enum on purpose: if they were removed,
+# FastAPI would reject ?engine=otp at query validation with a 422 and the
+# handler could never answer the 400 "engine retired" that callers get now.
+RETIRED_ROUTING_ENGINES = frozenset(
+    {
+        RoutingEngine.open_trip_planner,
+        RoutingEngine.open_trip_planner_kl,
+        RoutingEngine.hybrid,
+    }
+)
+
+
 class WalkOptions(BaseModel):
     speed: float
     avoid: bool

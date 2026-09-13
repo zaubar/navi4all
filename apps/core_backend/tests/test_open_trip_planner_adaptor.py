@@ -36,6 +36,11 @@ from schemas.routing import (
 )
 from services.adaptors.open_trip_planner import OpenTripPlannerAdaptor
 
+# OpenTripPlanner was retired 2026-09. The adaptor module is kept for now but
+# nothing constructs it (endpoints/routing.py builds Valhalla only), so its
+# unit tests are skipped instead of maintained.
+pytestmark = pytest.mark.skip(reason="OTP retired 2026-09; adaptor kept but never constructed")
+
 
 class _FakeRedis:
     def __init__(self, data: dict[bytes, bytes]):
