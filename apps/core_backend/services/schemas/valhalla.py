@@ -76,6 +76,11 @@ class ValhallaPedestrianCostingOptions(BaseModel):
     # costs 1 + 24 * avoid_bad_surfaces times more; sett files as paved_rough.
     # None is omitted from the request (the model is dumped exclude_none).
     avoid_bad_surfaces: float | None = Field(default=None, ge=0.0, le=1.0)
+    # Fork PR #3 splits the rough side: avoid_bad_surfaces charges paved_rough
+    # (sound sett, cobblestone) only, avoid_very_rough_surfaces (0..1) charges
+    # compacted and worse (sett in bad repair, gravel, dirt). Absent, the
+    # engine lets it follow avoid_bad_surfaces.
+    avoid_very_rough_surfaces: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class ValhallaCostingOptions(BaseModel):
