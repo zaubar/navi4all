@@ -156,11 +156,11 @@ async def test_medium_band_sends_medium_setting_and_keeps_foot(
     # wheelchair type (stairs refused by access), a plain walker stays foot.
     pedestrian = await _sent_pedestrian(_request(surface_quality))
     assert pedestrian["avoid_bad_surfaces"] == 0.15
-    assert pedestrian["avoid_very_rough_surfaces"] == 0.4
+    assert pedestrian["avoid_very_rough_surfaces"] == 0.8
     assert pedestrian["type"] == "foot"
     pedestrian = await _sent_pedestrian(_request(surface_quality, accessible=True))
     assert pedestrian["avoid_bad_surfaces"] == 0.15
-    assert pedestrian["avoid_very_rough_surfaces"] == 0.4
+    assert pedestrian["avoid_very_rough_surfaces"] == 0.8
     assert pedestrian["type"] == "wheelchair"
 
 

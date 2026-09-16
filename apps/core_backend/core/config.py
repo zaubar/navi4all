@@ -93,7 +93,7 @@ class Settings(BaseSettings):
     # on the bumpy tier and "Einige Pflasterungen" keeps sound sett cheap while
     # still steering off the bumpy one.
     VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH: float = Field(1.0, ge=0.0, le=1.0)
-    VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM: float = Field(0.4, ge=0.0, le=1.0)
+    VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM: float = Field(0.8, ge=0.0, le=1.0)
 
     GEOCODING_PROVIDER: SupportedGeocodingProviders
     GEOCODING_PROVIDER_API_URL: str | None = None
