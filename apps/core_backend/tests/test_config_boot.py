@@ -74,7 +74,7 @@ def test_avoid_bad_surfaces_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     settings = Settings(_env_file=None)
 
     assert settings.VALHALLA_AVOID_BAD_SURFACES_SMOOTH == 0.4
-    assert settings.VALHALLA_AVOID_BAD_SURFACES_MEDIUM == 0.15
+    assert settings.VALHALLA_AVOID_BAD_SURFACES_MEDIUM == 0.08
     assert settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH == 1.0
     assert settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM == 0.8
 

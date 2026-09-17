@@ -85,7 +85,10 @@ class Settings(BaseSettings):
     # to 3x longer); OTP accessible routes crossed 9.8 km of sett against
     # 22.0 km on the Valhalla wheelchair type, which this option is to close.
     VALHALLA_AVOID_BAD_SURFACES_SMOOTH: float = Field(0.4, ge=0.0, le=1.0)
-    VALHALLA_AVOID_BAD_SURFACES_MEDIUM: float = Field(0.15, ge=0.0, le=1.0)
+    # MEDIUM 0.15 priced sound sett like the smooth band (4.6x): the middle slider step
+    # took the smooth band's detours. 0.08 measured 2026-09-17 on 218 Altstadt pairs,
+    # zaubar/regensburg-web#267.
+    VALHALLA_AVOID_BAD_SURFACES_MEDIUM: float = Field(0.08, ge=0.0, le=1.0)
     # Fork PR #3 splits the rough side: the value above now charges paved_rough
     # (sound sett, cobblestone) only; these charge compacted and worse, where the
     # fork files sett in bad repair (the Regensburg survey's bumpy squares), gravel
