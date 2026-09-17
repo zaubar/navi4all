@@ -1,6 +1,6 @@
 # Core Backend
 
-This is a Python-based backend that integrates various data and routing services to expose unified APIs for the mobile app. It utilises a modular architecture with separate engines for different routing services (OpenTripPlanner, Valhalla) and geocoding providers (Pelias). The backend is designed to be scalable and maintainable, allowing for easy addition of new features and services in the future.
+This is a Python-based backend that integrates various data and routing services to expose unified APIs for the mobile app. It utilises a modular architecture with a routing engine adaptor (Valhalla; OpenTripPlanner was retired 2026-09) and geocoding providers (Pelias). The backend is designed to be scalable and maintainable, allowing for easy addition of new features and services in the future.
 
 
 ![Core backend architecture diagram](/docs/core-backend-structure-diagram.svg)
@@ -24,9 +24,19 @@ Template file: `apps/core_backend/.env.example`
 
 #### 2) Configure environment variables
 
-- `OPEN_TRIP_PLANNER_URL`: OTP endpoint used by the `otp` engine.
-- `OPEN_TRIP_PLANNER_KL_URL`: OTP endpoint used by the `otp_kl` engine.
-- `VALHALLA_URL`: Valhalla endpoint used by the `valhalla` engine.
+- `VALHALLA_URL`: Valhalla endpoint, the only routing engine. `engine=valhalla`
+  is the default on every routing endpoint; `engine=otp|otp_kl|hybrid` answers
+  HTTP 400 `engine retired: use valhalla`.
+- `OPEN_TRIP_PLANNER_URL`, `OPEN_TRIP_PLANNER_KL_URL`: retired, optional; accepted
+  and ignored so an existing env still boots.
+- `VALHALLA_PEDESTRIAN_DESTINATION_ONLY_PENALTY`: seconds charged when a walking
+  route enters an `access=destination` edge (default `0`).
+- `VALHALLA_AVOID_BAD_SURFACES_SMOOTH` / `_MEDIUM`: value of the fork's pedestrian
+  option `avoid_bad_surfaces` (0..1) sent for `walk.surface_quality >= 0.7` and
+  `0.3 < surface_quality < 0.7` (defaults `0.4` / `0.08`); not sent otherwise.
+- `VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH` / `_MEDIUM`: the fork's second tier
+  `avoid_very_rough_surfaces` (0..1, compacted and worse: sett in bad repair, gravel,
+  dirt), sent next to the value above for the same bands (defaults `1.0` / `0.8`).
 - `GEOCODING_PROVIDER`: `none` or `pelias`.
 - `GEOCODING_PROVIDER_API_URL`: required when `GEOCODING_PROVIDER != none`.
 - `GEOCODING_PROVIDER_API_KEY`: optional/provider-specific key.

@@ -19,6 +19,7 @@
 from core.config import settings
 from httpx import AsyncClient
 from redis import Redis
+from schemas.coordinates import Coordinates
 from schemas.routing import (
     RoutingPlanRequestModel,
     RoutingPlanSummaryResponseModel,
@@ -37,9 +38,13 @@ from schemas.routing import (
 from services.schemas.valhalla import (
     ValhallaRouteRequestModel,
     ValhallaRouteResponseModel,
+    ValhallaTrip,
     ValhallaLocation,
     ValhallaCosting,
+    ValhallaCostingOptions,
     ValhallaManeuverType,
+    ValhallaPedestrianCostingOptions,
+    ValhallaPedestrianCostingOptionsType,
     MANEUVER_TYPE_TO_RELATIVE_DIRECTION,
     MODE_TO_COSTING,
     TRAVEL_MODE_TO_MODE,
@@ -76,30 +81,10 @@ class ValhallaAdaptor:
         ) -> ValhallaPedestrianCostingOptions:
             """Map surface_quality (0.0-1.0) and grade_category to Valhalla pedestrian options."""
 
-            # grade_category takes precedence over surface_quality + accessible
-            if grade_category:
-                if grade_category == "gentle":
-                    costing_type = ValhallaPedestrianCostingOptionsType.wheelchair
-                else:
-                    costing_type = ValhallaPedestrianCostingOptionsType.foot
-                return ValhallaPedestrianCostingOptions(
-                    walking_speed=request.walk.speed if request.walk else None,
-                    type=costing_type,
-                )
-
-            # Determine type
-            if surface_quality is not None and surface_quality >= 0.7:
-                costing_type = ValhallaPedestrianCostingOptionsType.wheelchair
-            elif surface_quality is not None and surface_quality > 0.0:
-                costing_type = ValhallaPedestrianCostingOptionsType.foot
-            else:
-                costing_type = (
-                    ValhallaPedestrianCostingOptionsType.wheelchair
-                    if accessible
-                    else ValhallaPedestrianCostingOptionsType.foot
-                )
-
-            # Determine surface_smoothness
+            # Determine surface_smoothness (shared by both branches below: a
+            # gradient-avoider with surface sensitivity must not lose surface
+            # handling — the web app now steers those users here instead of to
+            # OTP precisely because Valhalla can honour both).
             surface_smoothness: float | None = None
             if surface_quality is not None and surface_quality > 0.0:
                 if surface_quality <= 0.3:
@@ -111,10 +96,115 @@ class ValhallaAdaptor:
                 else:
                     surface_smoothness = 1.0
 
+            # Soft cobblestone avoidance (fork PR #1 option avoid_bad_surfaces;
+            # settings in core/config.py). Two bands from surface_quality:
+            # >= 0.7 smooth surfaces only, 0.3 < q < 0.7 mostly smooth. Below
+            # that, or without surface_quality, the option is not sent and the
+            # engine default (0) applies. Shared by both branches below like
+            # surface_smoothness. The costing TYPE is not derived from it.
+            avoid_bad_surfaces: float | None = None
+            avoid_very_rough_surfaces: float | None = None
+            if surface_quality is not None:
+                if surface_quality >= 0.7:
+                    avoid_bad_surfaces = settings.VALHALLA_AVOID_BAD_SURFACES_SMOOTH
+                    avoid_very_rough_surfaces = (
+                        settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH
+                    )
+                elif surface_quality > 0.3:
+                    avoid_bad_surfaces = settings.VALHALLA_AVOID_BAD_SURFACES_MEDIUM
+                    avoid_very_rough_surfaces = (
+                        settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM
+                    )
+
+            # grade_category takes precedence over surface_quality + accessible
+            # for the costing TYPE, but surface_smoothness rides along.
+            if grade_category:
+                if grade_category == "gentle":
+                    costing_type = ValhallaPedestrianCostingOptionsType.wheelchair
+                else:
+                    costing_type = ValhallaPedestrianCostingOptionsType.foot
+                # use_hills (0 = avoid hills as much as possible, 1 = no preference)
+                # feeds Valhalla's per-grade-bin cost penalty (kAvoidHillsStrength).
+                # "gentle" previously only changed the costing type, which alone does
+                # not bias routing away from steep edges -- this is the option that
+                # actually does.
+                use_hills = 0.0 if grade_category == "gentle" else None
+                return ValhallaPedestrianCostingOptions(
+                    walking_speed=request.walk.speed if request.walk else None,
+                    type=costing_type,
+                    use_hills=use_hills,
+                    surface_smoothness=surface_smoothness,
+                    avoid_bad_surfaces=avoid_bad_surfaces,
+                    avoid_very_rough_surfaces=avoid_very_rough_surfaces,
+                )
+
+            # Determine type: from the accessible flag only. The surface level feeds
+            # avoid_bad_surfaces above and never the type: a surface slider step 1 user
+            # with accessible=true keeps the wheelchair type (stairs refused by access)
+            # and only gets a softer rough-surface factor.
+            costing_type = (
+                ValhallaPedestrianCostingOptionsType.wheelchair
+                if accessible
+                else ValhallaPedestrianCostingOptionsType.foot
+            )
+
             return ValhallaPedestrianCostingOptions(
                 walking_speed=request.walk.speed if request.walk else None,
                 surface_smoothness=surface_smoothness,
                 type=costing_type,
+                avoid_bad_surfaces=avoid_bad_surfaces,
+                avoid_very_rough_surfaces=avoid_very_rough_surfaces,
+            )
+
+        costing = (
+            MODE_TO_COSTING.get(request.transport_modes[0])
+            if len(request.transport_modes) == 1
+            else ValhallaCosting.multi_modal
+        )
+
+        # Ask Valhalla for alternate routes on every pedestrian plan, sized by
+        # the caller's num_itineraries (1 -> none, 3 -> 2, 5 -> 2: Valhalla caps
+        # at service_limits.max_alternates = 2). Before 2026-09-11 alternates
+        # were requested only for "gentle", so every other Valhalla plan came
+        # back as exactly one itinerary although the app asked for 3 or 5, and
+        # the grade gate (services/grade_gate.py) starved: it can only drop a
+        # too-steep itinerary when a compliant alternative exists IN the
+        # response (measured live: Blaue-Lilien-Gasse, 11% sustained, still
+        # suggested with the setting on). A gate needs candidates, so "gentle"
+        # keeps 2 alternates even when the caller wants a single itinerary.
+        # Valhalla only supports alternates for non-multimodal costings and may
+        # return fewer than requested; every consumer handles any count.
+        #
+        # walk.avoid is intentionally not mapped here: OTP used it as a
+        # walk-vs-transit reluctance, which is a no-op for WALK-only requests,
+        # and Valhalla has no equivalent single knob.
+        alternates: int | None = None
+        if costing == ValhallaCosting.pedestrian:
+            wanted = min(max(request.num_itineraries - 1, 0), 2)
+            if request.grade_category == "gentle":
+                wanted = 2
+            alternates = wanted or None
+
+        pedestrian_options = _get_surface_quality_options(
+            surface_quality=request.walk.surface_quality if request.walk else None,
+            accessible=request.accessible,
+            grade_category=request.grade_category,
+        )
+        # An explicit caller-selected profile (foot/wheelchair/blind) overrides
+        # the type derived from surface_quality / accessible / grade_category.
+        if request.pedestrian_profile:
+            pedestrian_options.type = ValhallaPedestrianCostingOptionsType(
+                request.pedestrian_profile.value
+            )
+        # Destination-only edges (access=destination, "Anlieger frei") are a
+        # vehicle rule, but Valhalla charges its 600 s destination_only_penalty
+        # to pedestrians as well. Nearly every Altstadt living street carries
+        # the tag, so walking routes went around the old town (Haus der Musik
+        # to Thon-Dittmer-Palais: 1087 m at 600 s, 587 m at 0 s; OTP 402 m).
+        # Applies to every pedestrian costing type, including wheelchair.
+        if costing == ValhallaCosting.pedestrian:
+            pedestrian_options.destination_only_penalty = (
+                settings.VALHALLA_PEDESTRIAN_DESTINATION_ONLY_PENALTY
             )
 
         # Reformat request payload
@@ -126,16 +216,17 @@ class ValhallaAdaptor:
                         lat=request.destination.lat, lon=request.destination.lon
                     ),
                 ],
-                costing=MODE_TO_COSTING.get(request.transport_modes[0])
-                if len(request.transport_modes) == 1
-                else ValhallaCosting.multi_modal,
+                costing=costing,
+                alternates=alternates,
                 costing_options=ValhallaCostingOptions(
-                    pedestrian=_get_surface_quality_options(
-                        surface_quality=request.walk.surface_quality if request.walk else None,
-                        accessible=request.accessible,
-                        grade_category=request.grade_category,
-                    )
+                    pedestrian=pedestrian_options
                 ),
+                exclude_locations=[
+                    ValhallaLocation(lat=location.lat, lon=location.lon)
+                    for location in request.exclude_locations
+                ]
+                if request.exclude_locations
+                else None,
                 language=request.guidance_language.value,
             ).model_dump(mode="json", exclude_none=True)
         ).replace("'", '"')
@@ -158,13 +249,46 @@ class ValhallaAdaptor:
             else RoutingPlanDetailedResponseModel(itineraries=[])
         )
 
+        # Map the primary trip and any alternates into itineraries, each cached
+        # under its own id so get_itinerary works for whichever one survives
+        # downstream filtering (e.g. the grade gate).
+        for trip in [router_response.trip] + [
+            alternate.trip for alternate in (router_response.alternates or [])
+        ]:
+            self._append_trip_itinerary(response, trip, request, summarized)
+
+        return response
+
+    def _append_trip_itinerary(
+        self,
+        response: RoutingPlanSummaryResponseModel | RoutingPlanDetailedResponseModel,
+        trip: ValhallaTrip,
+        request: RoutingPlanRequestModel,
+        summarized: bool,
+    ) -> None:
+        """Map one Valhalla trip into an itinerary appended to the response."""
+
         # Write itinerary to cache
         # Produce a unique ID for this itinerary and the journey it represents
         itinerary_id = str(uuid4())
 
-        # Produce ItineraryDetailed model for full itinerary response
+        # Produce ItineraryDetailed model for full itinerary response. Leg i
+        # runs between the trip locations i and i + 1 (Valhalla echoes the
+        # request locations on the trip); without them fall back to the
+        # request's origin and destination, which is exact for a single leg.
+        trip_locations = trip.locations or []
         legs: list[LegDetailed] = []
-        for leg in router_response.trip.legs:
+        for leg_index, leg in enumerate(trip.legs):
+            leg_start = (
+                Coordinates(lat=trip_locations[leg_index].lat, lon=trip_locations[leg_index].lon)
+                if len(trip_locations) > leg_index + 1
+                else request.origin
+            )
+            leg_end = (
+                Coordinates(lat=trip_locations[leg_index + 1].lat, lon=trip_locations[leg_index + 1].lon)
+                if len(trip_locations) > leg_index + 1
+                else request.destination
+            )
             shape_points = polyline.decode(leg.shape, precision=6)
 
             steps: list[Step] = []
@@ -230,13 +354,13 @@ class ValhallaAdaptor:
                         id="",
                         name="",
                         type=PlaceType.address,
-                        coordinates=request.origin,
+                        coordinates=leg_start,
                     ),
                     end_place=Place(
                         id="",
                         name="",
                         type=PlaceType.address,
-                        coordinates=request.destination,
+                        coordinates=leg_end,
                     ),
                     mode=TRAVEL_MODE_TO_MODE[leg.maneuvers[0].travel_mode],
                     duration=round(leg.summary.time),
@@ -248,10 +372,10 @@ class ValhallaAdaptor:
 
         itinerary_detailed = ItineraryDetailed(
             itinerary_id=itinerary_id,
-            duration=round(router_response.trip.summary.time),
+            duration=round(trip.summary.time),
             start_time=datetime.now(),
             end_time=datetime.now()
-            + timedelta(seconds=router_response.trip.summary.time),
+            + timedelta(seconds=trip.summary.time),
             origin=request.origin,
             destination=request.destination,
             legs=legs,
@@ -299,8 +423,6 @@ class ValhallaAdaptor:
             )
         else:
             response.itineraries.append(itinerary_detailed)
-
-        return response
 
     async def get_itinerary(self, itinerary_id: str) -> ItineraryResponseModel:
         """Retrieve a full itinerary from the cache by its journey ID."""
