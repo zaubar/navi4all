@@ -140,9 +140,11 @@ async def test_smooth_band_sends_smooth_setting_and_keeps_the_type_from_accessib
     # The surface level never picks the costing type: the type follows accessible.
     pedestrian = await _sent_pedestrian(_request(surface_quality))
     assert pedestrian["avoid_bad_surfaces"] == 0.4
+    assert pedestrian["avoid_very_rough_surfaces"] == 1.0
     assert pedestrian["type"] == "foot"
     pedestrian = await _sent_pedestrian(_request(surface_quality, accessible=True))
     assert pedestrian["avoid_bad_surfaces"] == 0.4
+    assert pedestrian["avoid_very_rough_surfaces"] == 1.0
     assert pedestrian["type"] == "wheelchair"
 
 
@@ -154,9 +156,11 @@ async def test_medium_band_sends_medium_setting_and_keeps_foot(
     # wheelchair type (stairs refused by access), a plain walker stays foot.
     pedestrian = await _sent_pedestrian(_request(surface_quality))
     assert pedestrian["avoid_bad_surfaces"] == 0.15
+    assert pedestrian["avoid_very_rough_surfaces"] == 0.8
     assert pedestrian["type"] == "foot"
     pedestrian = await _sent_pedestrian(_request(surface_quality, accessible=True))
     assert pedestrian["avoid_bad_surfaces"] == 0.15
+    assert pedestrian["avoid_very_rough_surfaces"] == 0.8
     assert pedestrian["type"] == "wheelchair"
 
 
@@ -164,6 +168,7 @@ async def test_medium_band_sends_medium_setting_and_keeps_foot(
 async def test_low_band_does_not_send_the_option(surface_quality: float) -> None:
     pedestrian = await _sent_pedestrian(_request(surface_quality))
     assert "avoid_bad_surfaces" not in pedestrian
+    assert "avoid_very_rough_surfaces" not in pedestrian
     assert pedestrian["type"] == "foot"
 
 
@@ -189,6 +194,7 @@ async def test_gentle_early_return_branch_carries_the_option() -> None:
         _request(1.0, grade_category=GradeCategory.gentle)
     )
     assert pedestrian["avoid_bad_surfaces"] == 0.4
+    assert pedestrian["avoid_very_rough_surfaces"] == 1.0
     assert pedestrian["use_hills"] == 0.0
     assert pedestrian["surface_smoothness"] == 1.0
     assert pedestrian["type"] == "wheelchair"
@@ -221,11 +227,17 @@ async def test_existing_options_are_untouched() -> None:
 async def test_values_follow_the_settings(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(settings, "VALHALLA_AVOID_BAD_SURFACES_SMOOTH", 0.8)
     monkeypatch.setattr(settings, "VALHALLA_AVOID_BAD_SURFACES_MEDIUM", 0.2)
-    assert (await _sent_pedestrian(_request(0.9)))["avoid_bad_surfaces"] == 0.8
-    assert (await _sent_pedestrian(_request(0.5)))["avoid_bad_surfaces"] == 0.2
+    monkeypatch.setattr(settings, "VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH", 0.9)
+    monkeypatch.setattr(settings, "VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM", 0.3)
+    smooth = await _sent_pedestrian(_request(0.9))
+    assert (smooth["avoid_bad_surfaces"], smooth["avoid_very_rough_surfaces"]) == (0.8, 0.9)
+    medium = await _sent_pedestrian(_request(0.5))
+    assert (medium["avoid_bad_surfaces"], medium["avoid_very_rough_surfaces"]) == (0.2, 0.3)
 
 
 @pytest.mark.parametrize("value", [1.5, -0.1])
 def test_schema_rejects_out_of_range_values(value: float) -> None:
     with pytest.raises(ValidationError):
         ValhallaPedestrianCostingOptions(avoid_bad_surfaces=value)
+    with pytest.raises(ValidationError):
+        ValhallaPedestrianCostingOptions(avoid_very_rough_surfaces=value)

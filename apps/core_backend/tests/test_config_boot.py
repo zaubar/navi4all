@@ -75,17 +75,23 @@ def test_avoid_bad_surfaces_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
 
     assert settings.VALHALLA_AVOID_BAD_SURFACES_SMOOTH == 0.4
     assert settings.VALHALLA_AVOID_BAD_SURFACES_MEDIUM == 0.15
+    assert settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH == 1.0
+    assert settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM == 0.8
 
 
 def test_avoid_bad_surfaces_follow_env(monkeypatch: pytest.MonkeyPatch) -> None:
     _clean_env(monkeypatch)
     monkeypatch.setenv("VALHALLA_AVOID_BAD_SURFACES_SMOOTH", "0.8")
     monkeypatch.setenv("VALHALLA_AVOID_BAD_SURFACES_MEDIUM", "0.2")
+    monkeypatch.setenv("VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH", "0.9")
+    monkeypatch.setenv("VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM", "0.3")
 
     settings = Settings(_env_file=None)
 
     assert settings.VALHALLA_AVOID_BAD_SURFACES_SMOOTH == 0.8
     assert settings.VALHALLA_AVOID_BAD_SURFACES_MEDIUM == 0.2
+    assert settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH == 0.9
+    assert settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM == 0.3
 
 
 @pytest.mark.parametrize("value", ["1.5", "-0.1"])

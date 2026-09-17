@@ -86,6 +86,14 @@ class Settings(BaseSettings):
     # 22.0 km on the Valhalla wheelchair type, which this option is to close.
     VALHALLA_AVOID_BAD_SURFACES_SMOOTH: float = Field(0.4, ge=0.0, le=1.0)
     VALHALLA_AVOID_BAD_SURFACES_MEDIUM: float = Field(0.15, ge=0.0, le=1.0)
+    # Fork PR #3 splits the rough side: the value above now charges paved_rough
+    # (sound sett, cobblestone) only; these charge compacted and worse, where the
+    # fork files sett in bad repair (the Regensburg survey's bumpy squares), gravel
+    # and dirt. Sent for the same two bands, so "Nur glatte Wege" pushes hardest
+    # on the bumpy tier and "Einige Pflasterungen" keeps sound sett cheap while
+    # still steering off the bumpy one.
+    VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH: float = Field(1.0, ge=0.0, le=1.0)
+    VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM: float = Field(0.8, ge=0.0, le=1.0)
 
     GEOCODING_PROVIDER: SupportedGeocodingProviders
     GEOCODING_PROVIDER_API_URL: str | None = None

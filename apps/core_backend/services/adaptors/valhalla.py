@@ -103,11 +103,18 @@ class ValhallaAdaptor:
             # engine default (0) applies. Shared by both branches below like
             # surface_smoothness. The costing TYPE is not derived from it.
             avoid_bad_surfaces: float | None = None
+            avoid_very_rough_surfaces: float | None = None
             if surface_quality is not None:
                 if surface_quality >= 0.7:
                     avoid_bad_surfaces = settings.VALHALLA_AVOID_BAD_SURFACES_SMOOTH
+                    avoid_very_rough_surfaces = (
+                        settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH
+                    )
                 elif surface_quality > 0.3:
                     avoid_bad_surfaces = settings.VALHALLA_AVOID_BAD_SURFACES_MEDIUM
+                    avoid_very_rough_surfaces = (
+                        settings.VALHALLA_AVOID_VERY_ROUGH_SURFACES_MEDIUM
+                    )
 
             # grade_category takes precedence over surface_quality + accessible
             # for the costing TYPE, but surface_smoothness rides along.
@@ -128,6 +135,7 @@ class ValhallaAdaptor:
                     use_hills=use_hills,
                     surface_smoothness=surface_smoothness,
                     avoid_bad_surfaces=avoid_bad_surfaces,
+                    avoid_very_rough_surfaces=avoid_very_rough_surfaces,
                 )
 
             # Determine type: from the accessible flag only. The surface level feeds
@@ -145,6 +153,7 @@ class ValhallaAdaptor:
                 surface_smoothness=surface_smoothness,
                 type=costing_type,
                 avoid_bad_surfaces=avoid_bad_surfaces,
+                avoid_very_rough_surfaces=avoid_very_rough_surfaces,
             )
 
         costing = (
