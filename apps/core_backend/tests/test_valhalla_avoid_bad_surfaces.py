@@ -155,11 +155,11 @@ async def test_medium_band_sends_medium_setting_and_keeps_foot(
     # The medium band softens the factor only; an accessible user keeps the
     # wheelchair type (stairs refused by access), a plain walker stays foot.
     pedestrian = await _sent_pedestrian(_request(surface_quality))
-    assert pedestrian["avoid_bad_surfaces"] == 0.15
+    assert pedestrian["avoid_bad_surfaces"] == 0.08
     assert pedestrian["avoid_very_rough_surfaces"] == 0.8
     assert pedestrian["type"] == "foot"
     pedestrian = await _sent_pedestrian(_request(surface_quality, accessible=True))
-    assert pedestrian["avoid_bad_surfaces"] == 0.15
+    assert pedestrian["avoid_bad_surfaces"] == 0.08
     assert pedestrian["avoid_very_rough_surfaces"] == 0.8
     assert pedestrian["type"] == "wheelchair"
 
@@ -204,7 +204,7 @@ async def test_gentle_medium_band_carries_the_medium_setting() -> None:
     pedestrian = await _sent_pedestrian(
         _request(0.5, grade_category=GradeCategory.gentle)
     )
-    assert pedestrian["avoid_bad_surfaces"] == 0.15
+    assert pedestrian["avoid_bad_surfaces"] == 0.08
     assert pedestrian["use_hills"] == 0.0
 
 

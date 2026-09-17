@@ -33,7 +33,7 @@ Template file: `apps/core_backend/.env.example`
   route enters an `access=destination` edge (default `0`).
 - `VALHALLA_AVOID_BAD_SURFACES_SMOOTH` / `_MEDIUM`: value of the fork's pedestrian
   option `avoid_bad_surfaces` (0..1) sent for `walk.surface_quality >= 0.7` and
-  `0.3 < surface_quality < 0.7` (defaults `1.0` / `0.4`); not sent otherwise.
+  `0.3 < surface_quality < 0.7` (defaults `0.4` / `0.08`); not sent otherwise.
 - `VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH` / `_MEDIUM`: the fork's second tier
   `avoid_very_rough_surfaces` (0..1, compacted and worse: sett in bad repair, gravel,
   dirt), sent next to the value above for the same bands (defaults `1.0` / `0.8`).
