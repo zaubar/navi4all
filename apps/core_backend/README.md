@@ -37,6 +37,10 @@ Template file: `apps/core_backend/.env.example`
 - `VALHALLA_AVOID_VERY_ROUGH_SURFACES_SMOOTH` / `_MEDIUM`: the fork's second tier
   `avoid_very_rough_surfaces` (0..1, compacted and worse: sett in bad repair, gravel,
   dirt), sent next to the value above for the same bands (defaults `1.0` / `0.8`).
+- `VALHALLA_SURFACE_DETOUR_MAX_RATIO` (default 1.5, 0 disables): detour cap for walk
+  plans that carry a surface penalty. Among the alternatives the engine returned, the
+  first one at most this many times as long as the unpenalised route leads; when none
+  is, the shortest leads. Nothing is dropped. See `services/detour_cap.py`.
 - `GEOCODING_PROVIDER`: `none` or `pelias`.
 - `GEOCODING_PROVIDER_API_URL`: required when `GEOCODING_PROVIDER != none`.
 - `GEOCODING_PROVIDER_API_KEY`: optional/provider-specific key.

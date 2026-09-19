@@ -27,6 +27,7 @@ from schemas.routing import (
     ItineraryResponseModel,
 )
 from services.adaptors.valhalla import ValhallaAdaptor
+from services.detour_cap import apply_detour_cap
 from services.grade_gate import apply_grade_gate
 from core.config import settings
 
@@ -72,6 +73,9 @@ async def plan(
         # Engine-agnostic hard gradient exclusion (no-op unless the request
         # asks for gentle grades on a walk mode) -- see services/grade_gate.py.
         response = await apply_grade_gate(client, request, response)
+        # Surface-avoiding plans only: keep the first itinerary within the detour
+        # cap, after the grade gate has removed what is too steep.
+        response = await apply_detour_cap(client, adaptor, request, response)
 
     return response
 
@@ -99,6 +103,9 @@ async def itinerary_detailed(
         # Engine-agnostic hard gradient exclusion (no-op unless the request
         # asks for gentle grades on a walk mode) -- see services/grade_gate.py.
         response = await apply_grade_gate(client, request, response)
+        # Surface-avoiding plans only: keep the first itinerary within the detour
+        # cap, after the grade gate has removed what is too steep.
+        response = await apply_detour_cap(client, adaptor, request, response)
 
     return response
 

@@ -65,6 +65,15 @@ class Settings(BaseSettings):
     GRADE_GATE_WINDOW_M: float = 40.0
     GRADE_GATE_TIMEOUT_S: float = 5.0
 
+    # Detour cap for surface-avoiding walk plans (services/detour_cap.py). The
+    # surface options price bumpy paving at 20 to 25 times its length, so the
+    # cheapest route can be much longer than the route without the setting
+    # (prod 2026-09-19: 173 m -> 328 m to avoid 31 m of bumpy paving). Among
+    # the alternatives the engine returned, the first one at most this many
+    # times as long as the unpenalised route leads; none within it => the
+    # shortest leads. 0 disables the cap.
+    VALHALLA_SURFACE_DETOUR_MAX_RATIO: float = Field(1.5, ge=0.0)
+
     # Valhalla adds destination_only_penalty (default 600 s) when a route
     # enters an edge tagged access=destination / motor_vehicle=destination,
     # for pedestrians too (upstream PR #5862 to change the default is open).
